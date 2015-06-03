@@ -12,14 +12,25 @@ public class Users {
 	
 	public Users(String trainFile){
 		this.trainFile=trainFile;
+		this.readLineFile();
 	}
 	
 	
 	public void readLineFile(){
 		ArrayList<ArrayList<String>> users = new ArrayList<ArrayList<String>>();
 		FileTool.readLinesAsTaglist( this.trainFile, users);
+		//System.out.println(users.get(0));
 	}
 	
 	
 
 }
+
+class User {
+	
+	
+	
+	
+	
+}
+

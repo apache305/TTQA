@@ -12,13 +12,14 @@ public class Main {
 		
 		String trainFile = args[0];
 		String resultPath= args[1];
+		//String curWorkingDir=System.getProperty("user.dir");
+		//System.out.println(curWorkingDir+trainFile);
 		Users users= new Users(trainFile);
 		
 		//i think a better way to do is a simple version, then enrich it.
 		
 		
 		
-		
-		
+
 	}
 }
