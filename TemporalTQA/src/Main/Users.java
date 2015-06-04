@@ -10,7 +10,7 @@ import Util.FileTool;
 
 public class Users {
 	String trainFile =null;
-	ArrayList< User > users;
+	Map<String, User> users;
 	Map<String, Integer> tagToIndexMap;
 	ArrayList<String> indexToTagMap;
 	Map<String, Integer> tagCountMap;
@@ -26,11 +26,14 @@ public class Users {
 	
 	public Users(String trainFile){
 		this.trainFile=trainFile;
-		this.users= new ArrayList<User>();
+		this.users= new HashMap<String,User>();
+		
+		//tag count
 		this.tagToIndexMap = new HashMap<String,Integer>();
 		this.indexToTagMap = new ArrayList<String>();
 		this.tagCountMap   = new HashMap<String,Integer>();
 		
+		//time count
 		this.timeToIndexMap = new HashMap<String,Integer>();
 		this.indexToTimeMap = new ArrayList<String>();
 		this.timeCountMap   = new HashMap<String,Integer>();		
@@ -59,10 +62,17 @@ public class Users {
 		FileTool.readLinesAsTaglist( this.trainFile, userInfoLines);
 		for(ArrayList<String> userInfo: userInfoLines){
 			String userId= userInfo.get(0);
-			String timeLabel= userInfo.get(1).substring(0,6);
 			userInfo.remove(0);
-			userInfo.remove(1);
-			User u= new User();
+			User u;
+			if(this.users.containsKey(userId)){
+				u= this.users.get(userId);
+			}else{
+				u= new User(userId);
+			}
+			
+			ArrayList<String> eachAnswerInfo=userInfo;
+			u.addNewAnswerPost(eachAnswerInfo,this);
+		
 			
 			
 			
@@ -80,6 +90,17 @@ public class Users {
 }
 
 class User {
+	String userId;
+
+
+	public User(String userId) {
+		// TODO Auto-generated constructor stub
+		this.userId=userId;
+	}
+	
+	public void addNewAnswerPost(ArrayList<String> eachAnswerInfo, Users users){
+		
+	}
 	
 	
 	
