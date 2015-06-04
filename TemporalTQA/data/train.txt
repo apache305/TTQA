@@ -1,0 +1,500 @@
+9 2008-07-31T22:17:57.883 c# winforms forms type-conversion opacity
+1 2008-07-31T23:56:41.303 c# .net datetime timespan
+63550 2013-01-05T14:44:25.013 mysql database binary-data data-storage
+5 2008-08-01T07:25:22.443 c# code-generation j# visualj#
+13 2008-08-01T08:57:27.280 c# .net datetime
+17 2008-08-01T12:07:19.500 c# .net datetime
+48 2008-08-01T12:16:22.167 mysql database binary-data data-storage
+17 2008-08-01T12:17:19.357 c# .net datetime timespan
+19 2008-08-01T12:19:17.417 html browser timezone timezoneoffset
+13 2008-08-01T12:22:40.797 c++ c sockets mainframe zos
+842480 2012-06-04T23:35:58.177 html css css3 internet-explorer-7
+13 2008-08-01T12:26:39.773 .net math
+23 2008-08-01T12:36:00.957 c++ c sockets mainframe zos
+35 2008-08-01T12:55:42.413 c# .net vb.net timer
+39 2008-08-01T12:56:37.920 c# .net vb.net timer
+43 2008-08-01T13:02:51.900 mysql database triggers
+17 2008-08-01T13:07:52.810 sql-server datatable rdbms
+23 2008-08-01T13:08:59.127 flex actionscript-3
+34 2008-08-01T13:08:59.487 flex actionscript-3
+39 2008-08-01T13:10:16.473 html form-submit html-form submit-button
+37 2008-08-01T13:14:30.303 html form-submit html-form submit-button
+41 2008-08-01T13:14:40.007 flex actionscript-3
+45 2008-08-01T13:18:37.640 c# linq .net-3.5
+39 2008-08-01T13:19:43.723 office-2007 file-type
+35 2008-08-01T13:20:44.283 office-2007 file-type
+17 2008-08-01T13:22:04.483 linq .net-3.5
+49 2008-08-01T13:37:59.723 performance algorithm language-agnostic unix pi
+13 2008-08-01T13:40:16.443 c++ c sockets mainframe zos
+50 2008-08-01T13:44:35.843 php plugins architecture
+40 2008-08-01T13:46:00.097 php plugins architecture
+55 2008-08-01T13:53:06.357 c# winforms forms type-conversion opacity
+41 2008-08-01T14:03:22.230 flex actionscript-3
+51 2008-08-01T14:06:28.560 sql-server datatable rdbms
+59 2008-08-01T14:10:19.660 php plugins architecture
+60 2008-08-01T14:10:55.757 c# linq web-services .net-3.5
+39 2008-08-01T14:23:28.087 c# winforms forms type-conversion opacity
+59 2008-08-01T14:26:22.793 php sql database flat-file
+44 2008-08-01T14:44:27.203 svn tortoisesvn branch branching-and-merging
+61 2008-08-01T14:45:37.403 svn tortoisesvn branch branching-and-merging
+25 2008-08-01T14:46:53.097 linux winapi visual-c++ unix timer
+39 2008-08-01T14:47:38.210 svn tortoisesvn branch branching-and-merging
+40 2008-08-01T14:52:53.537 php sql database flat-file
+2089740 2008-08-01T14:53:47.497 linux winapi visual-c++ unix timer
+25 2008-08-01T14:55:08.477 linux winapi visual-c++ unix timer
+59 2008-08-01T14:58:15.430 php sql database flat-file
+40 2008-08-01T15:08:50.150 php sql database flat-file
+72 2008-08-01T15:11:59.987 html browser timezone timezoneoffset
+61 2008-08-01T15:19:25.900 .net performance memory-leaks com-interop
+36 2008-08-01T15:23:33.817 .net performance memory-leaks com-interop
+146270 2008-08-01T15:27:23.093 windows svn 64bit
+34 2008-08-01T15:28:12.543 .net performance memory-leaks com-interop
+60 2008-08-01T15:32:11.337 windows svn 64bit
+17 2008-08-01T15:32:42.473 windows svn 64bit
+58 2008-08-01T15:34:43.873 windows svn 64bit
+26 2008-08-01T16:09:47.687 flex actionscript-3 air
+35 2008-08-01T16:13:47.600 java php oop theory
+26 2008-08-01T16:19:04.283 java php oop theory
+59 2008-08-01T16:31:43.430 java xml csv data-conversion
+72 2008-08-01T16:36:42.080 sql mysql sql-server csv bcp
+72 2008-08-01T16:43:30.880 java php oop theory
+71 2008-08-01T16:47:54.927 sql mysql sql-server csv bcp
+42 2008-08-01T16:56:55.830 java php oop theory
+86 2008-08-01T17:01:27.240 java php oop theory
+146637 2008-08-01T17:23:43.777 php plugins architecture
+71 2008-08-01T17:24:24.290 php apache
+80 2008-08-01T17:28:24.253 c# compression decompression
+44 2008-08-01T17:30:56.277 c# compression decompression
+146637 2008-08-01T17:33:58.750 php apache
+59 2008-08-01T17:42:04.723 php apache
+146637 2008-08-01T17:45:06.513 php sql database flat-file
+9 2008-08-01T17:47:54.727 windows svn 64bit
+70 2008-08-01T17:51:55.407 php apache
+42 2008-08-01T17:52:46.293 .net performance memory-leaks com-interop
+17 2008-08-01T17:54:08.163 sql mysql sql-server csv bcp
+33 2008-08-01T17:57:14.117 .net performance memory-leaks com-interop
+17 2008-08-01T18:00:06.077 c# code-generation j# visualj#
+90 2008-08-01T18:04:25.023 c# compression decompression
+17 2008-08-01T18:08:16.590 .net asp.net svn versioning
+30 2008-08-01T18:08:53.080 windows embed media
+93 2008-08-01T18:23:59.040 java php oop theory
+59 2008-08-01T18:24:30.550 .net asp.net svn versioning
+39 2008-08-01T18:42:10.563 .net pdf
+60 2008-08-01T18:45:32.007 .net pdf
+86 2008-08-01T18:51:12.090 java xml csv data-conversion
+40 2008-08-01T19:07:59.480 java php oop theory
+55 2008-08-01T19:21:57.517 java xml csv data-conversion
+26 2008-08-01T19:22:43.960 .net pdf
+80 2008-08-01T19:28:25.447 sql-server database version-control
+71 2008-08-01T19:34:49.067 sql-server migration
+50 2008-08-01T19:36:46.067 algorithm language-agnostic colors color-space
+71 2008-08-01T19:45:02.870 algorithm language-agnostic colors color-space
+35 2008-08-01T19:52:14.227 .net database xsd
+50 2008-08-01T19:58:45.837 php apache
+39 2008-08-01T20:02:08.357 c# .net asp.net internationalization globalization
+96 2008-08-01T20:05:12.750 c# .net asp.net internationalization globalization
+91 2008-08-01T21:46:12.313 c# .net datetime
+71 2008-08-01T22:12:30.170 windows mailto
+91 2008-08-01T22:18:21.623 windows mailto
+48 2008-08-01T22:20:05.117 php apache
+34 2008-08-01T22:22:37.823 mysql sql-server query
+61 2008-08-01T22:25:30.750 git version-control github dvcs
+34 2008-08-01T22:27:12.230 git version-control github dvcs
+91 2008-08-01T22:29:00.823 git version-control github dvcs
+71 2008-08-01T22:31:36.137 mysql sql-server query
+48 2008-08-01T22:57:41.950 php forms
+34 2008-08-01T23:10:25.980 git version-control github dvcs
+55 2008-08-01T23:10:56.510 php arrays cloud tag-cloud
+146637 2008-08-01T23:16:42.943 php forms
+55 2008-08-01T23:17:53.657 c# .net asp.net internationalization globalization
+70 2008-08-01T23:20:07.367 .net pdf
+34 2008-08-01T23:40:28.463 svn collaboration
+101 2008-08-01T23:44:05.883 svn collaboration
+91 2008-08-01T23:49:57.103 c# .net scripting compiler
+103 2008-08-01T23:57:40.707 php forms
+40 2008-08-01T23:58:35.650 php arrays cloud tag-cloud
+101 2008-08-01T23:58:48.880 git version-control github dvcs
+55 2008-08-02T00:03:33.033 php arrays cloud tag-cloud
+106 2008-08-02T00:12:12.813 c# .net scripting compiler
+40 2008-08-02T00:20:59.927 php arrays cloud tag-cloud
+60 2008-08-02T00:22:59.360 asp.net visual-studio svn
+2 2008-08-02T00:25:28.763 asp.net visual-studio svn
+106 2008-08-02T00:42:35.310 c# html web-services printing
+109 2008-08-02T00:43:38.837 c# sorting
+91 2008-08-02T00:47:48.797 c# sorting
+40 2008-08-02T01:10:41.027 php apache
+49 2008-08-02T01:15:42.123 c# sorting
+91 2008-08-02T01:38:14.077 c# sql vb.net ascii hex
+49 2008-08-02T01:49:46.220 c# .net scripting compiler
+55 2008-08-02T01:56:51.573 sql database version-control
+59 2008-08-02T02:43:42.790 php security php-session
+58 2008-08-02T02:55:07.743 php security php-session
+59 2008-08-02T03:00:24.613 c++ oop class nested-class
+50 2008-08-02T03:16:19.480 php security php-session
+61 2008-08-02T03:43:33.620 python xml
+59 2008-08-02T03:49:21.987 language-agnostic types
+59 2008-08-02T04:01:34.600 python xml
+100 2008-08-02T04:18:15.517 c# .net scripting compiler
+50 2008-08-02T04:31:54.803 language-agnostic types
+100 2008-08-02T05:09:00.063 svn tortoisesvn branch branching-and-merging
+5 2008-08-02T05:20:22.397 sql-server datatable rdbms
+116 2008-08-02T05:51:57.247 language-agnostic types
+116 2008-08-02T06:05:04.770 sql database version-control
+115 2008-08-02T06:06:50.337 html browser timezone timezoneoffset
+109 2008-08-02T06:16:20.427 git version-control github dvcs
+119 2008-08-02T06:16:23.967 c# .net scripting compiler
+109 2008-08-02T06:23:33.737 sql database version-control
+80 2008-08-02T07:48:07.607 string language-agnostic cross-platform generation
+117 2008-08-02T07:48:56.107 sql database version-control
+122 2008-08-02T07:56:07.933 string language-agnostic cross-platform generation
+116 2008-08-02T08:08:22.230 linux winapi visual-c++ unix timer
+115 2008-08-02T08:08:25.113 php arrays cloud tag-cloud
+122 2008-08-02T08:17:17.890 string language-agnostic cross-platform generation
+124 2008-08-02T08:32:04.287 email email-spam
+122 2008-08-02T08:33:41.350 ant build-process phing
+122 2008-08-02T08:58:48.430 java generics warnings casting type-safety
+118 2008-08-02T09:40:54.693 string language-agnostic cross-platform generation
+134 2008-08-02T09:51:00.883 search lucene
+91 2008-08-02T09:52:36.870 search lucene
+136 2008-08-02T10:21:54.300 email email-spam
+135 2008-08-02T10:22:41.567 ruby rdoc
+135 2008-08-02T10:27:27.737 .net vb.net vb6 vb6-migration
+136 2008-08-02T10:32:17.197 ruby rdoc
+137 2008-08-02T11:05:55.460 windows embed media
+137 2008-08-02T11:24:57.417 html form-submit html-form submit-button
+123 2008-08-02T11:30:47.920 windows svn 64bit
+139 2008-08-02T11:34:21.407 code-review collaboration
+133 2008-08-02T11:56:56.650 code-review collaboration
+34 2008-08-02T11:59:58.423 hash exploit gravatar
+117 2008-08-02T12:07:17.490 hash exploit gravatar
+111 2008-08-02T12:11:43.157 .net vb.net vb6 vb6-migration
+136 2008-08-02T12:28:12.517 c# .net asp.net internationalization globalization
+34 2008-08-02T12:31:30.717 windows windows-services scheduled-tasks
+52 2008-08-02T12:31:47.360 windows windows-services scheduled-tasks
+17 2008-08-02T13:45:57.197 email email-spam
+144 2008-08-02T14:57:13.043 mysql database binary-data data-storage
+147 2008-08-02T15:21:03.587 python xml
+49 2008-08-02T15:33:13.390 .net web-services
+35 2008-08-02T15:50:26.540 ant build-process phing
+147 2008-08-02T16:10:42.817 ruby-on-rails ruby http
+58 2008-08-02T16:13:52.187 html css design
+34 2008-08-02T16:15:47.767 html css design
+33 2008-08-02T16:18:35.750 html css design
+151 2008-08-02T16:43:44.793 ant build-process phing
+50 2008-08-02T16:56:53.893 python osx fonts photoshop
+50 2008-08-02T16:59:38.427 html css design
+71 2008-08-02T17:08:22.997 html css design
+143 2008-08-02T17:18:12.680 c# windows data-binding forms
+136 2008-08-02T17:27:21.960 ant build-process phing
+150 2008-08-02T17:33:54.927 sql-server database version-control
+153 2008-08-02T17:42:28.607 python osx fonts photoshop
+136 2008-08-02T17:50:34.987 ruby-on-rails ruby crash
+154 2008-08-02T17:54:50.687 sql-server database version-control
+156 2008-08-02T17:57:06.033 linux winapi visual-c++ unix timer
+154 2008-08-02T18:04:10.543 python xml
+86 2008-08-02T18:16:07.867 algorithm language-agnostic colors color-space
+86 2008-08-02T18:21:21.993 c++ berkeley-db
+157 2008-08-02T18:22:52.690 performance algorithm language-agnostic unix pi
+86 2008-08-02T18:30:34.673 svn collaboration
+161 2008-08-02T18:49:07.740 python windows image pdf
+156 2008-08-02T18:49:30.390 c++ c linux gtk x11
+156 2008-08-02T18:56:56.460 python continuous-integration extreme-programming
+157 2008-08-02T19:03:52.170 algorithm language-agnostic colors color-space
+154 2008-08-02T19:06:38.717 java xml csv data-conversion
+157 2008-08-02T19:06:40.667 python continuous-integration extreme-programming
+156 2008-08-02T20:03:06.483 search lucene
+136 2008-08-02T20:40:45.533 http authentication language-agnostic article
+166 2008-08-02T21:28:38.620 html css design
+154 2008-08-02T21:55:45.477 c# java integer int
+58 2008-08-02T22:05:08.093 c# java integer int
+163 2008-08-02T23:00:53.237 email email-spam
+149 2008-08-02T23:33:30.740 c# asp.net medium-trust
+39 2008-08-02T23:37:10.077 c# java integer int
+149 2008-08-02T23:40:04.733 sql-server deployment release-management
+34 2008-08-02T23:51:09.410 sql-server deployment release-management
+149 2008-08-02T23:56:23.000 ant build-process phing
+116 2008-08-03T00:04:59.023 unit-testing language-agnostic testing
+116 2008-08-03T00:22:03.997 sql-server deployment release-management
+111 2008-08-03T00:37:03.903 sql-server deployment release-management
+116 2008-08-03T01:17:36.393 python sql database oracle cx-oracle
+76 2008-08-03T01:38:02.640 sql-server deployment release-management
+175 2008-08-03T01:39:56.117 email email-spam
+175 2008-08-03T01:49:58.983 sql-server database version-control
+175 2008-08-03T01:53:49.707 ruby-on-rails ruby http
+13 2008-08-03T02:18:57.987 c# c++ random
+175 2008-08-03T02:19:34.273 git version-control github dvcs
+116 2008-08-03T02:26:33.213 c# c++ random
+175 2008-08-03T02:28:06.503 html css design
+156 2008-08-03T02:30:05.907 c++ c linux gtk x11
+13 2008-08-03T02:32:50.690 c# java integer int
+173 2008-08-03T03:07:30.150 php windows exchange webdav mapi
+173 2008-08-03T03:22:27.203 .net ruby database
+173 2008-08-03T04:03:23.020 git version-control github dvcs
+183 2008-08-03T05:22:20.457 ruby-on-rails ruby crash
+154 2008-08-03T06:03:35.973 performance algorithm primes
+51 2008-08-03T06:39:54.153 .net vb.net vb6 vb6-migration
+51 2008-08-03T06:41:40.703 .net pdf
+122 2008-08-03T07:28:54.070 ruby lambda proc
+33 2008-08-03T07:50:37.617 php windows exchange webdav mapi
+188 2008-08-03T08:34:57.103 python xml
+151 2008-08-03T09:56:21.607 ruby-on-rails ruby crash
+115 2008-08-03T11:32:26.637 sql database
+91 2008-08-03T11:41:38.490 c# visual-studio versioning
+197 2008-08-03T12:09:18.357 python continuous-integration extreme-programming
+197 2008-08-03T12:26:35.843 sql database
+58 2008-08-03T12:33:02.583 open-source
+197 2008-08-03T12:34:36.060 c++ berkeley-db
+117 2008-08-03T12:42:56.277 open-source
+117 2008-08-03T12:48:36.657 encryption passwords
+200 2008-08-03T12:55:50.027 encryption passwords
+199 2008-08-03T13:01:24.243 php arrays cloud tag-cloud
+51 2008-08-03T13:12:21.007 html form-submit html-form submit-button
+200 2008-08-03T13:14:48.600 php security php-session
+51 2008-08-03T13:22:25.340 sql database
+34 2008-08-03T13:48:25.367 encryption passwords
+209 2008-08-03T13:57:01.633 email email-spam
+206 2008-08-03T13:59:24.063 sql-server datatable rdbms
+30 2008-08-03T14:27:20.967 windows embed media
+49 2008-08-03T14:30:02.067 python ide code-completion wing-ide
+111 2008-08-03T14:30:50.850 python arrays iteration
+147 2008-08-03T14:33:00.033 python ide code-completion wing-ide
+111 2008-08-03T14:37:45.187 python ide code-completion wing-ide
+200 2008-08-03T14:39:09.710 php database odbc db2 ibm-midrange
+46 2008-08-03T14:48:52.497 .net database embedded-database
+51 2008-08-03T14:57:18.907 .net database embedded-database
+207 2008-08-03T14:57:35.257 python ide code-completion wing-ide
+91 2008-08-03T14:57:44.600 c# .net visual-studio unit-testing
+34 2008-08-03T14:59:20.993 c# .net visual-studio unit-testing
+189 2008-08-03T15:03:24.013 python ide code-completion wing-ide
+27 2008-08-03T15:07:20.213 c# .net visual-studio unit-testing
+216 2008-08-03T15:21:52.760 ruby lambda proc
+205 2008-08-03T15:24:38.290 asp.net iis authentication active-directory
+91 2008-08-03T15:27:59.050 hash exploit gravatar
+90 2008-08-03T15:34:17.523 .net database embedded-database
+90 2008-08-03T15:43:15.243 asp.net mapping gis
+145 2008-08-03T15:47:22.100 python arrays iteration
+173 2008-08-03T15:48:43.657 .net database embedded-database
+91 2008-08-03T15:49:53.560 hash exploit gravatar
+206 2008-08-03T15:49:56.710 asp.net mapping gis
+173 2008-08-03T15:55:54.033 python ide code-completion wing-ide
+154 2008-08-03T15:59:19.797 python arrays iteration
+192 2008-08-03T16:05:57.537 string language-agnostic format title-case
+91 2008-08-03T16:06:09.190 .net database embedded-database
+58 2008-08-03T16:12:43.747 string language-agnostic format title-case
+199 2008-08-03T16:13:29.363 python arrays iteration
+219 2008-08-03T16:25:07.700 string language-agnostic format title-case
+192 2008-08-03T16:31:22.260 c# .net reflection
+142 2008-08-03T16:33:51.193 string language-agnostic format title-case
+34 2008-08-03T16:35:34.233 c# .net reflection
+197 2008-08-03T16:37:03.077 python ide code-completion wing-ide
+90 2008-08-03T16:54:12.277 c++ visual-studio compatibility windows-nt
+214 2008-08-03T17:31:31.313 .net internationalization date globalization
+51 2008-08-03T17:37:43.063 .net internationalization date globalization
+46 2008-08-03T17:40:35.070 open-source
+214 2008-08-03T18:06:30.913 c# html web-services printing
+175 2008-08-03T18:18:54.400 .net internationalization date globalization
+175 2008-08-03T18:22:47.213 string language-agnostic format title-case
+157 2008-08-03T18:27:13.180 math linear-algebra system linear-equation
+150 2008-08-03T18:32:27.693 python mysql postgresql bpgsql
+229 2008-08-03T18:37:24.003 math linear-algebra system linear-equation
+189 2008-08-03T18:40:09.053 python iteration
+175 2008-08-03T18:42:34.180 open-source
+175 2008-08-03T18:46:33.517 c# visual-studio versioning
+175 2008-08-03T18:52:17.093 performance algorithm primes
+157 2008-08-03T19:06:00.327 unit-testing language-agnostic testing
+227 2008-08-03T19:10:58.723 string language-agnostic format title-case
+227 2008-08-03T19:30:55.720 html browser timezone timezoneoffset
+230 2008-08-03T19:36:48.470 c# .net visual-studio unit-testing
+162 2008-08-03T19:42:03.687 .net database oledb legacy vfp
+1384652 2008-08-03T20:07:05.290 python mysql postgresql bpgsql
+58 2008-08-03T20:18:05.483 database oop object-database
+234 2008-08-03T20:30:11.170 database oop object-database
+52 2008-08-03T20:32:38.607 database oop object-database
+1384652 2008-08-03T20:35:16.697 database oop object-database
+198 2008-08-03T20:39:22.807 database oop object-database
+234 2008-08-03T20:40:33.707 html browser timezone timezoneoffset
+233 2008-08-03T20:45:27.350 windows visual-studio registry setup
+232 2008-08-03T20:45:51.777 database oop object-database
+91 2008-08-03T20:48:47.263 windows visual-studio registry setup
+234 2008-08-03T21:17:33.557 windows visual-studio registry setup
+200 2008-08-03T21:24:56.160 algorithm language-agnostic
+204 2008-08-03T21:31:14.353 php database odbc db2 ibm-midrange
+224 2008-08-03T21:31:17.863 c# linq
+60 2008-08-03T21:31:40.187 sql-server database
+101 2008-08-03T21:36:25.890 algorithm language-agnostic
+227 2008-08-03T21:38:04.497 asp.net visual-studio svn
+200 2008-08-03T21:46:27.553 php unit-testing
+93 2008-08-03T21:51:44.360 javascript html css fonts
+204 2008-08-03T21:55:30.233 javascript html css fonts
+204 2008-08-03T21:58:28.263 php unit-testing
+34 2008-08-03T22:12:52.820 visual-studio xslt documentation sandcastle xml-comments
+91 2008-08-03T22:14:55.453 visual-studio xslt documentation sandcastle xml-comments
+203 2008-08-03T22:29:48.840 asp.net visual-studio svn
+233 2008-08-03T22:34:06.380 windows visual-studio registry setup
+150 2008-08-03T22:44:26.203 svn git
+91 2008-08-03T22:45:44.533 svn git
+34 2008-08-03T22:47:42.703 svn git
+206 2008-08-03T22:48:47.490 .net database oledb legacy vfp
+34 2008-08-03T22:52:11.930 php variables pass-by-reference pass-by-value
+58 2008-08-03T22:52:17.593 php variables pass-by-reference pass-by-value
+159 2008-08-03T23:06:15.443 algorithm language-agnostic
+91 2008-08-03T23:06:56.423 php variables pass-by-reference pass-by-value
+153 2008-08-03T23:08:23.580 svn git
+40 2008-08-03T23:08:26.263 php variables pass-by-reference pass-by-value
+91 2008-08-03T23:20:48.347 php debugging
+200 2008-08-03T23:28:39.890 php debugging
+234 2008-08-03T23:32:13.020 php debugging
+234 2008-08-03T23:38:05.113 svn git
+200 2008-08-03T23:52:47.360 asp-classic sftp
+243 2008-08-03T23:56:54.077 sql-server migration
+34 2008-08-03T23:57:46.820 php variables pass-by-reference pass-by-value
+137 2008-08-04T00:05:05.790 php variables pass-by-reference pass-by-value
+204 2008-08-04T00:12:27.650 svn osx
+137 2008-08-04T00:15:28.423 svn osx
+122 2008-08-04T00:23:00.123 language-agnostic unicode localization internationalization
+244 2008-08-04T00:23:06.690 svn osx
+243 2008-08-04T00:23:55.690 sql-server migration
+136 2008-08-04T00:24:15.940 svn git
+55 2008-08-04T00:25:11.227 html css text
+200 2008-08-04T00:25:28.403 html css text
+91 2008-08-04T00:35:14.110 language-agnostic unicode localization internationalization
+118 2008-08-04T00:36:01.643 python
+116 2008-08-04T00:51:52.843 linux winapi visual-c++ unix timer
+244 2008-08-04T00:59:04.497 git version-control github dvcs
+91 2008-08-04T01:03:20.947 postgresql
+246 2008-08-04T01:07:03.233 postgresql
+244 2008-08-04T01:07:07.633 java xml csv data-conversion
+243 2008-08-04T01:07:14.760 c# database connection
+206 2008-08-04T01:13:06.247 sql-server windows-server-2003
+91 2008-08-04T01:14:57.367 postgresql
+243 2008-08-04T01:17:20.450 python
+63550 2012-03-10T21:38:45.257 svn osx
+206 2008-08-04T01:29:18.307 sql-server migration
+49 2008-08-04T01:31:31.157 c# database connection
+101 2008-08-04T01:39:45.490 python
+203 2008-08-04T02:03:03.103 python
+101 2008-08-04T02:14:59.477 windows embed media
+116 2008-08-04T02:25:25.057 database oop object-database
+116 2008-08-04T02:30:09.227 sql-server database
+200 2008-08-04T02:31:13.250 python oop monkeypatching
+122 2008-08-04T02:36:40.323 python oop monkeypatching
+1 2008-08-04T02:45:07.717 c# .net exception exception-handling
+233 2008-08-04T02:54:15.683 c# .net exception exception-handling
+13 2008-08-04T02:56:23.183 python oop monkeypatching
+55 2008-08-04T03:05:10.797 python oop monkeypatching
+159 2008-08-04T03:09:13.127 algorithm language-agnostic
+50 2008-08-04T03:17:40.893 python
+55 2008-08-04T03:39:31.163 linux unix vi
+13 2008-08-04T04:04:52.110 linux unix vi
+1 2008-08-04T04:31:02.557 c# .net exception exception-handling
+93 2008-08-04T04:45:05.367 c# database connection
+231 2008-08-04T04:45:12.497 msbuild cruisecontrol.net
+77 2008-08-04T04:48:40.697 vb6
+234 2008-08-04T04:50:44.437 ruby-on-rails ruby exception plugins
+90 2008-08-04T04:58:40.300 vb6
+116 2008-08-04T05:21:59.660 ip lookup country
+46 2008-08-04T05:44:45.887 c# winforms flash adobe macromedia
+55 2008-08-04T05:59:53.000 c# file-locking
+227 2008-08-04T06:01:52.873 c# file-locking
+227 2008-08-04T06:10:16.600 sql-server query indexing full-text-search
+234 2008-08-04T06:12:11.447 c# file-locking
+234 2008-08-04T06:14:42.690 c# file-locking
+90 2008-08-04T06:15:30.363 c# file-locking
+13 2008-08-04T06:22:18.713 math language-agnostic floating-point
+234 2008-08-04T06:23:51.847 c++ regex
+234 2008-08-04T06:26:22.370 ip lookup country
+55 2008-08-04T06:29:03.910 math language-agnostic floating-point
+3 2008-08-04T06:39:40.003 sql-server query indexing full-text-search
+116 2008-08-04T06:41:29.547 c++ regex
+116 2008-08-04T06:52:32.270 linux unix vi
+231 2008-08-04T07:12:57.237 c# winforms flash adobe macromedia
+257 2008-08-04T07:45:38.717 c++ berkeley-db
+122 2008-08-04T07:48:51.440 c++ windows multithreading debugging memory
+90 2008-08-04T07:51:02.997 c++ windows multithreading debugging memory
+1 2008-08-04T08:04:41.737 c# asp.net
+214 2008-08-04T08:14:56.973 .net internationalization date globalization
+116 2008-08-04T08:21:07.570 unix size
+2090742 2008-08-04T08:26:55.967 c++ windows multithreading debugging memory
+86 2008-08-04T08:54:16.393 artificial-intelligence email-spam bayesian
+61 2008-08-04T09:04:01.867 language-agnostic opengl 3d directx
+51 2008-08-04T09:04:17.997 c# asp.net
+51 2008-08-04T09:08:32.217 artificial-intelligence email-spam bayesian
+41 2008-08-04T09:12:37.543 language-agnostic opengl 3d directx
+46 2008-08-04T10:02:59.797 .net free ocr
+49 2008-08-04T10:06:13.550 .net free ocr
+13 2008-08-04T10:10:15.727 c++ exception try-catch
+227 2008-08-04T10:20:01.260 c# .net exception exception-handling
+91 2008-08-04T10:27:05.270 visual-studio xslt documentation sandcastle xml-comments
+269 2008-08-04T10:28:54.533 python
+39 2008-08-04T10:31:33.220 visual-studio xslt documentation sandcastle xml-comments
+264 2008-08-04T10:41:04.620 database indexing article
+274 2008-08-04T10:43:23.287 python
+274 2008-08-04T10:49:14.510 python ide code-completion wing-ide
+227 2008-08-04T10:51:39.560 windows language-agnostic chm winhelp
+40 2008-08-04T10:52:26.173 windows language-agnostic chm winhelp
+267 2008-08-04T11:02:12.097 windows language-agnostic chm winhelp
+268 2008-08-04T11:03:51.437 artificial-intelligence email-spam bayesian
+268 2008-08-04T11:09:05.950 python windows image pdf
+46 2008-08-04T11:11:14.230 html browser timezone timezoneoffset
+200 2008-08-04T11:14:48.827 c malloc
+188 2008-08-04T11:16:25.640 svn osx
+267 2008-08-04T11:17:32.330 c malloc
+268 2008-08-04T11:19:54.447 c malloc
+2090742 2008-08-04T11:20:58.657 c malloc
+200 2008-08-04T11:25:14.017 sql database indexing
+188 2008-08-04T11:35:33.463 c malloc
+263 2008-08-04T11:39:47.853 c malloc
+91 2008-08-04T11:41:37.133 svn msbuild cruisecontrol.net
+120 2008-08-04T11:51:59.297 svn msbuild cruisecontrol.net
+275 2008-08-04T11:56:42.533 svn msbuild cruisecontrol.net
+266 2008-08-04T12:03:03.487 svn msbuild cruisecontrol.net
+267 2008-08-04T12:09:55.830 python data-structures performance graph
+206 2008-08-04T12:11:47.900 windows language-agnostic chm winhelp
+281 2008-08-04T12:13:18.083 svn osx
+60 2008-08-04T12:28:03.467 dns web-applications subdomain user account
+34 2008-08-04T12:28:24.950 ruby open-source
+275 2008-08-04T12:32:24.143 dns web-applications subdomain user account
+258 2008-08-04T12:40:49.137 c# .net safari viewstate
+188 2008-08-04T12:41:15.767 python data-structures performance graph
+91 2008-08-04T12:59:39.817 hash exploit gravatar
+192 2008-08-04T13:00:32.043 c# .net safari viewstate
+207 2008-08-04T13:01:39.313 python
+120 2008-08-04T13:02:52.460 .net pdf
+120 2008-08-04T13:22:31.640 svn msbuild cruisecontrol.net
+257 2008-08-04T13:35:41.273 language-agnostic types
+48 2008-08-04T13:39:39.423 dns web-applications subdomain user account
+173 2008-08-04T13:43:54.530 svn msbuild cruisecontrol.net
+149 2008-08-04T13:44:49.473 c# .net safari viewstate
+206 2008-08-04T13:48:02.993 windows language-agnostic chm winhelp
+34 2008-08-04T13:52:06.043 regex
+39 2008-08-04T13:54:01.687 hyperlink powerpoint
+264 2008-08-04T13:55:05.647 regex
+268 2008-08-04T13:57:26.097 c# .net datetime timespan
+30 2008-08-04T14:00:04.373 regex
+206 2008-08-04T14:02:14.493 ip lookup country
+257 2008-08-04T14:09:47.117 .net performance memory-leaks com-interop
+91 2008-08-04T14:09:54.993 svn version-control cvs
+61 2008-08-04T14:10:52.933 language-agnostic types
+267 2008-08-04T14:11:03.557 c# java integer int
+48 2008-08-04T14:14:14.877 svn version-control cvs
+205 2008-08-04T14:16:21.330 asp.net mapping gis
+268 2008-08-04T14:17:59.080 svn version-control cvs
+46 2008-08-04T14:30:12.223 c# c++ sockets
+275 2008-08-04T14:35:12.277 svn version-control cvs
+35 2008-08-04T14:40:20.360 msbuild cruisecontrol.net
+268 2008-08-04T14:44:56.950 linux winapi visual-c++ unix timer
+25 2008-08-04T14:52:40.493 .net collections queue
+267 2008-08-04T14:56:49.470 .net collections queue
+192 2008-08-04T14:57:28.767 .net collections queue
+267 2008-08-04T14:59:24.410 c# .net io
+91 2008-08-04T15:04:47.737 language-agnostic unicode localization internationalization
+48 2008-08-04T15:11:16.663 xss sql-injection malicious
+216 2008-08-04T15:11:19.770 ruby unix curses
+91 2008-08-04T15:12:13.917 msbuild build-process cruisecontrol.net
+312 2008-08-04T15:12:37.630 .net .net-3.5 msbuild nant
+268 2008-08-04T15:14:39.857 language-agnostic colors
+267 2008-08-04T15:14:40.277 language-agnostic colors
+39 2008-08-04T15:16:11.537 language-agnostic colors
+267 2008-08-04T15:18:16.447 c# .net io
+121 2008-08-04T15:20:17.973 xss sql-injection malicious
+39 2008-08-04T15:21:49.047 windows file filesystems utilities
