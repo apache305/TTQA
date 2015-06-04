@@ -40,6 +40,7 @@ public class Users {
 		
 		this.initTimeMap();
 		this.readLineFile();
+		//System.out.println(this.users.get("9"));
 	}
 	
 	public void initTimeMap(){
@@ -51,6 +52,7 @@ public class Users {
 				String timeLabel=String.format("%s-%s", year,month);
 				this.timeToIndexMap.put(timeLabel , i);
 				this.indexToTimeMap.add(timeLabel);
+				this.timeCountMap.put(timeLabel, 0);
 				i++;
 			}
 		}
@@ -68,6 +70,7 @@ public class Users {
 				u= this.users.get(userId);
 			}else{
 				u= new User(userId);
+				this.users.put(userId, u);
 			}
 			
 			ArrayList<String> eachAnswerInfo=userInfo;
@@ -93,9 +96,10 @@ class User {
 	
 	public void addNewAnswerPost(ArrayList<String> eachAnswerInfo, Users users){
 		
-		String timeLabel = eachAnswerInfo.get(0).substring(0,6);
+		String timeLabel = eachAnswerInfo.get(0).substring(0,7);
 		eachAnswerInfo.remove(0);
 		ArrayList<String> tagInfos = eachAnswerInfo;
+		//System.out.println(timeLabel);
 		int time= users.timeToIndexMap.get(timeLabel);
 		int oldCount=0;
 		oldCount=users.timeCountMap.get(timeLabel);

@@ -1,6 +1,5 @@
 9 2008-07-31T22:17:57.883 c# winforms forms type-conversion opacity
 1 2008-07-31T23:56:41.303 c# .net datetime timespan
-63550 2013-01-05T14:44:25.013 mysql database binary-data data-storage
 5 2008-08-01T07:25:22.443 c# code-generation j# visualj#
 13 2008-08-01T08:57:27.280 c# .net datetime
 17 2008-08-01T12:07:19.500 c# .net datetime
@@ -8,7 +7,6 @@
 17 2008-08-01T12:17:19.357 c# .net datetime timespan
 19 2008-08-01T12:19:17.417 html browser timezone timezoneoffset
 13 2008-08-01T12:22:40.797 c++ c sockets mainframe zos
-842480 2012-06-04T23:35:58.177 html css css3 internet-explorer-7
 13 2008-08-01T12:26:39.773 .net math
 23 2008-08-01T12:36:00.957 c++ c sockets mainframe zos
 35 2008-08-01T12:55:42.413 c# .net vb.net timer
@@ -368,7 +366,6 @@
 206 2008-08-04T01:13:06.247 sql-server windows-server-2003
 91 2008-08-04T01:14:57.367 postgresql
 243 2008-08-04T01:17:20.450 python
-63550 2012-03-10T21:38:45.257 svn osx
 206 2008-08-04T01:29:18.307 sql-server migration
 49 2008-08-04T01:31:31.157 c# database connection
 101 2008-08-04T01:39:45.490 python
