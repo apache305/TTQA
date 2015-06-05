@@ -21,6 +21,11 @@ public class Main {
 		
 		//i think a better way to do is a simple version, then enrich it.
 		
+		TTQAModel tt= new TTQAModel();
+		tt.initModel(users);
+		tt.trainModel(users);
+		tt.estimateProb();
+		
 		
 		
 

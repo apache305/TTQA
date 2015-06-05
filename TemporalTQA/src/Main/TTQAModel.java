@@ -169,14 +169,14 @@ public class TTQAModel {
 		double [] backupProb =  new double [this.K];
 		int tagL=tagIDs.length;
 		for(int k=0;k<this.K;k++){
-			backupProb[k]  =  ( this.nuk[uid][k] + a )/(this.sumuk[uid] + this.K*a ) ;
+			backupProb[k]  =  ( this.nuk[uid][k] + this.a )/(this.sumuk[uid] + this.K*this.a ) ;
 			
 			for(int eachTagID:tagIDs){
-				backupProb[k] *=  ( this.nkv[k][eachTagID] + tagL+ b )/(this.sumkv[k] + tagL+ this.V*b ) ;
+				backupProb[k] *=  ( this.nkv[k][eachTagID] + tagL+ this.b )/(this.sumkv[k] + tagL+ this.V*this.b ) ;
 			}
 			
-			backupProb[k] *= ( this.nkt[k][timeID] + c )/(this.sumkt[k] + this.T*c ) ;
-			backupProb[k] *= ( this.nukt[uid][k][timeID] + d )/(this.sumukt[uid][k] + this.T*d ) ;
+			backupProb[k] *= ( this.nkt[k][timeID] + this.c )/(this.sumkt[k] + this.T*this.c ) ;
+			backupProb[k] *= ( this.nukt[uid][k][timeID] + this.d )/(this.sumukt[uid][k] + this.T*this.d ) ;
 			
 		}
 		
@@ -187,9 +187,15 @@ public class TTQAModel {
 		
 		double newProb = Math.random()* backupProb[this.K-1];
 		int newSampledTopic=0;
-		while(newSampledTopic < this.K  && newProb< backupProb[newSampledTopic] ){
+		while(newSampledTopic < this.K ){
+			if(newProb< backupProb[newSampledTopic] ) break;
 			newSampledTopic++;
 		}
+		
+		/*System.out.print(oldTopicID);
+		System.out.print("->");
+		System.out.print(newSampledTopic);
+		System.out.print("\n");*/
 		
 		//update count
 		this.topicLabel[uid][pid]=newSampledTopic;
@@ -212,5 +218,39 @@ public class TTQAModel {
 		return newSampledTopic;
 	}
 	
-
+	public void estimateProb(){
+		
+		//thetaUK
+		for(int uid = 0;uid<this.U;uid++){
+			for(int kid =0 ;kid<this.K;kid++){
+				this.thetaUK[uid][kid]=( this.nuk[uid][kid] + this.a )/(this.sumuk[uid] + this.K*this.a );
+			}
+		}
+		
+		//thetaKV
+		for(int kid=0;kid<this.K;kid++){
+			for(int vid=0;vid<this.V;vid++){
+				this.thetaKV[kid][vid]=(this.nkv[kid][vid] +  this.b )/(this.sumkv[kid] + this.V*this.b);
+			}
+		}
+		
+		//thetaKT
+		for(int kid=0;kid<this.K;kid++){
+			for(int tid=0;tid<this.T;tid++){
+				this.thetaKT[kid][tid]=(this.nkt[kid][tid] + this.c )/(this.sumkt[kid] + this.T*this.c);
+			}
+		}
+		
+		//thetaUKT
+		for(int uid=0;uid<this.U;uid++){
+			for(int kid=0;kid<this.K;kid++){
+				for(int tid=0;tid<this.T;tid++){
+					this.thetaUKT[uid][kid][tid]=( this.nukt[uid][kid][tid] + this.d )/(this.sumukt[uid][kid] + this.T*this.d ) ;
+				}
+			}
+		}
+		
+		
+	}
+	
 }
