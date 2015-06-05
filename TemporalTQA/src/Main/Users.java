@@ -118,6 +118,7 @@ class User {
 			String tag= tagInfos.get(i);
 			if( ! users.tagToIndexMap.containsKey(tag)){
 				int newIndex= users.tagToIndexMap.size();
+				users.indexToTagMap.add(tag);
 				users.tagToIndexMap.put(tag, newIndex);
 				users.tagCountMap.put(tag, 1);	
 				tags[i]=newIndex;

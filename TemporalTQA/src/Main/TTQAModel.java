@@ -3,7 +3,13 @@ package Main;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 
 public class TTQAModel {
@@ -271,11 +277,42 @@ public class TTQAModel {
 		writer.close();
 		
 		//thetaKV
+		writer = new BufferedWriter(new FileWriter(outputPath+ "thetaKV.txt"));
 		for(int kid=0;kid<this.K;kid++){
+			writer.write(String.format("Topic%d",kid));
 			for(int vid=0;vid<this.V;vid++){
-				this.thetaKV[kid][vid]=(this.nkv[kid][vid] +  this.b )/(this.sumkv[kid] + this.V*this.b);
+				String tag=users.indexToTagMap.get(vid);
+				writer.write(tag+":"+this.thetaKV[kid][vid]+"\t");
 			}
+			writer.write("\n");
 		}
+		writer.close();
+		
+		//ordered version.
+		writer = new BufferedWriter(new FileWriter(outputPath+ "thetaKV.sorted.txt"));
+		for(int kid=0;kid<this.K;kid++){
+			writer.write(String.format("Topic%d",kid));
+			ArrayList<Map.Entry<String, Double>> dp= new ArrayList<Map.Entry<String, Double>>();
+			for(int vid=0;vid<this.V;vid++){
+				String tag=users.indexToTagMap.get(vid);
+				//AbstractMap.SimpleEntry<String, Integer>("exmpleString", 42);
+				Map.Entry<String, Double> pairs =new  AbstractMap.SimpleEntry<String , Double> (tag,this.thetaKV[kid][vid]);
+				dp.add(pairs);
+			}
+			Collections.sort(dp, new Comparator<Entry<String,Double>>(){
+				public int compare(Entry<String, Double> arg0,Entry<String, Double> arg1) {
+					// TODO Auto-generated method stub
+					return arg0.getValue().compareTo(arg1.getValue());
+				}
+			});
+			for(int i=0;i<10;i++){
+				//only output top 10;
+				writer.write(String.format("%s:%f\t", dp.get(i).getKey(),dp.get(i).getValue()));
+			}
+			writer.write("\n");
+		}
+		writer.close();
+		
 		
 		//thetaKT
 		for(int kid=0;kid<this.K;kid++){
