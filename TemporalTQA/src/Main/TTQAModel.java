@@ -1,5 +1,8 @@
 package Main;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -253,4 +256,42 @@ public class TTQAModel {
 		
 	}
 	
+	public void outputResult(String outputPath, Users users) throws IOException{
+		
+	
+		//thetaUK
+		BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath+ "thetaUK.txt"));
+		for(int uid = 0;uid<this.U;uid++){
+			writer.write( users.users.get(uid).userId +":");
+			for(int kid =0 ;kid<this.K;kid++){
+				writer.write(this.thetaUK[uid][kid]+"\t");
+			}
+			writer.write("\n");
+		}
+		writer.close();
+		
+		//thetaKV
+		for(int kid=0;kid<this.K;kid++){
+			for(int vid=0;vid<this.V;vid++){
+				this.thetaKV[kid][vid]=(this.nkv[kid][vid] +  this.b )/(this.sumkv[kid] + this.V*this.b);
+			}
+		}
+		
+		//thetaKT
+		for(int kid=0;kid<this.K;kid++){
+			for(int tid=0;tid<this.T;tid++){
+				this.thetaKT[kid][tid]=(this.nkt[kid][tid] + this.c )/(this.sumkt[kid] + this.T*this.c);
+			}
+		}
+		
+		//thetaUKT
+		for(int uid=0;uid<this.U;uid++){
+			for(int kid=0;kid<this.K;kid++){
+				for(int tid=0;tid<this.T;tid++){
+					this.thetaUKT[uid][kid][tid]=( this.nukt[uid][kid][tid] + this.d )/(this.sumukt[uid][kid] + this.T*this.d ) ;
+				}
+			}
+		}
+		
+	}
 }

@@ -1,8 +1,10 @@
 package Util;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,6 +32,17 @@ public class FileTool {
 		}
 			
 		
+	}
+	
+	public static BufferedWriter getNewWriter(String filepath){
+		BufferedWriter writer =null;
+		try {
+			writer = new BufferedWriter(new FileWriter( filepath));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return writer;
 	}
 	
 	public static void readLinesAsTaglist(String file,ArrayList<ArrayList<String>> lines){

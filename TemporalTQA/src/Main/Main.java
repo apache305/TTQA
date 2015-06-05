@@ -1,5 +1,7 @@
 package Main;
 
+import java.io.IOException;
+
 public class Main {
 	public static void main(String [] args){
 		//this is the entry
@@ -25,6 +27,12 @@ public class Main {
 		tt.initModel(users);
 		tt.trainModel(users);
 		tt.estimateProb();
+		try {
+			tt.outputResult(resultPath, users);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		
 		
