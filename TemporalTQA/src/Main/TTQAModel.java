@@ -15,9 +15,24 @@ public class TTQAModel {
 	int iterNum;//number of iterations.
 	
 	double [][] thetaU;// user - topic distribution  U*K
+	int [][] nuk;// number of user i in topic j. U*K
+	int [] sumuk;//sum for each user. U
+
+	
+	
 	double [][] thetaK;// topic - tag distribution  K*V
+	int [][] nkt;//number of topic k in tag j; K*V
+	int [] sumkt;//sum for each topic. K
+	
+	
 	double [][] thetaGT;//  topic - time distribution K*T 
+	int [][] ngt;//number of topic k in time j; K*T
+	int [] sumgt;//sum for each topic. K
+	
+	
 	double [][][] thetaUT;// topic -time per user. distribution  U*K*T;
+	int [][][] nut;//number of user i 's topic j in time k; U*K*T
+	int [][] sumut;//sum of user i's each topic. U*K;
 	
 	public TTQAModel(){
 		this.setDefaultParameteres();
@@ -47,6 +62,22 @@ public class TTQAModel {
 		this.U= users.users.size();//number of user.
 		this.T= users.timeCountMap.size();//number of time label
 		this.V= users.tagCountMap.size();//number of tag
+		this.nuk= new int[this.U][this.K];
+		this.sumuk= new int[this.U];
+		this.nkt=new int [this.K][this.T];
+		this.sumkt= new int[this.K];
+		this.ngt= new int[this.K][this.T];
+		this.sumgt=new int[this.K];
+		this.nut= new int[this.U][this.K][this.T];
+		this.sumut=new int[this.U][this.K];
+		
+		
+		
+		
+		
+		
+		
+		
 		
 		
 		
