@@ -17,5 +17,30 @@ public class TTQAModel {
 	double [][] thetaGT;//  topic - time distribution K*T 
 	double [][][] thetaUT;// topic -time per user. distribution  U*K*T;
 	
+	public TTQAModel(){
+		this.setDefaultParameteres();
+		
+	}
+	
+	public TTQAModel(int a,int b,int c,int d, int topicNum){
+		this.a=a;
+		this.b=b;
+		this.c=c;
+		this.d=d;
+		this.K=topicNum;
+	}
+	
+	public void setDefaultParameteres(){
+		this.K=10;
+		this.a=(float) 50.0/(float)this.K;
+		this.b=0.01f;
+		this.c=0.01f;
+		this.d=0.01f;
+	}
+	
+	
+	
+	
+	
 
 }
