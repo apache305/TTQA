@@ -1,6 +1,7 @@
 package Main;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class TTQAModel {
 	
@@ -16,30 +17,31 @@ public class TTQAModel {
 	
 	int iterNum;//number of iterations.
 	
-	double [][] thetaU;// user - topic distribution  U*K
+	double [][] thetaUK;// user - topic distribution  U*K
 	int [][] nuk;// number of user i in topic j. U*K
 	int [] sumuk;//sum for each user. U
 
 	
 	
-	double [][] thetaK;// topic - tag distribution  K*V
-	int [][] nkt;//number of topic k in tag j; K*V
+	double [][] thetaKV;// topic - tag distribution  K*V
+	int [][] nkv;//number of topic k in tag j; K*V
+	int [] sumkv;//sum for each topic. K
+	
+	
+	double [][] thetaKT;//  topic - time distribution K*T 
+	int [][] nkt;//number of topic k in time j; K*T
 	int [] sumkt;//sum for each topic. K
 	
 	
-	double [][] thetaGT;//  topic - time distribution K*T 
-	int [][] ngt;//number of topic k in time j; K*T
-	int [] sumgt;//sum for each topic. K
+	double [][][] thetaUKT;// topic -time per user. distribution  U*K*T;
+	int [][][] nukt;//number of user i 's topic j in time k; U*K*T
+	int [][] sumukt;//sum of user i's each topic. U*K;
 	
 	
-	double [][][] thetaUT;// topic -time per user. distribution  U*K*T;
-	int [][][] nut;//number of user i 's topic j in time k; U*K*T
-	int [][] sumut;//sum of user i's each topic. U*K;
-	
-	
-	//topic label for each user's each post
-	//ArrayList<ArrayList<Integer>> topicLabel; 
+	//each users' each posts' topic label.
 	int [][] topicLabel;
+	
+	
 	
 	
 	
@@ -71,29 +73,45 @@ public class TTQAModel {
 		this.U= users.users.size();//number of user.
 		this.T= users.timeCountMap.size();//number of time label
 		this.V= users.tagCountMap.size();//number of tag
-		this.thetaU = new double [this.U][this.K];
+		this.thetaUK = new double [this.U][this.K];
 		this.nuk= new int[this.U][this.K];
 		this.sumuk= new int[this.U];
 		
-		this.thetaK= new double[this.K][this.V];
-		this.nkt=new int [this.K][this.V];
-		this.sumkt= new int[this.K];
+		this.thetaKV= new double[this.K][this.V];
+		this.nkv=new int [this.K][this.V];
+		this.sumkv= new int[this.K];
 		
-		this.thetaGT=new double[this.K][this.T];
-		this.ngt= new int[this.K][this.T];
-		this.sumgt=new int[this.K];
+		this.thetaKT=new double[this.K][this.T];
+		this.nkt= new int[this.K][this.T];
+		this.sumkt=new int[this.K];
 		
-		this.thetaUT=new double[this.U][this.K][this.T];
-		this.nut= new int[this.U][this.K][this.T];
-		this.sumut=new int[this.U][this.K];
+		this.thetaUKT=new double[this.U][this.K][this.T];
+		this.nukt= new int[this.U][this.K][this.T];
+		this.sumukt=new int[this.U][this.K];
 		
 
 		
 		this.topicLabel = new int [this.U][];
+		Random r = new Random();
 		for(int i=0;i<this.U;i++ ){
-			//users.
-			
-			
+			User u=users.users.get(i);
+			ArrayList<AnswerPost> anses = u.answerPosts;
+			this.topicLabel[i]= new int[anses.size()	];
+			for(int j=0;j<anses.size();j++){
+				int initialTopicLabel = r.nextInt(this.K);//0 to K-1
+				this.topicLabel[i][j]=initialTopicLabel;
+				//update those counts.
+				this.nuk[i][initialTopicLabel]++;
+				//for each tag
+				AnswerPost eachPost= anses.get(j);
+				for(int t:eachPost.Qtags){
+					this.nkv[initialTopicLabel][t]++;
+				}
+				int timePos=eachPost.Atime;
+				this.nkt[initialTopicLabel][timePos]++;
+				this.nukt[i][initialTopicLabel][timePos]++;
+				
+			}
 		}
 		
 		
