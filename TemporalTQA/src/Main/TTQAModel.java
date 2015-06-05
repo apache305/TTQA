@@ -100,16 +100,24 @@ public class TTQAModel {
 			for(int j=0;j<anses.size();j++){
 				int initialTopicLabel = r.nextInt(this.K);//0 to K-1
 				this.topicLabel[i][j]=initialTopicLabel;
+				
+				AnswerPost eachPost= anses.get(j);
 				//update those counts.
 				this.nuk[i][initialTopicLabel]++;
-				//for each tag
-				AnswerPost eachPost= anses.get(j);
-				for(int t:eachPost.Qtags){
-					this.nkv[initialTopicLabel][t]++;
-				}
+				this.sumuk[i]++;
+				
 				int timePos=eachPost.Atime;
 				this.nkt[initialTopicLabel][timePos]++;
+				this.sumkt[initialTopicLabel]++;
+				
 				this.nukt[i][initialTopicLabel][timePos]++;
+				this.sumukt[i][initialTopicLabel]++;
+				
+				//for each tag
+				for(int t:eachPost.Qtags){
+					this.nkv[initialTopicLabel][t]++;
+					this.sumkv[initialTopicLabel]++;
+				}
 				
 			}
 		}
