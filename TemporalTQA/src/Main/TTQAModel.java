@@ -42,8 +42,13 @@ public class TTQAModel {
 		this.iterNum=100;
 	}
 	
-	public void initModel(){
+	public void initModel(Users users){
 		//init those probabilities;
+		this.U= users.users.size();//number of user.
+		this.T= users.timeCountMap.size();//number of time label
+		this.V= users.tagCountMap.size();//number of tag
+		
+		
 		
 	}
 	

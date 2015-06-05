@@ -15,6 +15,9 @@ public class Main {
 		//String curWorkingDir=System.getProperty("user.dir");
 		//System.out.println(curWorkingDir+trainFile);
 		Users users= new Users(trainFile);
+		//only for debug
+		//System.out.println(users.tagCountMap.keySet().size());
+		//System.out.println(users.tagCountMap.size());
 		
 		//i think a better way to do is a simple version, then enrich it.
 		
