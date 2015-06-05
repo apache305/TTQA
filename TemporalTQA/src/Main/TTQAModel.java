@@ -12,6 +12,8 @@ public class TTQAModel {
 	int T;//time number
 	
 	
+	int iterNum;//number of iterations.
+	
 	double [][] thetaU;// user - topic distribution  U*K
 	double [][] thetaK;// topic - tag distribution  K*V
 	double [][] thetaGT;//  topic - time distribution K*T 
@@ -22,12 +24,13 @@ public class TTQAModel {
 		
 	}
 	
-	public TTQAModel(int a,int b,int c,int d, int topicNum){
+	public TTQAModel(int a,int b,int c,int d, int topicNum,int iterNum){
 		this.a=a;
 		this.b=b;
 		this.c=c;
 		this.d=d;
 		this.K=topicNum;
+		this.iterNum=iterNum;
 	}
 	
 	public void setDefaultParameteres(){
@@ -36,6 +39,12 @@ public class TTQAModel {
 		this.b=0.01f;
 		this.c=0.01f;
 		this.d=0.01f;
+		this.iterNum=100;
+	}
+	
+	public void initModel(){
+		//init those probabilities;
+		
 	}
 	
 	
