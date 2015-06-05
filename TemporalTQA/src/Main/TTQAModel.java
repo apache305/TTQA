@@ -1,5 +1,7 @@
 package Main;
 
+import java.util.ArrayList;
+
 public class TTQAModel {
 	
 	float a;
@@ -33,6 +35,13 @@ public class TTQAModel {
 	double [][][] thetaUT;// topic -time per user. distribution  U*K*T;
 	int [][][] nut;//number of user i 's topic j in time k; U*K*T
 	int [][] sumut;//sum of user i's each topic. U*K;
+	
+	
+	//topic label for each user's each post
+	//ArrayList<ArrayList<Integer>> topicLabel; 
+	int [][] topicLabel;
+	
+	
 	
 	public TTQAModel(){
 		this.setDefaultParameteres();
@@ -77,6 +86,27 @@ public class TTQAModel {
 		this.thetaUT=new double[this.U][this.K][this.T];
 		this.nut= new int[this.U][this.K][this.T];
 		this.sumut=new int[this.U][this.K];
+		
+
+		
+		this.topicLabel = new int [this.U][];
+		for(int i=0;i<this.U;i++ ){
+			//users.
+			
+			
+		}
+		
+		
+		
+		
+		// init latent variable z for each post. why?
+		for(int u=0;u<this.U;u++){
+
+			
+			
+			
+			
+		}
 		
 		
 		

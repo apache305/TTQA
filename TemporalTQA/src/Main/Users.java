@@ -10,7 +10,9 @@ import Util.FileTool;
 
 public class Users {
 	String trainFile =null;
-	Map<String, User> users;
+	ArrayList<User> users;
+	Map<String,Integer> userToIndexMap;
+	
 	Map<String, Integer> tagToIndexMap;
 	ArrayList<String> indexToTagMap;
 	Map<String, Integer> tagCountMap;
@@ -26,7 +28,10 @@ public class Users {
 	
 	public Users(String trainFile){
 		this.trainFile=trainFile;
-		this.users= new HashMap<String,User>();
+		//this.users= new HashMap<String,User>();
+		this.users= new ArrayList<User>();
+		this.userToIndexMap= new HashMap<String,Integer>();
+		
 		
 		//tag count
 		this.tagToIndexMap = new HashMap<String,Integer>();
@@ -66,17 +71,21 @@ public class Users {
 			String userId= userInfo.get(0);
 			userInfo.remove(0);
 			User u;
-			if(this.users.containsKey(userId)){
-				u= this.users.get(userId);
+			if(this.userToIndexMap.containsKey(userId)){
+				int userIndex= this.userToIndexMap.get(userId);
+				u= this.users.get(userIndex);
 			}else{
 				u= new User(userId);
-				this.users.put(userId, u);
+				this.userToIndexMap.put(userId, this.users.size());
+				this.users.add(u);
+				
 			}
 			
 			ArrayList<String> eachAnswerInfo=userInfo;
 			u.addNewAnswerPost(eachAnswerInfo,this);	
 			
 		}
+		
 		
 	}
 	
