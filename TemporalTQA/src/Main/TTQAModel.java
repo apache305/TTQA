@@ -150,6 +150,7 @@ public class TTQAModel {
 	public int gibbsSample(int uid,int pid,int [] tagIDs, int timeID){
 		int oldTopicID=this.topicLabel[uid][pid];
 		
+		//remove current stuff.
 		this.nuk[uid][oldTopicID]--;
 		this.sumuk[uid]--;
 		
@@ -164,7 +165,20 @@ public class TTQAModel {
 		this.nukt[uid][oldTopicID][timeID]--;
 		this.sumukt[uid][oldTopicID]--;
 		
-		
+		//souihaite ca marche.
+		double [] backupProb =  new double [this.K];
+		int tagL=tagIDs.length;
+		for(int k=0;k<this.K;k++){
+			backupProb[k]  =  ( this.nuk[uid][k] + a )/(this.sumuk[uid] + this.K*a ) ;
+			
+			for(int eachTagID:tagIDs){
+				backupProb[k] *=  ( this.nkv[k][eachTagID] + tagL+ b )/(this.sumkv[k] + tagL+ this.V*b ) ;
+			}
+			
+			backupProb[k] *= ( this.nkt[k][timeID] + c )/(this.sumkt[k] + this.T*c ) ;
+			backupProb[k] *= ( this.nukt[uid][k][timeID] + d )/(this.sumukt[uid][k] + this.T*d ) ;
+			
+		}
 		
 		
 		
