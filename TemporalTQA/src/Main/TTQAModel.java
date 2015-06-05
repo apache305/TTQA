@@ -127,7 +127,7 @@ public class TTQAModel {
 		
 	}
 	
-	public void inferenceModel(Users users){
+	public void trainModel(Users users){
 		for(int it=0;it<this.iterNum;it++){
 			//for each iteration
 			
@@ -208,7 +208,6 @@ public class TTQAModel {
 		
 		this.nukt[uid][newSampledTopic][timeID]++;
 		this.sumukt[uid][newSampledTopic]++;
-		
 		
 		return newSampledTopic;
 	}
