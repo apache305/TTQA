@@ -106,16 +106,16 @@ public class TTQAModel {
 				this.nuk[i][initialTopicLabel]++;
 				this.sumuk[i]++;
 				
-				int timePos=eachPost.Atime;
-				this.nkt[initialTopicLabel][timePos]++;
+				int timeID=eachPost.Atime;
+				this.nkt[initialTopicLabel][timeID]++;
 				this.sumkt[initialTopicLabel]++;
 				
-				this.nukt[i][initialTopicLabel][timePos]++;
+				this.nukt[i][initialTopicLabel][timeID]++;
 				this.sumukt[i][initialTopicLabel]++;
 				
 				//for each tag
-				for(int t:eachPost.Qtags){
-					this.nkv[initialTopicLabel][t]++;
+				for(int tagID:eachPost.Qtags){
+					this.nkv[initialTopicLabel][tagID]++;
 					this.sumkv[initialTopicLabel]++;
 				}
 				
@@ -123,36 +123,54 @@ public class TTQAModel {
 		}
 		
 		
-		
-		
-		// init latent variable z for each post. why?
-		for(int u=0;u<this.U;u++){
 
-			
-			
-			
-			
-		}
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 		
 	}
 	
+	public void inferenceModel(Users users){
+		for(int it=0;it<this.iterNum;it++){
+			//for each iteration
+			
+			
+			for(int i=0;i<this.U;i++ ){
+				User u=users.users.get(i);
+				ArrayList<AnswerPost> anses = u.answerPosts;
+				for(int j=0;j<anses.size();j++){
+					AnswerPost eachPost= anses.get(j);
+					int timeID=eachPost.Atime;
+					int [] tagIDs=eachPost.Qtags;
+					int newTopicLabel = this.gibbsSample(i,j,tagIDs,timeID);
+					this.topicLabel[i][j]=newTopicLabel;
+					
+				}
+			}
+		}
+	}
 	
-	
-	
+	public int gibbsSample(int uid,int pid,int [] tagIDs, int timeID){
+		int oldTopicID=this.topicLabel[uid][pid];
+		
+		this.nuk[uid][oldTopicID]--;
+		this.sumuk[uid]--;
+		
+		for(int eachTagID: tagIDs){
+			this.nkv[oldTopicID][eachTagID]--;
+			this.sumkv[oldTopicID]--;
+		}
+		
+		this.nkt[oldTopicID][timeID]--;
+		this.sumkt[oldTopicID]--;
+		
+		this.nukt[uid][oldTopicID][timeID]--;
+		this.sumukt[uid][oldTopicID]--;
+		
+		
+		
+		
+		
+		
+		return 0;
+	}
 	
 
 }
