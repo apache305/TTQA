@@ -180,10 +180,37 @@ public class TTQAModel {
 			
 		}
 		
+		//normalize backupProb
+		for(int k=1;k<this.K;k++){
+			backupProb[k]+=backupProb[k-1];
+		}
+		
+		double newProb = Math.random()* backupProb[this.K-1];
+		int newSampledTopic=0;
+		while(newSampledTopic < this.K  && newProb< backupProb[newSampledTopic] ){
+			newSampledTopic++;
+		}
+		
+		//update count
+		this.topicLabel[uid][pid]=newSampledTopic;
+		
+		//remove current stuff.
+		this.nuk[uid][newSampledTopic]++;
+		this.sumuk[uid]++;
+		
+		for(int eachTagID: tagIDs){
+			this.nkv[newSampledTopic][eachTagID]++;
+			this.sumkv[newSampledTopic]++;
+		}
+		
+		this.nkt[newSampledTopic][timeID]++;
+		this.sumkt[newSampledTopic]++;
+		
+		this.nukt[uid][newSampledTopic][timeID]++;
+		this.sumukt[uid][newSampledTopic]++;
 		
 		
-		
-		return 0;
+		return newSampledTopic;
 	}
 	
 
