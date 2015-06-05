@@ -62,14 +62,25 @@ public class TTQAModel {
 		this.U= users.users.size();//number of user.
 		this.T= users.timeCountMap.size();//number of time label
 		this.V= users.tagCountMap.size();//number of tag
+		this.thetaU = new double [this.U][this.K];
 		this.nuk= new int[this.U][this.K];
 		this.sumuk= new int[this.U];
-		this.nkt=new int [this.K][this.T];
+		
+		this.thetaK= new double[this.K][this.V];
+		this.nkt=new int [this.K][this.V];
 		this.sumkt= new int[this.K];
+		
+		this.thetaGT=new double[this.K][this.T];
 		this.ngt= new int[this.K][this.T];
 		this.sumgt=new int[this.K];
+		
+		this.thetaUT=new double[this.U][this.K][this.T];
 		this.nut= new int[this.U][this.K][this.T];
 		this.sumut=new int[this.U][this.K];
+		
+		
+		
+		
 		
 		
 		
