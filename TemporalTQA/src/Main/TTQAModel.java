@@ -139,6 +139,7 @@ public class TTQAModel {
 	public void trainModel(Users users){
 		for(int it=0;it<this.iterNum;it++){
 			//for each iteration
+			System.out.println(String.format("Round:%d", it));
 			
 			
 			for(int i=0;i<this.U;i++ ){
@@ -302,7 +303,7 @@ public class TTQAModel {
 			Collections.sort(dp, new Comparator<Entry<String,Double>>(){
 				public int compare(Entry<String, Double> arg0,Entry<String, Double> arg1) {
 					// TODO Auto-generated method stub
-					return arg0.getValue().compareTo(arg1.getValue());
+					return -1*arg0.getValue().compareTo(arg1.getValue());
 				}
 			});
 			for(int i=0;i<10;i++){
