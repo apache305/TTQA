@@ -316,13 +316,19 @@ public class TTQAModel {
 		
 		
 		//thetaKT
+		writer = new BufferedWriter(new FileWriter(outputPath+ "thetaKT.txt"));
 		for(int kid=0;kid<this.K;kid++){
+			writer.write(String.format("Topic%d",kid));
 			for(int tid=0;tid<this.T;tid++){
-				this.thetaKT[kid][tid]=(this.nkt[kid][tid] + this.c )/(this.sumkt[kid] + this.T*this.c);
+				String tag=users.indexToTagMap.get(tid);
+				writer.write(tag+":"+this.thetaKV[kid][tid]+"\t");
 			}
+			writer.write("\n");
 		}
+		writer.close();
 		
 		//thetaUKT
+		//writer = new BufferedWriter(new FileWriter(outputPath+ "UserthetaKT.txt"));
 		for(int uid=0;uid<this.U;uid++){
 			for(int kid=0;kid<this.K;kid++){
 				for(int tid=0;tid<this.T;tid++){
