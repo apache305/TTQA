@@ -69,9 +69,9 @@ public class TTQAModel {
 	}
 	
 	public void setDefaultParameteres(){
-		this.K=10;
+		this.K=30;
 		this.a=(float) 50.0/(float)this.K;
-		this.b=0.01f;
+		this.b=0.001f;
 		this.c=0.01f;
 		this.d=0.01f;
 		this.iterNum=100;
@@ -181,7 +181,7 @@ public class TTQAModel {
 		for(int k=0;k<this.K;k++){
 			backupProb[k]  =  ( this.nuk[uid][k] + this.a )/(this.sumuk[uid] + this.K*this.a ) ;
 			
-			for(int eachTagID:tagIDs){
+			for(int eachTagID:tagIDs){  // if remove this, can not detect topic. tested!
 				backupProb[k] *=  ( this.nkv[k][eachTagID] + tagL+ this.b )/(this.sumkv[k] + tagL+ this.V*this.b ) ;
 			}
 			
@@ -318,24 +318,32 @@ public class TTQAModel {
 		//thetaKT
 		writer = new BufferedWriter(new FileWriter(outputPath+ "thetaKT.txt"));
 		for(int kid=0;kid<this.K;kid++){
-			writer.write(String.format("Topic%d",kid));
-			for(int tid=0;tid<this.T;tid++){
-				String tag=users.indexToTagMap.get(tid);
-				writer.write(tag+":"+this.thetaKV[kid][tid]+"\t");
+			writer.write(String.format("Topic%d,",kid));
+			for(int tid=7;tid<this.T;tid++){
+				
+				String timeLabel = users.indexToTimeMap.get(tid);
+				System.out.println(timeLabel);
+				//writer.write(timeLabel+":"+this.thetaKT[kid][tid]+"\t");
+				writer.write(this.thetaKT[kid][tid]+",");
 			}
 			writer.write("\n");
 		}
 		writer.close();
 		
 		//thetaUKT
-		//writer = new BufferedWriter(new FileWriter(outputPath+ "UserthetaKT.txt"));
+		writer = new BufferedWriter(new FileWriter(outputPath+ "UserthetaKT.txt"));
 		for(int uid=0;uid<this.U;uid++){
+			writer.write( users.users.get(uid).userId +",");
 			for(int kid=0;kid<this.K;kid++){
+				writer.write(String.format("Topic%d,",kid));
 				for(int tid=0;tid<this.T;tid++){
-					this.thetaUKT[uid][kid][tid]=( this.nukt[uid][kid][tid] + this.d )/(this.sumukt[uid][kid] + this.T*this.d ) ;
+					
+					writer.write(this.thetaUKT[uid][kid][tid]+",");
 				}
+				writer.write("\n");
 			}
 		}
+		System.out.println("done");
 		
 	}
 }
