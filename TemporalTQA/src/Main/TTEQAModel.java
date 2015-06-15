@@ -249,8 +249,8 @@ public class TTEQAModel {
 		this.nukt[uid][newSampledTopic][timeID]++;
 		this.sumukt[uid][newSampledTopic]++;
 		
-		this.nuke[uid][newSampledTopic][expLevel]--;
-		this.sumuke[uid][newSampledTopic]--;
+		this.nuke[uid][newSampledTopic][expLevel]++;
+		this.sumuke[uid][newSampledTopic]++;
 		
 		return newSampledTopic;
 	}
