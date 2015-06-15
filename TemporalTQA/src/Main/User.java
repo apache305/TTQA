@@ -54,9 +54,9 @@ public class User {
 				users.tagCountMap.put(tag, oldCount+1);
 			}
 		}
-		System.out.print(score);
-		System.out.print("\t");
-		System.out.println(vote_level);
+		//System.out.print(score);
+		//System.out.print("\t");
+		//System.out.println(vote_level);
 		AnswerPost ans= new AnswerPost(time,tags,qid,score, vote_level);
 		this.answerPosts.add(ans);
 		

@@ -49,6 +49,11 @@ public class TTEQAModel {
 	int [][] sumukt;//sum of user i's each topic. U*K;
 	
 	
+	double [][][] thetaUKE;// topic -expertise per user. distrbution U*K*E;
+	int [][][] nuke;
+	int [][] sumuke;
+	
+	
 	//each users' each posts' topic label.
 	int [][] topicLabel;
 	
@@ -61,14 +66,14 @@ public class TTEQAModel {
 		
 	}
 	
-	public TTEQAModel(int a,int b,int c,int d, int topicNum,int iterNum){
+	/*public TTEQAModel(int a,int b,int c,int d, int topicNum,int iterNum){
 		this.a=a;
 		this.b=b;
 		this.c=c;
 		this.d=d;
 		this.K=topicNum;
 		this.iterNum=iterNum;
-	}
+	}*/
 	
 	public void setDefaultParameteres(){
 		this.K=30;
@@ -76,6 +81,7 @@ public class TTEQAModel {
 		this.b=0.001f;
 		this.c=0.01f;
 		this.d=0.01f;
+		this.e=0.01f;
 		this.iterNum=100;
 	}
 	
@@ -84,6 +90,7 @@ public class TTEQAModel {
 		this.U= users.users.size();//number of user.
 		this.T= users.timeCountMap.size();//number of time label
 		this.V= users.tagCountMap.size();//number of tag
+		this.E= users.voteStep;//number of expertise.
 		this.thetaUK = new double [this.U][this.K];
 		this.nuk= new int[this.U][this.K];
 		this.sumuk= new int[this.U];
@@ -100,6 +107,9 @@ public class TTEQAModel {
 		this.nukt= new int[this.U][this.K][this.T];
 		this.sumukt=new int[this.U][this.K];
 		
+		this.thetaUKE = new double [this.U][this.K][this.E];
+		this.nuke= new int [this.U][this.K][this.E];
+		this.sumuke=new int [this.U][this.K];
 
 		
 		this.topicLabel = new int [this.U][];
@@ -123,6 +133,11 @@ public class TTEQAModel {
 				
 				this.nukt[i][initialTopicLabel][timeID]++;
 				this.sumukt[i][initialTopicLabel]++;
+				
+				int expertiseLevel = eachPost.vote_level;
+				this.nuke[i][initialTopicLabel][expertiseLevel]++;
+				this.sumuke[i][initialTopicLabel]++;
+				
 				
 				//for each tag
 				for(int tagID:eachPost.Qtags){
@@ -151,7 +166,8 @@ public class TTEQAModel {
 					AnswerPost eachPost= anses.get(j);
 					int timeID=eachPost.Atime;
 					int [] tagIDs=eachPost.Qtags;
-					int newTopicLabel = this.gibbsSample(i,j,tagIDs,timeID);
+					int expLevel = eachPost.vote_level;
+					int newTopicLabel = this.gibbsSample(i,j,tagIDs,timeID,expLevel);
 					this.topicLabel[i][j]=newTopicLabel;
 					
 				}
@@ -159,7 +175,7 @@ public class TTEQAModel {
 		}
 	}
 	
-	public int gibbsSample(int uid,int pid,int [] tagIDs, int timeID){
+	public int gibbsSample(int uid,int pid,int [] tagIDs, int timeID,int expLevel){
 		int oldTopicID=this.topicLabel[uid][pid];
 		
 		//remove current stuff.
@@ -177,6 +193,9 @@ public class TTEQAModel {
 		this.nukt[uid][oldTopicID][timeID]--;
 		this.sumukt[uid][oldTopicID]--;
 		
+		this.nuke[uid][oldTopicID][expLevel]--;
+		this.sumuke[uid][oldTopicID]--;
+		
 		//souihaite ca marche.
 		double [] backupProb =  new double [this.K];
 		int tagL=tagIDs.length;
@@ -189,6 +208,8 @@ public class TTEQAModel {
 			
 			backupProb[k] *= ( this.nkt[k][timeID] + this.c )/(this.sumkt[k] + this.T*this.c ) ;
 			backupProb[k] *= ( this.nukt[uid][k][timeID] + this.d )/(this.sumukt[uid][k] + this.T*this.d ) ;
+			backupProb[k] *= ( this.nukt[uid][k][expLevel] + this.e )/(this.sumukt[uid][k] + this.E*this.e ) ;
+			
 			
 		}
 		
@@ -227,6 +248,9 @@ public class TTEQAModel {
 		this.nukt[uid][newSampledTopic][timeID]++;
 		this.sumukt[uid][newSampledTopic]++;
 		
+		this.nuke[uid][newSampledTopic][expLevel]--;
+		this.sumuke[uid][newSampledTopic]--;
+		
 		return newSampledTopic;
 	}
 	
@@ -261,6 +285,16 @@ public class TTEQAModel {
 				}
 			}
 		}
+		
+		//thetaUKE
+		for(int uid=0;uid<this.U;uid++){
+			for(int kid=0;kid<this.K;kid++){
+				for(int eid=0;eid<this.E;eid++){
+					this.thetaUKE[uid][kid][eid]=( this.nuke[uid][kid][eid] + this.e )/(this.sumuke[uid][kid] + this.E*this.e ) ;
+				}
+			}
+		}
+		
 		
 		
 	}
