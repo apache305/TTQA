@@ -381,7 +381,6 @@ public class TTEQAModel {
 			}
 		}
 		writer.close();
-		System.out.println("done");
 		
 		//thetaUKE
 		writer = new BufferedWriter(new FileWriter(outputPath+ "UserthetaKE.txt"));
