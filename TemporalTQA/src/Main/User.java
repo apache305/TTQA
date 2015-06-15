@@ -20,6 +20,20 @@ public class User {
 		eachAnswerInfo.remove(0);
 		int score =Integer.parseInt(eachAnswerInfo.get(0)) ;
 		eachAnswerInfo.remove(0);
+		
+		double cur_vote_log=0.0 ;
+		if (score!=0){
+			cur_vote_log=Math.log(score);
+		}
+		int vote_level=0;
+		for(;vote_level< users.voteStep ;vote_level++){
+			if( cur_vote_log <= users.voteMap[vote_level]){
+				break;
+			}
+			
+		}
+		
+		
 		ArrayList<String> tagInfos = eachAnswerInfo;
 		//System.out.println(timeLabel);
 		int time= users.timeToIndexMap.get(timeLabel);
@@ -41,7 +55,7 @@ public class User {
 				users.tagCountMap.put(tag, oldCount+1);
 			}
 		}
-		AnswerPost ans= new AnswerPost(time,tags,qid,score);
+		AnswerPost ans= new AnswerPost(time,tags,qid,score, vote_level);
 		this.answerPosts.add(ans);
 		
 		

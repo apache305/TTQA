@@ -21,7 +21,7 @@ public class Users {
 	public ArrayList<String> indexToTimeMap;
 	public Map<String, Integer> timeCountMap;
 	
-	private int voteStep;
+	public int voteStep;
 	public double [] voteMap;
 	
 	public String [] years={"2008","2009"};
@@ -88,7 +88,7 @@ public class Users {
 		//System.out.println(max_vote);
 		double one_step=  Math.log(max_vote)/(double)this.voteStep;
 		for (int i=0;i<this.voteStep;i++){
-			this.voteMap[i]=i*one_step;
+			this.voteMap[i]=(i+1)*one_step;
 		}
 		
 
