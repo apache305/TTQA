@@ -1,5 +1,8 @@
 package Others;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 //import Main.Users;
 import Main.*;
 
@@ -72,6 +75,43 @@ public class GrosToT {
 		this.thetaGKT = new double [this.G][this.K][this.T];
 		this.ngkt = new int [this.G][this.K][this.T];
 		this.sumngkt = new int[this.G][this.K];
+		
+		
+		
+		this.topicLabel = new int [this.U][];
+		this.groupLabel = new int [this.U];
+		
+		Random r = new Random();
+		for(int i=0;i<this.U;i++ ){
+			User u=users.users.get(i);
+			ArrayList<AnswerPost> anses = u.answerPosts;
+			this.topicLabel[i]= new int[anses.size()	];
+			for(int j=0;j<anses.size();j++){
+				int initialTopicLabel = r.nextInt(this.K);//0 to K-1
+				int initialGroupLabel = r.nextInt(this.G);//0 to G-1
+				this.topicLabel[i][j]=initialTopicLabel;
+				this.groupLabel[i] = initialGroupLabel;
+				
+				AnswerPost eachPost= anses.get(j);
+				//update those counts.
+				/*this.nuk[i][initialTopicLabel]++;
+				this.sumuk[i]++;
+				
+				int timeID=eachPost.Atime;
+				this.nkt[initialTopicLabel][timeID]++;
+				this.sumkt[initialTopicLabel]++;
+				
+				this.nukt[i][initialTopicLabel][timeID]++;
+				this.sumukt[i][initialTopicLabel]++;
+			
+				//for each tag
+				for(int tagID:eachPost.Qtags){
+					this.nkv[initialTopicLabel][tagID]++;
+					this.sumkv[initialTopicLabel]++;
+				}*/
+				
+			}
+		}
 		
 		
 	
