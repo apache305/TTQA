@@ -9,20 +9,20 @@ import java.util.Map;
 import Util.FileTool;
 
 public class Users {
-	String trainFile =null;
-	ArrayList<User> users;
-	Map<String,Integer> userToIndexMap;
+	public String trainFile =null;
+	public ArrayList<User> users;
+	public Map<String,Integer> userToIndexMap;
 	
-	Map<String, Integer> tagToIndexMap;
-	ArrayList<String> indexToTagMap;
-	Map<String, Integer> tagCountMap;
+	public Map<String, Integer> tagToIndexMap;
+	public ArrayList<String> indexToTagMap;
+	public Map<String, Integer> tagCountMap;
 	
-	Map<String, Integer> timeToIndexMap;
-	ArrayList<String> indexToTimeMap;
-	Map<String, Integer> timeCountMap;
+	public Map<String, Integer> timeToIndexMap;
+	public ArrayList<String> indexToTimeMap;
+	public Map<String, Integer> timeCountMap;
 	
-	String [] years={"2008","2009"};
-	String [] months={"01","02","03","04","05","06","07","08","09","10","11","12"};
+	public String [] years={"2008","2009"};
+	public String [] months={"01","02","03","04","05","06","07","08","09","10","11","12"};
 	
 	
 	
