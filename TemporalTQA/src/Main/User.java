@@ -16,6 +16,10 @@ public class User {
 		
 		String timeLabel = eachAnswerInfo.get(0).substring(0,7);
 		eachAnswerInfo.remove(0);
+		int qid=Integer.parseInt(eachAnswerInfo.get(0));
+		eachAnswerInfo.remove(0);
+		int score =Integer.parseInt(eachAnswerInfo.get(0)) ;
+		eachAnswerInfo.remove(0);
 		ArrayList<String> tagInfos = eachAnswerInfo;
 		//System.out.println(timeLabel);
 		int time= users.timeToIndexMap.get(timeLabel);
@@ -37,7 +41,7 @@ public class User {
 				users.tagCountMap.put(tag, oldCount+1);
 			}
 		}
-		AnswerPost ans= new AnswerPost(time,tags);
+		AnswerPost ans= new AnswerPost(time,tags,qid,score);
 		this.answerPosts.add(ans);
 		
 		
