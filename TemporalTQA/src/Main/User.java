@@ -22,7 +22,7 @@ public class User {
 		eachAnswerInfo.remove(0);
 		
 		double cur_vote_log=0.0 ;
-		if (score!=0){
+		if (score>=0){
 			cur_vote_log=Math.log(score);
 		}
 		int vote_level=0;
@@ -30,7 +30,6 @@ public class User {
 			if( cur_vote_log <= users.voteMap[vote_level]){
 				break;
 			}
-			
 		}
 		
 		
@@ -55,6 +54,9 @@ public class User {
 				users.tagCountMap.put(tag, oldCount+1);
 			}
 		}
+		System.out.print(score);
+		System.out.print("\t");
+		System.out.println(vote_level);
 		AnswerPost ans= new AnswerPost(time,tags,qid,score, vote_level);
 		this.answerPosts.add(ans);
 		
