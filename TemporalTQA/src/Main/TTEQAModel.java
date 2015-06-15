@@ -147,6 +147,7 @@ public class TTEQAModel {
 				
 			}
 		}
+		System.out.println("init model finishled");
 		
 		
 
@@ -379,7 +380,24 @@ public class TTEQAModel {
 				writer.write("\n");
 			}
 		}
+		writer.close();
 		System.out.println("done");
+		
+		//thetaUKE
+		writer = new BufferedWriter(new FileWriter(outputPath+ "UserthetaKE.txt"));
+		for(int uid=0;uid<this.U;uid++){
+			writer.write( users.users.get(uid).userId +",");
+			for(int kid=0;kid<this.K;kid++){
+				writer.write(String.format("Topic%d,",kid));
+				for(int eid=0;eid<this.E;eid++){
+					
+					writer.write(this.thetaUKE[uid][kid][eid]+",");
+				}
+				writer.write("\n");
+			}
+		}
+		System.out.println("done");
+		writer.close();
 		
 	}
 }
