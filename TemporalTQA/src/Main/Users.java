@@ -21,6 +21,9 @@ public class Users {
 	public ArrayList<String> indexToTimeMap;
 	public Map<String, Integer> timeCountMap;
 	
+	private int voteStep;
+	public double [] voteMap;
+	
 	public String [] years={"2008","2009"};
 	public String [] months={"01","02","03","04","05","06","07","08","09","10","11","12"};
 	
@@ -41,9 +44,15 @@ public class Users {
 		//time count
 		this.timeToIndexMap = new HashMap<String,Integer>();
 		this.indexToTimeMap = new ArrayList<String>();
-		this.timeCountMap   = new HashMap<String,Integer>();		
+		this.timeCountMap   = new HashMap<String,Integer>();	
+		
+		//vote count
+		this.voteStep=10;
+		this.voteMap = new double [this.voteStep];
+		
 		
 		this.initTimeMap();
+		this.initVoteMap();
 		this.readLineFile();
 		//System.out.println(this.users.get("9"));
 	}
@@ -61,6 +70,29 @@ public class Users {
 				i++;
 			}
 		}
+	}
+	
+	public void initVoteMap(){
+		//first to find the vote freq map;
+		ArrayList<ArrayList<String>> userInfoLines = new ArrayList<ArrayList<String>>();
+		FileTool.readLinesAsTaglist( this.trainFile, userInfoLines);
+		//Map<Array>
+		// I jsut want to simplfied here. not to complated.
+		int max_vote=0;
+		for(ArrayList<String> userInfo: userInfoLines){
+			//String userId= userInfo.get(0);
+			int score =Integer.parseInt(userInfo.get(3)) ;
+			max_vote= Math.max(score, max_vote);
+			//System.out.println(score);
+		}
+		//System.out.println(max_vote);
+		double one_step=  Math.log(max_vote)/(double)this.voteStep;
+		for (int i=0;i<this.voteStep;i++){
+			this.voteMap[i]=i*one_step;
+		}
+		
+
+		
 	}
 	
 	
