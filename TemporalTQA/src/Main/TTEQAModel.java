@@ -76,7 +76,7 @@ public class TTEQAModel {
 	}*/
 	
 	public void setDefaultParameteres(){
-		this.K=30;
+		this.K=10;
 		this.a=(float) 50.0/(float)this.K;
 		this.b=0.001f;
 		this.c=0.01f;
@@ -207,9 +207,12 @@ public class TTEQAModel {
 				backupProb[k] *=  ( this.nkv[k][eachTagID] + tagL+ this.b )/(this.sumkv[k] + tagL+ this.V*this.b ) ;
 			}
 			//but if remove this , it still works.
+			//if only keep this, good result.
 			backupProb[k] *= ( this.nkt[k][timeID] + this.c )/(this.sumkt[k] + this.T*this.c ) ;
-			backupProb[k] *= ( this.nukt[uid][k][timeID] + this.d )/(this.sumukt[uid][k] + this.T*this.d ) ;
-			backupProb[k] *= ( this.nukt[uid][k][expLevel] + this.e )/(this.sumukt[uid][k] + this.E*this.e ) ;
+		
+			
+			//backupProb[k] *= ( this.nukt[uid][k][timeID] + this.d )/(this.sumukt[uid][k] + this.T*this.d ) ;
+			//backupProb[k] *= ( this.nukt[uid][k][expLevel] + this.e )/(this.sumukt[uid][k] + this.E*this.e ) ;
 			
 			
 		}
@@ -306,9 +309,9 @@ public class TTEQAModel {
 		//thetaUK
 		BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath+ "thetaUK.txt"));
 		for(int uid = 0;uid<this.U;uid++){
-			writer.write( users.users.get(uid).userId +":");
+			writer.write( users.users.get(uid).userId +",");
 			for(int kid =0 ;kid<this.K;kid++){
-				writer.write(this.thetaUK[uid][kid]+"\t");
+				writer.write(this.thetaUK[uid][kid]+",");
 			}
 			writer.write("\n");
 		}
