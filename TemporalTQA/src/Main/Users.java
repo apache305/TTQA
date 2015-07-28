@@ -47,7 +47,7 @@ public class Users {
 		this.timeCountMap   = new HashMap<String,Integer>();	
 		
 		//vote count
-		this.voteStep=10;
+		this.voteStep=3;// low medium high
 		this.voteMap = new double [this.voteStep];
 		
 		

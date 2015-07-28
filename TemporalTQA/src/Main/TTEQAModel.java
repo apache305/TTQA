@@ -82,7 +82,7 @@ public class TTEQAModel {
 		this.c=0.01f;
 		this.d=0.01f;
 		this.e=0.01f;
-		this.iterNum=100;
+		this.iterNum=300;
 	}
 	
 	public void initModel(Users users){
