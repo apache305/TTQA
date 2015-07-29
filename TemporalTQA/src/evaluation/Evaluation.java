@@ -10,6 +10,18 @@ public class Evaluation {
 		Users users= new Users(testFile);
 		
 		
+		
+		
+		
+	}
+	
+	
+	
+	public static void checkPerplexity(){
+		
+		
+		
+		
 	}
 	
 	

@@ -25,6 +25,9 @@ public class TTEQAModel {
 	int T;//time number
 	int E; //vote level number;
 	
+	Users trainU=null;
+	Users testU=null;
+	
 	
 	int iterNum;//number of iterations.
 	
@@ -87,6 +90,7 @@ public class TTEQAModel {
 	
 	public void initModel(Users users){
 		//init those probabilities;
+		this.trainU=users;
 		this.U= users.users.size();//number of user.
 		this.T= users.timeCountMap.size();//number of time label
 		this.V= users.tagCountMap.size();//number of tag
@@ -300,6 +304,78 @@ public class TTEQAModel {
 		}
 		
 		
+		
+	}
+	
+	public void computePer(Users testUsers){
+		this.testU = testUsers;
+		//p(tag) or p(word) = p(k|u)p(k|v)
+		
+		//test dataset =
+		
+		double  total_result=0.0;
+		int post_number=0;
+		int tag_number=0;
+		double final_perplex=0.0;
+		for (User u : this.testU.users){
+			int uid=0;
+			if ( !this.trainU.userToIndexMap.containsKey(u.userId) ){
+				continue;
+			}
+			uid=this.trainU.userToIndexMap.get(u.userId);
+			//System.out.println(u.userId);
+			//System.out.println(u.answerPosts.size());
+			
+			for(AnswerPost eachPost: u.answerPosts){
+				int [] tids = eachPost.Qtags;
+				
+				//compute for each post.
+				double curPostW=0.0;
+				
+				ArrayList<String> tags = new ArrayList<String>();
+				for( int tid : tids){
+					String testOriTag = this.testU.indexToTagMap.get(tid);
+					if(this.trainU.tagToIndexMap.containsKey(testOriTag)){
+						tags.add( testOriTag);
+					}
+					
+				}
+				
+				int tag_n= tags.size();
+				if(tag_n==0){
+					continue;
+				}
+				
+				//double tempW=0.0;
+				
+				
+				double forAllW=0.0;
+				for(int topic_id=0;topic_id < this.K; topic_id++){
+					double tempW=1.0;
+					for(String tag: tags){
+						//System.out.println(tag);
+						int cur_tid=this.trainU.tagToIndexMap.get(tag);
+						//p(topic|u) * p(tag|topic);
+						
+						tempW *= this.thetaUK[uid][topic_id] * this.thetaKV[topic_id][cur_tid];
+						assert (tempW!=0.0 );
+					}
+					assert(tempW!=1.0);
+					forAllW+=tempW;//accumulate for each topic.
+				}
+				
+				post_number+=1;
+				total_result += Math.log(forAllW);
+				tag_number+=tag_n;
+				
+			}
+			
+			//break;
+
+		}
+		
+		final_perplex =  Math.exp(-1.0  *  total_result  / tag_number);
+		System.out.println(final_perplex);
 		
 	}
 	
