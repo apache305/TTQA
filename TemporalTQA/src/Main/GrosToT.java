@@ -14,10 +14,10 @@ import java.util.Random;
 
 public class GrosToT {
 	
-	float a; //  u 
-	float b; // g
-	float c; // k
-	float d; //kg
+	float a; // 
+	float b; //
+	float c; //
+	float d; //
 
 	int U;//user number
 	int K;//topic number
@@ -49,15 +49,18 @@ public class GrosToT {
 	
 	
 	double [][][] thetaKGT;// topic -time per user. distribution  K*G*T;
-	int [][][] nkgt;//number of user i 's topic j in time k; U*K*T
+	int [][][] nkgt;//number of user i 's topic j in time k;  K*G*T
 	int [][] sumkgt;//sum of user i's each topic. U*K;
 	
 	
 
 	
-	//each users' each posts' topic label.
-	int [][] topicLabel;
+
 	
+
+	int [][] topicLabel;
+	int [][] groupLabel;
+
 	
 	
 	
@@ -67,7 +70,7 @@ public class GrosToT {
 		
 	}
 	
-	/*public TTEQAModel(int a,int b,int c,int d, int topicNum,int iterNum){
+	/*public GrosToT(int a,int b,int c,int d, int topicNum,int iterNum){
 		this.a=a;
 		this.b=b;
 		this.c=c;
@@ -77,13 +80,13 @@ public class GrosToT {
 	}*/
 	
 	public void setDefaultParameteres(){
-		this.K=20;
+		this.K=30;
+		this.G=50;
 		this.a=(float) 50.0/(float)this.K;
-		this.b=0.001f;
-		this.c=0.01f;
+		this.b=0.01f;
+		this.c=(float) 50.0/(float)this.G;
 		this.d=0.01f;
-		this.e=0.01f;
-		this.iterNum=10;
+		this.iterNum=100;
 	}
 	
 	public void initModel(Users users){
@@ -92,60 +95,61 @@ public class GrosToT {
 		this.U= users.users.size();//number of user.
 		this.T= users.timeCountMap.size();//number of time label
 		this.V= users.tagCountMap.size();//number of tag
-		this.E= users.voteStep;//number of expertise.
-		this.thetaUK = new double [this.U][this.K];
-		this.nuk= new int[this.U][this.K];
-		this.sumuk= new int[this.U];
+		this.thetaUG = new double [this.U][this.G];
+		this.nug= new int[this.U][this.G];
+		this.sumug= new int[this.U];
 		
 		this.thetaKV= new double[this.K][this.V];
 		this.nkv=new int [this.K][this.V];
 		this.sumkv= new int[this.K];
 		
-		this.thetaKT=new double[this.K][this.T];
-		this.nkt= new int[this.K][this.T];
-		this.sumkt=new int[this.K];
+		this.thetaGK=new double[this.G][this.K];
+		this.ngk= new int[this.G][this.K];
+		this.sumgk=new int[this.G];
 		
-		this.thetaUKT=new double[this.U][this.K][this.T];
-		this.nukt= new int[this.U][this.K][this.T];
-		this.sumukt=new int[this.U][this.K];
+		this.thetaKGT=new double[this.K][this.G][this.T];
+		this.nkgt= new int[this.K][this.G][this.T];
+		this.sumkgt=new int[this.K][this.G];
 		
-		this.thetaUKE = new double [this.U][this.K][this.E];
-		this.nuke= new int [this.U][this.K][this.E];
-		this.sumuke=new int [this.U][this.K];
+		
 
 		
 		this.topicLabel = new int [this.U][];
+		this.groupLabel = new int [this.U][];
+		//first random to generate g, and k.
 		Random r = new Random();
 		for(int i=0;i<this.U;i++ ){
 			User u=users.users.get(i);
 			ArrayList<AnswerPost> anses = u.answerPosts;
 			this.topicLabel[i]= new int[anses.size()	];
+			this.groupLabel[i]= new int [anses.size()];
+			
 			for(int j=0;j<anses.size();j++){
 				int initialTopicLabel = r.nextInt(this.K);//0 to K-1
 				this.topicLabel[i][j]=initialTopicLabel;
+				int initialGroupLabel = r.nextInt(this.G);// 0 to G-1
+				this.groupLabel[i][j]=initialGroupLabel;
+					
+						
 				
 				AnswerPost eachPost= anses.get(j);
 				//update those counts.
-				this.nuk[i][initialTopicLabel]++;
-				this.sumuk[i]++;
+				this.nug[i][initialGroupLabel]++;
+				this.sumug[i]++;
 				
-				int timeID=eachPost.Atime;
-				this.nkt[initialTopicLabel][timeID]++;
-				this.sumkt[initialTopicLabel]++;
-				
-				this.nukt[i][initialTopicLabel][timeID]++;
-				this.sumukt[i][initialTopicLabel]++;
-				
-				int expertiseLevel = eachPost.vote_level;
-				this.nuke[i][initialTopicLabel][expertiseLevel]++;
-				this.sumuke[i][initialTopicLabel]++;
-				
+				this.ngk[initialGroupLabel][initialTopicLabel]++;
+				this.sumgk[initialGroupLabel]++;
 				
 				//for each tag
 				for(int tagID:eachPost.Qtags){
 					this.nkv[initialTopicLabel][tagID]++;
 					this.sumkv[initialTopicLabel]++;
 				}
+				
+				int timeID=eachPost.Atime;
+				
+				this.nkgt[initialGroupLabel][initialTopicLabel][timeID]++;
+				this.sumkgt[initialGroupLabel][initialTopicLabel]++;
 				
 			}
 		}
