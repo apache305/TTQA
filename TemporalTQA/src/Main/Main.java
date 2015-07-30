@@ -29,14 +29,14 @@ public class Main {
 		
 		TTEQAModel tt= new TTEQAModel();
 		tt.initModel(users);
-		/*tt.trainModel(users);
+		tt.trainModel(users);
 		tt.estimateProb();
 		try {
 			tt.outputResult(resultPath, users);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}*/
+		}
 		tt.computePer(testUsers);
 		
 		

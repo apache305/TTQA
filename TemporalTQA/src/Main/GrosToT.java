@@ -12,18 +12,19 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 
-public class TTEQAModel {
+public class GrosToT {
 	
-	float a;
-	float b;
-	float c;
-	float d;
-	float e;
+	float a; //  u 
+	float b; // g
+	float c; // k
+	float d; //kg
+
 	int U;//user number
 	int K;//topic number
-	int V;//tag number
+	int G;//group number
+	int V;//word number
 	int T;//time number
-	int E; //vote level number;
+
 	
 	Users trainU=null;
 	Users testU=null;
@@ -31,31 +32,28 @@ public class TTEQAModel {
 	
 	int iterNum;//number of iterations.
 	
-	double [][] thetaUK;// user - topic distribution  U*K
-	int [][] nuk;// number of user i in topic j. U*K
-	int [] sumuk;//sum for each user. U
+	double [][] thetaUG;// user - group distribution  U*G
+	int [][] nug;// number of user i in group j. U*G
+	int [] sumug;//sum for each user. U
 
 	
 	
-	double [][] thetaKV;// topic - tag distribution  K*V
-	int [][] nkv;//number of topic k in tag j; K*V
+	double [][] thetaKV;// topic - word distribution  K*V
+	int [][] nkv;//number of topic k in word j; K*V
 	int [] sumkv;//sum for each topic. K
 	
 	
-	double [][] thetaKT;//  topic - time distribution K*T 
-	int [][] nkt;//number of topic k in time j; K*T
-	int [] sumkt;//sum for each topic. K
+	double [][] thetaGK;//  group - topic distribution G*Z
+	int [][] ngk;//number of topic k in time j; K*T
+	int [] sumgk;//sum for each topic. K
 	
 	
-	double [][][] thetaUKT;// topic -time per user. distribution  U*K*T;
-	int [][][] nukt;//number of user i 's topic j in time k; U*K*T
-	int [][] sumukt;//sum of user i's each topic. U*K;
+	double [][][] thetaKGT;// topic -time per user. distribution  K*G*T;
+	int [][][] nkgt;//number of user i 's topic j in time k; U*K*T
+	int [][] sumkgt;//sum of user i's each topic. U*K;
 	
 	
-	double [][][] thetaUKE;// topic -expertise per user. distrbution U*K*E;
-	int [][][] nuke;
-	int [][] sumuke;
-	
+
 	
 	//each users' each posts' topic label.
 	int [][] topicLabel;
@@ -64,7 +62,7 @@ public class TTEQAModel {
 	
 	
 	
-	public TTEQAModel(){
+	public GrosToT(){
 		this.setDefaultParameteres();
 		
 	}
