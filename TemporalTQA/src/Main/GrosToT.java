@@ -177,6 +177,8 @@ public class GrosToT {
 					int [] tagIDs=eachPost.Qtags;
 					int newGroupLabel = this.gibbsSampleGroupLabel(i, j, tagIDs, timeID);
 					this.groupLabel[i][j]=newGroupLabel;
+					int newTopicLabel = this.gibbsSampleTopicLabel(i, j, tagIDs, timeID);
+					this.topicLabel[i][j]=newTopicLabel;
 					
 				}
 			}
@@ -242,6 +244,73 @@ public class GrosToT {
 		
 		return newSampledGroup;
 	}
+	
+	
+	public int gibbsSampleTopicLabel(int uid,int pid,int [] tagIDs, int timeID){
+		int oldTopicID=this.topicLabel[uid][pid];
+		int oldGroupID=this.groupLabel[uid][pid];
+		
+		//remove current stuff.
+		this.ngk[oldGroupID][oldTopicID]--;
+		this.sumgk[oldGroupID]--;
+
+		this.nkgt[oldTopicID][oldGroupID][timeID]--;
+		this.sumkgt[oldTopicID][oldGroupID]--;
+
+		
+		for(int eachTagID: tagIDs){
+			this.nkv[oldTopicID][eachTagID]--;
+			this.sumkv[oldTopicID]--;
+		}
+		
+		
+		double [] backupProb =  new double [this.K];
+		int tagL=tagIDs.length;
+		for(int k=0;k<this.K;k++){
+			backupProb[k]  =  ( this.ngk[oldGroupID][k] + this.a )/(this.sumgk[oldGroupID] + this.K*this.a);
+			backupProb[k] *= ( this.nkgt[k][oldGroupID][timeID]+this.d)/(this.sumkgt[k][oldGroupID] +this.T*this.d);
+			for(int eachTagID:tagIDs){  // if remove this, can not detect topic. tested!
+				backupProb[k] *=  ( this.nkv[k][eachTagID] + tagL+ this.b )/(this.sumkv[k] + tagL+ this.V*this.b ) ;
+			}
+
+		}
+		
+		//normalize backupProb
+		for(int k=1;k<this.K;k++){
+			backupProb[k]+=backupProb[k-1];
+		}
+		
+		double newProb = Math.random()* backupProb[this.K-1];
+		int newSampledTopic=0;
+		while(newSampledTopic < this.K ){
+			if(newProb< backupProb[newSampledTopic] ) break;
+			newSampledTopic++;
+		}
+		
+		System.out.print(oldTopicID);
+		System.out.print("->");
+		System.out.print(newSampledTopic);
+		System.out.print("\n");
+		
+		//update count
+		this.topicLabel[uid][pid]=newSampledTopic;
+		
+		//remove current stuff.
+		this.ngk[oldGroupID][newSampledTopic]++;
+		this.sumgk[oldGroupID]++;
+
+		this.nkgt[newSampledTopic][oldGroupID][timeID]++;
+		this.sumkgt[newSampledTopic][oldGroupID]++;
+
+		
+		for(int eachTagID: tagIDs){
+			this.nkv[newSampledTopic][eachTagID]++;
+			this.sumkv[newSampledTopic]++;
+		}
+		
+		return newSampledTopic;
+	}
+	
 	
 	public void estimateProb(){
 		
