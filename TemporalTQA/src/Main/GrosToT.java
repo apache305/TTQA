@@ -156,14 +156,16 @@ public class GrosToT {
 		System.out.println("init model finishled");
 		
 		
-
-		
 	}
+	
 	
 	public void trainModel(Users users){
 		for(int it=0;it<this.iterNum;it++){
 			//for each iteration
 			System.out.println(String.format("Round:%d", it));
+			
+			//first sample gi
+			
 			
 			
 			for(int i=0;i<this.U;i++ ){
@@ -173,52 +175,37 @@ public class GrosToT {
 					AnswerPost eachPost= anses.get(j);
 					int timeID=eachPost.Atime;
 					int [] tagIDs=eachPost.Qtags;
-					int expLevel = eachPost.vote_level;
-					int newTopicLabel = this.gibbsSample(i,j,tagIDs,timeID,expLevel);
-					this.topicLabel[i][j]=newTopicLabel;
+					int newGroupLabel = this.gibbsSampleGroupLabel(i, j, tagIDs, timeID);
+					this.groupLabel[i][j]=newGroupLabel;
 					
 				}
 			}
 		}
 	}
 	
-	public int gibbsSample(int uid,int pid,int [] tagIDs, int timeID,int expLevel){
+	public int gibbsSampleGroupLabel(int uid,int pid,int [] tagIDs, int timeID){
+		int oldGroupID=this.groupLabel[uid][pid];
 		int oldTopicID=this.topicLabel[uid][pid];
 		
+		
 		//remove current stuff.
-		this.nuk[uid][oldTopicID]--;
-		this.sumuk[uid]--;
+		this.nug[uid][oldGroupID]--;
+		this.sumug[uid]--;
+
+		this.ngk[oldGroupID][oldTopicID]--;
+		this.sumgk[oldGroupID]--;
+
+		this.nkgt[oldTopicID][oldGroupID][timeID]--;
+		this.sumkgt[oldTopicID][oldGroupID]--;
 		
-		for(int eachTagID: tagIDs){
-			this.nkv[oldTopicID][eachTagID]--;
-			this.sumkv[oldTopicID]--;
-		}
-		
-		this.nkt[oldTopicID][timeID]--;
-		this.sumkt[oldTopicID]--;
-		
-		this.nukt[uid][oldTopicID][timeID]--;
-		this.sumukt[uid][oldTopicID]--;
-		
-		this.nuke[uid][oldTopicID][expLevel]--;
-		this.sumuke[uid][oldTopicID]--;
 		
 		//souihaite ca marche.
-		double [] backupProb =  new double [this.K];
-		int tagL=tagIDs.length;
-		for(int k=0;k<this.K;k++){
-			backupProb[k]  =  ( this.nuk[uid][k] + this.a )/(this.sumuk[uid] + this.K*this.a ) ;
-			
-			for(int eachTagID:tagIDs){  // if remove this, can not detect topic. tested!
-				backupProb[k] *=  ( this.nkv[k][eachTagID] + tagL+ this.b )/(this.sumkv[k] + tagL+ this.V*this.b ) ;
-			}
-			//but if remove this , it still works.
-			//if only keep this, good result.
-			backupProb[k] *= ( this.nkt[k][timeID] + this.c )/(this.sumkt[k] + this.T*this.c ) ;
 		
-			//indeed, if add this, perplex will increase. fuck!
-			backupProb[k] *= ( this.nukt[uid][k][timeID] + this.d )/(this.sumukt[uid][k] + this.T*this.d ) ;
-			backupProb[k] *= ( this.nukt[uid][k][expLevel] + this.e )/(this.sumukt[uid][k] + this.E*this.e ) ;
+		double [] backupProb =  new double [this.G];
+		for(int g=0;g<this.G;g++){
+			backupProb[g]  =  ( this.nug[uid][g] + this.c )/(this.sumug[uid] + this.G*this.c ) ;
+			backupProb[g]  =  ( this.ngk[g][oldTopicID] + this.a )/(this.sumgk[g] + this.K*this.a);
+			backupProb[g]  =  ( this.nkgt[oldTopicID][g][timeID]+this.d)/(this.sumkgt[oldTopicID][g] +this.T*this.d);
 			
 			
 		}
