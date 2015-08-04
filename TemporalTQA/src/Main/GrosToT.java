@@ -206,49 +206,41 @@ public class GrosToT {
 			backupProb[g]  =  ( this.nug[uid][g] + this.c )/(this.sumug[uid] + this.G*this.c ) ;
 			backupProb[g]  =  ( this.ngk[g][oldTopicID] + this.a )/(this.sumgk[g] + this.K*this.a);
 			backupProb[g]  =  ( this.nkgt[oldTopicID][g][timeID]+this.d)/(this.sumkgt[oldTopicID][g] +this.T*this.d);
-			
-			
 		}
 		
 		//normalize backupProb
-		for(int k=1;k<this.K;k++){
-			backupProb[k]+=backupProb[k-1];
+		for(int g=1;g<this.G;g++){
+			backupProb[g]+=backupProb[g-1];
 		}
 		
-		double newProb = Math.random()* backupProb[this.K-1];
-		int newSampledTopic=0;
-		while(newSampledTopic < this.K ){
-			if(newProb< backupProb[newSampledTopic] ) break;
-			newSampledTopic++;
+		double newProb = Math.random()* backupProb[this.G-1];
+		int newSampledGroup=0;
+		while(newSampledGroup < this.G ){
+			if(newProb< backupProb[newSampledGroup] ) break;
+			newSampledGroup++;
 		}
 		
-		/*System.out.print(oldTopicID);
+		System.out.print(oldGroupID);
 		System.out.print("->");
-		System.out.print(newSampledTopic);
-		System.out.print("\n");*/
+		System.out.print(newSampledGroup);
+		System.out.print("\n");
 		
 		//update count
-		this.topicLabel[uid][pid]=newSampledTopic;
+		this.groupLabel[uid][pid]=newSampledGroup;
+		//this.topicLabel[uid][pid]=newSampledTopic;
 		
 		//remove current stuff.
-		this.nuk[uid][newSampledTopic]++;
-		this.sumuk[uid]++;
+		this.nug[uid][newSampledGroup]++;
+		this.sumug[uid]++;
 		
-		for(int eachTagID: tagIDs){
-			this.nkv[newSampledTopic][eachTagID]++;
-			this.sumkv[newSampledTopic]++;
-		}
+		this.ngk[newSampledGroup][oldTopicID]++;
+		this.sumgk[newSampledGroup]++;
 		
-		this.nkt[newSampledTopic][timeID]++;
-		this.sumkt[newSampledTopic]++;
+		this.nkgt[oldTopicID][newSampledGroup][timeID]++;
+		this.sumkgt[oldTopicID][newSampledGroup]++;
+
 		
-		this.nukt[uid][newSampledTopic][timeID]++;
-		this.sumukt[uid][newSampledTopic]++;
-		
-		this.nuke[uid][newSampledTopic][expLevel]++;
-		this.sumuke[uid][newSampledTopic]++;
-		
-		return newSampledTopic;
+		return newSampledGroup;
 	}
 	
 	public void estimateProb(){
