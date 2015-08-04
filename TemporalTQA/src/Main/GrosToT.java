@@ -295,7 +295,7 @@ public class GrosToT {
 		//update count
 		this.topicLabel[uid][pid]=newSampledTopic;
 		
-		//remove current stuff.
+		//update current stuff.
 		this.ngk[oldGroupID][newSampledTopic]++;
 		this.sumgk[oldGroupID]++;
 
@@ -314,10 +314,10 @@ public class GrosToT {
 	
 	public void estimateProb(){
 		
-		//thetaUK
+		//thetaUG
 		for(int uid = 0;uid<this.U;uid++){
-			for(int kid =0 ;kid<this.K;kid++){
-				this.thetaUK[uid][kid]=( this.nuk[uid][kid] + this.a )/(this.sumuk[uid] + this.K*this.a );
+			for(int gid =0 ;gid<this.G;gid++){
+				this.thetaUG[uid][gid]=( this.nug[uid][gid] + this.c )/(this.sumug[uid] + this.G*this.c );
 			}
 		}
 		
@@ -328,30 +328,22 @@ public class GrosToT {
 			}
 		}
 		
-		//thetaKT
+		//thetaGK
+		for(int gid=0;gid<this.G;gid++){
+			for(int kid=0;kid<this.K;kid++){
+				this.thetaGK[gid][kid]=(this.ngk[gid][kid] + this.a )/(this.sumgk[gid] + this.K*this.a);
+			}
+		}
+		
+		//thetaKGT
 		for(int kid=0;kid<this.K;kid++){
-			for(int tid=0;tid<this.T;tid++){
-				this.thetaKT[kid][tid]=(this.nkt[kid][tid] + this.c )/(this.sumkt[kid] + this.T*this.c);
-			}
-		}
-		
-		//thetaUKT
-		for(int uid=0;uid<this.U;uid++){
-			for(int kid=0;kid<this.K;kid++){
+			for(int gid=0;gid<this.G;gid++){
 				for(int tid=0;tid<this.T;tid++){
-					this.thetaUKT[uid][kid][tid]=( this.nukt[uid][kid][tid] + this.d )/(this.sumukt[uid][kid] + this.T*this.d ) ;
+					this.thetaKGT[kid][gid][tid]=( this.nkgt[kid][gid][tid] + this.d )/(this.sumkgt[kid][gid] + this.T*this.d ) ;
 				}
 			}
 		}
 		
-		//thetaUKE
-		for(int uid=0;uid<this.U;uid++){
-			for(int kid=0;kid<this.K;kid++){
-				for(int eid=0;eid<this.E;eid++){
-					this.thetaUKE[uid][kid][eid]=( this.nuke[uid][kid][eid] + this.e )/(this.sumuke[uid][kid] + this.E*this.e ) ;
-				}
-			}
-		}
 		
 		
 		
