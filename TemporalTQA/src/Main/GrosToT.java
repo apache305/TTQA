@@ -287,10 +287,10 @@ public class GrosToT {
 			newSampledTopic++;
 		}
 		
-		System.out.print(oldTopicID);
+		/*System.out.print(oldTopicID);
 		System.out.print("->");
 		System.out.print(newSampledTopic);
-		System.out.print("\n");
+		System.out.print("\n");*/
 		
 		//update count
 		this.topicLabel[uid][pid]=newSampledTopic;
