@@ -148,8 +148,8 @@ public class GrosToT {
 				
 				int timeID=eachPost.Atime;
 				
-				this.nkgt[initialGroupLabel][initialTopicLabel][timeID]++;
-				this.sumkgt[initialGroupLabel][initialTopicLabel]++;
+				this.nkgt[initialTopicLabel][initialGroupLabel][timeID]++;
+				this.sumkgt[initialTopicLabel][initialGroupLabel]++;
 				
 			}
 		}
@@ -222,10 +222,10 @@ public class GrosToT {
 			newSampledGroup++;
 		}
 		
-		System.out.print(oldGroupID);
+		/*System.out.print(oldGroupID);
 		System.out.print("->");
 		System.out.print(newSampledGroup);
-		System.out.print("\n");
+		System.out.print("\n");*/
 		
 		//update count
 		this.groupLabel[uid][pid]=newSampledGroup;

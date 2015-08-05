@@ -26,7 +26,7 @@ public class Main {
 		//System.out.println(users.tagCountMap.size());
 		
 		//i think a better way to do is a simple version, then enrich it.
-		/*String resultPath= "outTTEQA/";
+		/*String resultPath= "out/outTTEQA/";
 		TTEQAModel tt= new TTEQAModel();
 		tt.initModel(users);
 		tt.trainModel(users);
@@ -40,7 +40,7 @@ public class Main {
 		tt.computePer(testUsers);*/
 		
 		
-		resultPath= "outGROST/";
+		resultPath= "out/outGROST/";
 		GrosToT tot= new GrosToT();
 		tot.initModel(users);
 		tot.trainModel(users);
