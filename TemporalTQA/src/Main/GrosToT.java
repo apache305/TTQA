@@ -343,17 +343,12 @@ public class GrosToT {
 				}
 			}
 		}
-		
-		
-		
-		
 	}
 	
 	public void computePer(Users testUsers){
 		this.testU = testUsers;
-		//p(tag) or p(word) = p(k|u)p(k|v)
-		
-		//test dataset =
+		//p(tag) or p(word) = p(g|u)(k|g)(v|k)
+
 		
 		double  total_result=0.0;
 		int post_number=0;
@@ -392,19 +387,24 @@ public class GrosToT {
 				
 				
 				double forAllW=0.0;
-				for(int topic_id=0;topic_id < this.K; topic_id++){
-					double tempW=1.0;
-					for(String tag: tags){
-						//System.out.println(tag);
-						int cur_tid=this.trainU.tagToIndexMap.get(tag);
-						//p(topic|u) * p(tag|topic);
-						
-						tempW *= this.thetaUK[uid][topic_id] * this.thetaKV[topic_id][cur_tid];
-						assert (tempW!=0.0 );
+				for (int group_id=0;group_id<this.G;group_id++){
+					
+					for(int topic_id=0;topic_id < this.K; topic_id++){
+						double tempW=1.0;
+						for(String tag: tags){
+							//System.out.println(tag);
+							int cur_tid=this.trainU.tagToIndexMap.get(tag);
+							//p(topic|u) * p(tag|topic);
+							
+							tempW *= this.thetaUG[uid][group_id] * this.thetaGK[group_id][topic_id] * this.thetaKV[topic_id][cur_tid];
+							assert (tempW!=0.0 );
+						}
+						assert(tempW!=1.0);
+						forAllW+=tempW;//accumulate for each topic.
 					}
-					assert(tempW!=1.0);
-					forAllW+=tempW;//accumulate for each topic.
+					
 				}
+				
 				
 				post_number+=1;
 				total_result += Math.log(forAllW);
@@ -424,12 +424,12 @@ public class GrosToT {
 	public void outputResult(String outputPath, Users users) throws IOException{
 		
 	
-		//thetaUK
-		BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath+ "thetaUK.txt"));
+		//thetaUG
+		BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath+ "thetaUG.txt"));
 		for(int uid = 0;uid<this.U;uid++){
 			writer.write( users.users.get(uid).userId +",");
-			for(int kid =0 ;kid<this.K;kid++){
-				writer.write(this.thetaUK[uid][kid]+",");
+			for(int gid =0 ;gid<this.G;gid++){
+				writer.write(this.thetaUG[uid][gid]+",");
 			}
 			writer.write("\n");
 		}
@@ -473,51 +473,40 @@ public class GrosToT {
 		writer.close();
 		
 		
-		//thetaKT
-		writer = new BufferedWriter(new FileWriter(outputPath+ "thetaKT.txt"));
-		for(int kid=0;kid<this.K;kid++){
-			writer.write(String.format("Topic%d,",kid));
-			for(int tid=7;tid<this.T;tid++){
+		//thetaGK
+		writer = new BufferedWriter(new FileWriter(outputPath+ "thetaGK.txt"));
+		for(int gid=0;gid<this.G;gid++){
+			writer.write(String.format("Group%d,",gid));
+			for(int kid=0;kid<this.K;kid++){
 				
-				String timeLabel = users.indexToTimeMap.get(tid);
-				System.out.println(timeLabel);
+				//String timeLabel = users.indexToTimeMap.get(tid);
+				//System.out.println(timeLabel);
 				//writer.write(timeLabel+":"+this.thetaKT[kid][tid]+"\t");
-				writer.write(this.thetaKT[kid][tid]+",");
+				writer.write(this.thetaGK[gid][kid]+",");
 			}
 			writer.write("\n");
 		}
 		writer.close();
 		
-		//thetaUKT
+		//thetaKGT
 		writer = new BufferedWriter(new FileWriter(outputPath+ "UserthetaKT.txt"));
-		for(int uid=0;uid<this.U;uid++){
-			writer.write( users.users.get(uid).userId +",");
-			for(int kid=0;kid<this.K;kid++){
-				writer.write(String.format("Topic%d,",kid));
+		for(int kid=0;kid<this.K;kid++){
+			//writer.write( users.users.get(uid).userId +",");
+			writer.write(String.format("Topic%d,",kid));
+			for(int gid=0;gid<this.G;gid++){
+				writer.write(String.format("Group%d,",gid));
 				for(int tid=0;tid<this.T;tid++){
 					
-					writer.write(this.thetaUKT[uid][kid][tid]+",");
+					writer.write(this.thetaKGT[kid][gid][tid]+",");
 				}
 				writer.write("\n");
 			}
 		}
 		writer.close();
 		
-		//thetaUKE
-		writer = new BufferedWriter(new FileWriter(outputPath+ "UserthetaKE.txt"));
-		for(int uid=0;uid<this.U;uid++){
-			writer.write( users.users.get(uid).userId +",");
-			for(int kid=0;kid<this.K;kid++){
-				writer.write(String.format("Topic%d,",kid));
-				for(int eid=0;eid<this.E;eid++){
-					
-					writer.write(this.thetaUKE[uid][kid][eid]+",");
-				}
-				writer.write("\n");
-			}
-		}
+		
 		System.out.println("done");
-		writer.close();
+		//writer.close();
 		
 	}
 }
