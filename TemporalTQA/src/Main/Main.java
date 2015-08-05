@@ -16,7 +16,7 @@ public class Main {
 		String resultPath= args[1];*/
 		String trainFile = "data/ntrain.txt";
 		String testFile="data/ntest.txt";
-		String resultPath= "out/";
+		String resultPath=null;
 		//String curWorkingDir=System.getProperty("user.dir");
 		//System.out.println(curWorkingDir+trainFile);
 		Users users= new Users(trainFile);
@@ -26,7 +26,7 @@ public class Main {
 		//System.out.println(users.tagCountMap.size());
 		
 		//i think a better way to do is a simple version, then enrich it.
-		
+		/*String resultPath= "outTTEQA/";
 		TTEQAModel tt= new TTEQAModel();
 		tt.initModel(users);
 		tt.trainModel(users);
@@ -37,7 +37,21 @@ public class Main {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		tt.computePer(testUsers);
+		tt.computePer(testUsers);*/
+		
+		
+		resultPath= "outGROST/";
+		GrosToT tot= new GrosToT();
+		tot.initModel(users);
+		tot.trainModel(users);
+		tot.estimateProb();
+		try {
+			tot.outputResult(resultPath, users);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		tot.computePer(testUsers);
 		
 		
 		
