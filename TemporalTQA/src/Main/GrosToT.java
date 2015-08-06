@@ -385,7 +385,7 @@ public class GrosToT {
 				
 				//double tempW=0.0;
 				
-				
+				//for each post
 				double forAllW=0.0;
 				for (int group_id=0;group_id<this.G;group_id++){
 					
@@ -396,10 +396,11 @@ public class GrosToT {
 							int cur_tid=this.trainU.tagToIndexMap.get(tag);
 							//p(topic|u) * p(tag|topic);
 							
-							tempW *= this.thetaUG[uid][group_id] * this.thetaGK[group_id][topic_id] * this.thetaKV[topic_id][cur_tid];
+							tempW *=  this.thetaKV[topic_id][cur_tid];
 							assert (tempW!=0.0 );
 						}
 						assert(tempW!=1.0);
+						tempW *= this.thetaUG[uid][group_id] * this.thetaGK[group_id][topic_id] ;
 						forAllW+=tempW;//accumulate for each topic.
 					}
 					

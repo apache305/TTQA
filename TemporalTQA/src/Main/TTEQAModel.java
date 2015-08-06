@@ -357,10 +357,11 @@ public class TTEQAModel {
 						int cur_tid=this.trainU.tagToIndexMap.get(tag);
 						//p(topic|u) * p(tag|topic);
 						
-						tempW *= this.thetaUK[uid][topic_id] * this.thetaKV[topic_id][cur_tid];
+						tempW *= this.thetaKV[topic_id][cur_tid];
 						assert (tempW!=0.0 );
 					}
 					assert(tempW!=1.0);
+					tempW *= this.thetaUK[uid][topic_id] ;
 					forAllW+=tempW;//accumulate for each topic.
 				}
 				
