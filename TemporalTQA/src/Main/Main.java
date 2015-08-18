@@ -1,17 +1,23 @@
 package Main;
 
+import java.io.File;
 import java.io.IOException;
 
 public class Main {
 	
-	public static void runModel(LDABasedModel xx, String output){
+	public static void runModel(LDABasedModel xx, String outputPathDir){
 		
 
 		xx.initModel();
 		xx.trainModel();
 		xx.estimateProb();
 		try {
-			xx.outputResult(output );
+			File f = new File(outputPathDir);
+			if(!f.exists()){
+				new File(outputPathDir).mkdirs();
+			}
+
+			xx.outputResult(outputPathDir );
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -48,9 +54,10 @@ public class Main {
 		TTEQAAModel tteqaa = new TTEQAAModel(users,testUsers);
 		runModel(tteqaa,"out/outTTEQAA/");
 		
+		System.exit(1);;
 		resultPath= "out/outTTEQA/";
 		TTEQAAModel tteqa = new TTEQAAModel(users,testUsers);
-		runModel(tteqa,"out/outTTEQAA/");
+		runModel(tteqa,"out/outTTEQA/");
 		
 		resultPath= "out/outGROST/";
 		TTEQAAModel tot = new TTEQAAModel(users,testUsers);

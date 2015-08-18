@@ -230,7 +230,7 @@ public class TTEQAModel extends LDABasedModel{
 		
 		double newProb = Math.random()* backupProb[this.K-1];
 		int newSampledTopic=0;
-		while(newSampledTopic < this.K ){
+		while(newSampledTopic < this.K-1 ){
 			if(newProb< backupProb[newSampledTopic] ) break;
 			newSampledTopic++;
 		}

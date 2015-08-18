@@ -217,7 +217,7 @@ public class GrosToT extends LDABasedModel{
 		
 		double newProb = Math.random()* backupProb[this.G-1];
 		int newSampledGroup=0;
-		while(newSampledGroup < this.G ){
+		while(newSampledGroup < this.G-1 ){
 			if(newProb< backupProb[newSampledGroup] ) break;
 			newSampledGroup++;
 		}
@@ -282,7 +282,7 @@ public class GrosToT extends LDABasedModel{
 		
 		double newProb = Math.random()* backupProb[this.K-1];
 		int newSampledTopic=0;
-		while(newSampledTopic < this.K ){
+		while(newSampledTopic < this.K-1 ){
 			if(newProb< backupProb[newSampledTopic] ) break;
 			newSampledTopic++;
 		}

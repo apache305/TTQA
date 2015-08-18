@@ -247,7 +247,7 @@ public class TTEQAAModel extends LDABasedModel{
 		
 		double newProb = Math.random()* backupProb[this.K-1];
 		int newSampledTopic=0;
-		while(newSampledTopic < this.K ){
+		while(newSampledTopic < this.K-1 ){
 			if(newProb< backupProb[newSampledTopic] ) break;
 			newSampledTopic++;
 		}
@@ -258,6 +258,8 @@ public class TTEQAAModel extends LDABasedModel{
 		System.out.print("\n");*/
 		
 		//update count
+		//assert(newSampledTopic>=0);
+		//assert(newSampledTopic<this.K);
 		this.topicLabel[uid][pid]=newSampledTopic;
 		
 		//update current stuff.
