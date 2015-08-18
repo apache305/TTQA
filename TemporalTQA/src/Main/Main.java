@@ -22,11 +22,12 @@ public class Main {
 		Users users= new Users(trainFile);
 		Users testUsers = new Users(testFile);
 		//only for debug
+		
 		//System.out.println(users.tagCountMap.keySet().size());
 		//System.out.println(users.tagCountMap.size());
 		
 		//i think a better way to do is a simple version, then enrich it.
-		/*String resultPath= "out/outTTEQA/";
+		/*resultPath= "out/outTTEQA/";
 		TTEQAModel tt= new TTEQAModel();
 		tt.initModel(users);
 		tt.trainModel(users);
@@ -37,7 +38,9 @@ public class Main {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		tt.computePer(testUsers);*/
+		tt.computePer(testUsers);
+		
+		System.exit(1);*/
 		
 		
 		resultPath= "out/outGROST/";

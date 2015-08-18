@@ -12,18 +12,20 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 
-public class TTEQAModel {
+public class TTEQAAModel {
 	
 	float a;
 	float b;
 	float c;
 	float d;
 	float e;
+	float f;
 	int U;//user number
 	int K;//topic number
 	int V;//tag number
 	int T;//time number
 	int E; //vote level number;
+
 	
 	Users trainU=null;
 	Users testU=null;
@@ -33,10 +35,12 @@ public class TTEQAModel {
 	
 	double [][] thetaUK;// user - topic distribution  U*K
 	int [][] nuk;// number of user i in topic j. U*K
-	int [] sumuk;//sum for each user. U
+	int [] sumuk;//sum for each user. 
+	
+	double [][] thetaKU;// topic-user distribution  K*U  activities.
+	int [][] nku;// number of topic i in user j. K*U
+	int [] sumku;//sum for each topic. 
 
-	
-	
 	double [][] thetaKV;// topic - tag distribution  K*V
 	int [][] nkv;//number of topic k in tag j; K*V
 	int [] sumkv;//sum for each topic. K
@@ -64,7 +68,7 @@ public class TTEQAModel {
 	
 	
 	
-	public TTEQAModel(){
+	public TTEQAAModel(){
 		this.setDefaultParameteres();
 		
 	}
@@ -99,6 +103,10 @@ public class TTEQAModel {
 		this.nuk= new int[this.U][this.K];
 		this.sumuk= new int[this.U];
 		
+		this.thetaKU = new double [this.K][this.U];
+		this.nku= new int[this.K][this.U];
+		this.sumku= new int[this.K];
+		
 		this.thetaKV= new double[this.K][this.V];
 		this.nkv=new int [this.K][this.V];
 		this.sumkv= new int[this.K];
@@ -130,6 +138,10 @@ public class TTEQAModel {
 				//update those counts.
 				this.nuk[i][initialTopicLabel]++;
 				this.sumuk[i]++;
+				
+				this.nku[initialTopicLabel][i]++;
+				this.sumku[initialTopicLabel]++;
+				
 				
 				int timeID=eachPost.Atime;
 				this.nkt[initialTopicLabel][timeID]++;
@@ -187,6 +199,9 @@ public class TTEQAModel {
 		this.nuk[uid][oldTopicID]--;
 		this.sumuk[uid]--;
 		
+		this.nku[oldTopicID][uid]--;
+		this.sumku[oldTopicID]--;
+		
 		for(int eachTagID: tagIDs){
 			this.nkv[oldTopicID][eachTagID]--;
 			this.sumkv[oldTopicID]--;
@@ -213,6 +228,8 @@ public class TTEQAModel {
 			//but if remove this , it still works.
 			//if only keep this, good result.
 			backupProb[k] *= ( this.nkt[k][timeID] + this.c )/(this.sumkt[k] + this.T*this.c ) ;
+			
+			backupProb[k] *= ( this.nku[k][uid] + this.f )/(this.sumku[k] + this.U*this.f ) ;
 		
 			//indeed, if add this, perplex will increase. fuck!
 			//backupProb[k] *= ( this.nukt[uid][k][timeID] + this.d )/(this.sumukt[uid][k] + this.T*this.d ) ;
@@ -241,9 +258,12 @@ public class TTEQAModel {
 		//update count
 		this.topicLabel[uid][pid]=newSampledTopic;
 		
-		//remove current stuff.
+		//update current stuff.
 		this.nuk[uid][newSampledTopic]++;
 		this.sumuk[uid]++;
+		
+		this.nku[newSampledTopic][uid]++;
+		this.sumku[newSampledTopic]++;
 		
 		for(int eachTagID: tagIDs){
 			this.nkv[newSampledTopic][eachTagID]++;
@@ -268,6 +288,12 @@ public class TTEQAModel {
 		for(int uid = 0;uid<this.U;uid++){
 			for(int kid =0 ;kid<this.K;kid++){
 				this.thetaUK[uid][kid]=( this.nuk[uid][kid] + this.a )/(this.sumuk[uid] + this.K*this.a );
+			}
+		}
+		
+		for(int kid =0 ;kid<this.K;kid++){
+			for(int uid = 0;uid<this.U;uid++){
+				this.thetaKU[kid][uid]=( this.nku[kid][uid] + this.f )/(this.sumku[kid] + this.U*this.f );
 			}
 		}
 		
