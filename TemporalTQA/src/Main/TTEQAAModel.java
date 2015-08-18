@@ -231,7 +231,7 @@ public class TTEQAAModel extends LDABasedModel{
 			//if only keep this, good result.
 			backupProb[k] *= ( this.nkt[k][timeID] + this.c )/(this.sumkt[k] + this.T*this.c ) ;
 			
-			backupProb[k] *= ( this.nku[k][uid] + this.f )/(this.sumku[k] + this.U*this.f ) ;
+			//backupProb[k] *= ( this.nku[k][uid] + this.f )/(this.sumku[k] + this.U*this.f ) ;
 		
 			//indeed, if add this, perplex will increase. fuck!
 			//backupProb[k] *= ( this.nukt[uid][k][timeID] + this.d )/(this.sumukt[uid][k] + this.T*this.d ) ;
@@ -422,6 +422,45 @@ public class TTEQAAModel extends LDABasedModel{
 			writer.write("\n");
 		}
 		writer.close();
+		
+		//thetaKU
+		writer = new BufferedWriter(new FileWriter(outputPath+ "thetaKU.txt"));
+		for(int kid = 0;kid<this.K;kid++){
+			writer.write(String.format("Topic%d",kid));
+			for(int uid =0 ;uid<this.U;uid++){
+				String userID=this.trainU.users.get(uid).userId;
+				writer.write(userID+":"+this.thetaUK[uid][kid]+",");
+			}
+			writer.write("\n");
+		}
+		writer.close();
+		
+		//orderedVersion
+		writer = new BufferedWriter(new FileWriter(outputPath+ "thetaKU.sorted.txt"));
+		for(int kid=0;kid<this.K;kid++){
+			writer.write(String.format("Topic%d",kid));
+			ArrayList<Map.Entry<String, Double>> dp= new ArrayList<Map.Entry<String, Double>>();
+			for(int uid=0;uid<this.U;uid++){
+				String userid=this.trainU.users.get(uid).userId;
+				//AbstractMap.SimpleEntry<String, Integer>("exmpleString", 42);
+				Map.Entry<String, Double> pairs =new  AbstractMap.SimpleEntry<String , Double> (userid,this.thetaKU[kid][uid]);
+				dp.add(pairs);
+			}
+			Collections.sort(dp, new Comparator<Entry<String,Double>>(){
+				public int compare(Entry<String, Double> arg0,Entry<String, Double> arg1) {
+					// TODO Auto-generated method stub
+					return -1*arg0.getValue().compareTo(arg1.getValue());
+				}
+			});
+			for(int i=0;i<10;i++){
+				//only output top 10;
+				writer.write(String.format("%s:%f\t", dp.get(i).getKey(),dp.get(i).getValue()));
+			}
+			writer.write("\n");
+		}
+		writer.close();
+		
+		
 		
 		//thetaKV
 		writer = new BufferedWriter(new FileWriter(outputPath+ "thetaKV.txt"));

@@ -15,6 +15,8 @@ public class Main {
 			File f = new File(outputPathDir);
 			if(!f.exists()){
 				new File(outputPathDir).mkdirs();
+			}{
+				//FileUtils.cleanDirectory(outputPathDir);
 			}
 
 			xx.outputResult(outputPathDir );
