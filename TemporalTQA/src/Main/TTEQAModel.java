@@ -218,7 +218,7 @@ public class TTEQAModel extends LDABasedModel{
 		
 			//indeed, if add this, perplex will increase. fuck!
 			//backupProb[k] *= ( this.nukt[uid][k][timeID] + this.d )/(this.sumukt[uid][k] + this.T*this.d ) ;
-			//backupProb[k] *= ( this.nukt[uid][k][expLevel] + this.e )/(this.sumukt[uid][k] + this.E*this.e ) ;
+			//backupProb[k] *= ( this.nuke[uid][k][expLevel] + this.e )/(this.sumuke[uid][k] + this.E*this.e ) ;
 			
 			
 		}
