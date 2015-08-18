@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 
-public class GrosToT {
+public class GrosToT extends LDABasedModel{
 	
 	float a; // 
 	float b; //
@@ -65,9 +65,10 @@ public class GrosToT {
 	
 	
 	
-	public GrosToT(){
+	public GrosToT(Users trainUsers, Users testUsers){
 		this.setDefaultParameteres();
-		
+		this.trainU=trainUsers;
+		this.testU=testUsers;
 	}
 	
 	/*public GrosToT(int a,int b,int c,int d, int topicNum,int iterNum){
@@ -89,12 +90,11 @@ public class GrosToT {
 		this.iterNum=100;
 	}
 	
-	public void initModel(Users users){
+	public void initModel(){
 		//init those probabilities;
-		this.trainU=users;
-		this.U= users.users.size();//number of user.
-		this.T= users.timeCountMap.size();//number of time label
-		this.V= users.tagCountMap.size();//number of tag
+		this.U= this.trainU.users.size();//number of user.
+		this.T= this.trainU.timeCountMap.size();//number of time label
+		this.V= this.trainU.tagCountMap.size();//number of tag
 		this.thetaUG = new double [this.U][this.G];
 		this.nug= new int[this.U][this.G];
 		this.sumug= new int[this.U];
@@ -119,7 +119,7 @@ public class GrosToT {
 		//first random to generate g, and k.
 		Random r = new Random();
 		for(int i=0;i<this.U;i++ ){
-			User u=users.users.get(i);
+			User u=this.trainU.users.get(i);
 			ArrayList<AnswerPost> anses = u.answerPosts;
 			this.topicLabel[i]= new int[anses.size()	];
 			this.groupLabel[i]= new int [anses.size()];
@@ -159,7 +159,7 @@ public class GrosToT {
 	}
 	
 	
-	public void trainModel(Users users){
+	public void trainModel(){
 		for(int it=0;it<this.iterNum;it++){
 			//for each iteration
 			System.out.println(String.format("Round:%d", it));
@@ -169,7 +169,7 @@ public class GrosToT {
 			
 			
 			for(int i=0;i<this.U;i++ ){
-				User u=users.users.get(i);
+				User u=this.trainU.users.get(i);
 				ArrayList<AnswerPost> anses = u.answerPosts;
 				for(int j=0;j<anses.size();j++){
 					AnswerPost eachPost= anses.get(j);
@@ -345,8 +345,7 @@ public class GrosToT {
 		}
 	}
 	
-	public void computePer(Users testUsers){
-		this.testU = testUsers;
+	public void computePer(){
 		//p(tag) or p(word) = p(g|u)(k|g)(v|k)
 
 		
@@ -422,13 +421,13 @@ public class GrosToT {
 		
 	}
 	
-	public void outputResult(String outputPath, Users users) throws IOException{
+	public void outputResult(String outputPath) throws IOException{
 		
 	
 		//thetaUG
 		BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath+ "thetaUG.txt"));
 		for(int uid = 0;uid<this.U;uid++){
-			writer.write( users.users.get(uid).userId +",");
+			writer.write( this.trainU.users.get(uid).userId +",");
 			for(int gid =0 ;gid<this.G;gid++){
 				writer.write(this.thetaUG[uid][gid]+",");
 			}
@@ -441,7 +440,7 @@ public class GrosToT {
 		for(int kid=0;kid<this.K;kid++){
 			writer.write(String.format("Topic%d",kid));
 			for(int vid=0;vid<this.V;vid++){
-				String tag=users.indexToTagMap.get(vid);
+				String tag=this.trainU.indexToTagMap.get(vid);
 				writer.write(tag+":"+this.thetaKV[kid][vid]+"\t");
 			}
 			writer.write("\n");
@@ -454,7 +453,7 @@ public class GrosToT {
 			writer.write(String.format("Topic%d",kid));
 			ArrayList<Map.Entry<String, Double>> dp= new ArrayList<Map.Entry<String, Double>>();
 			for(int vid=0;vid<this.V;vid++){
-				String tag=users.indexToTagMap.get(vid);
+				String tag=this.trainU.indexToTagMap.get(vid);
 				//AbstractMap.SimpleEntry<String, Integer>("exmpleString", 42);
 				Map.Entry<String, Double> pairs =new  AbstractMap.SimpleEntry<String , Double> (tag,this.thetaKV[kid][vid]);
 				dp.add(pairs);

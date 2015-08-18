@@ -3,6 +3,23 @@ package Main;
 import java.io.IOException;
 
 public class Main {
+	
+	public static void runModel(LDABasedModel xx, String output){
+		
+
+		xx.initModel();
+		xx.trainModel();
+		xx.estimateProb();
+		try {
+			xx.outputResult(output );
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		xx.computePer();
+		
+		
+	}
 	public static void main(String [] args){
 		//this is the entry
 		//first try to animate LDA.
@@ -27,34 +44,19 @@ public class Main {
 		//System.out.println(users.tagCountMap.size());
 		
 		//i think a better way to do is a simple version, then enrich it.
-		/*resultPath= "out/outTTEQA/";
-		TTEQAModel tt= new TTEQAModel();
-		tt.initModel(users);
-		tt.trainModel(users);
-		tt.estimateProb();
-		try {
-			tt.outputResult(resultPath, users);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		tt.computePer(testUsers);
+		resultPath= "out/outTTEQAA/";
+		TTEQAAModel tteqaa = new TTEQAAModel(users,testUsers);
+		runModel(tteqaa,"out/outTTEQAA/");
 		
-		System.exit(1);*/
-		
+		resultPath= "out/outTTEQA/";
+		TTEQAAModel tteqa = new TTEQAAModel(users,testUsers);
+		runModel(tteqa,"out/outTTEQAA/");
 		
 		resultPath= "out/outGROST/";
-		GrosToT tot= new GrosToT();
-		tot.initModel(users);
-		tot.trainModel(users);
-		tot.estimateProb();
-		try {
-			tot.outputResult(resultPath, users);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		tot.computePer(testUsers);
+		TTEQAAModel tot = new TTEQAAModel(users,testUsers);
+		runModel(tot,"out/outGROST/");
+		
+		
 		
 		
 		

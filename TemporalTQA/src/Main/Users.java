@@ -8,7 +8,11 @@ import java.util.Map;
 
 import Util.FileTool;
 
-public class Users {
+
+
+
+
+public class Users extends DataSetFormat{
 	public String trainFile =null;
 	public ArrayList<User> users;
 	public Map<String,Integer> userToIndexMap;
