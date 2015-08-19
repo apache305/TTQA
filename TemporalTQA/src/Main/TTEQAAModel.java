@@ -50,6 +50,10 @@ public class TTEQAAModel extends LDABasedModel{
 	int [][] nkt;//number of topic k in time j; K*T
 	int [] sumkt;//sum for each topic. K
 	
+	double [][] thetaTK;
+	int [][] ntk;
+	int [] sumtk;
+	
 	
 	double [][][] thetaUKT;// topic -time per user. distribution  U*K*T;
 	int [][][] nukt;//number of user i 's topic j in time k; U*K*T
@@ -117,6 +121,10 @@ public class TTEQAAModel extends LDABasedModel{
 		this.nkt= new int[this.K][this.T];
 		this.sumkt=new int[this.K];
 		
+		this.thetaTK = new double[this.T][this.K];
+		this.ntk = new int[this.T][this.K];
+		this.sumtk = new int[this.T];
+		
 		this.thetaUKT=new double[this.U][this.K][this.T];
 		this.nukt= new int[this.U][this.K][this.T];
 		this.sumukt=new int[this.U][this.K];
@@ -148,6 +156,9 @@ public class TTEQAAModel extends LDABasedModel{
 				int timeID=eachPost.Atime;
 				this.nkt[initialTopicLabel][timeID]++;
 				this.sumkt[initialTopicLabel]++;
+				
+				this.ntk[timeID][initialTopicLabel]++;
+				this.sumtk[timeID]++;
 				
 				this.nukt[i][initialTopicLabel][timeID]++;
 				this.sumukt[i][initialTopicLabel]++;
@@ -211,6 +222,9 @@ public class TTEQAAModel extends LDABasedModel{
 		
 		this.nkt[oldTopicID][timeID]--;
 		this.sumkt[oldTopicID]--;
+		
+		this.ntk[timeID][oldTopicID]--;
+		this.sumtk[timeID]--;
 		
 		this.nukt[uid][oldTopicID][timeID]--;
 		this.sumukt[uid][oldTopicID]--;
@@ -276,6 +290,9 @@ public class TTEQAAModel extends LDABasedModel{
 		this.nkt[newSampledTopic][timeID]++;
 		this.sumkt[newSampledTopic]++;
 		
+		this.ntk[timeID][newSampledTopic]++;
+		this.sumtk[timeID]++;
+		
 		this.nukt[uid][newSampledTopic][timeID]++;
 		this.sumukt[uid][newSampledTopic]++;
 		
@@ -311,6 +328,13 @@ public class TTEQAAModel extends LDABasedModel{
 		for(int kid=0;kid<this.K;kid++){
 			for(int tid=0;tid<this.T;tid++){
 				this.thetaKT[kid][tid]=(this.nkt[kid][tid] + this.c )/(this.sumkt[kid] + this.T*this.c);
+			}
+		}
+		
+		//thetaTK
+		for(int tid=0;tid<this.T;tid++){
+			for(int kid=0;kid<this.K;kid++){
+				this.thetaTK[tid][kid]=(this.ntk[tid][kid] + this.c )/(this.sumkt[tid] + this.K*this.c);
 			}
 		}
 		
@@ -509,6 +533,19 @@ public class TTEQAAModel extends LDABasedModel{
 				System.out.println(timeLabel);
 				//writer.write(timeLabel+":"+this.thetaKT[kid][tid]+"\t");
 				writer.write(this.thetaKT[kid][tid]+",");
+			}
+			writer.write("\n");
+		}
+		writer.close();
+		
+		//thetaKT
+		writer = new BufferedWriter(new FileWriter(outputPath+ "thetaTK.txt"));
+		for(int tid=7;tid<this.T;tid++){
+			String timeLabel = this.trainU.indexToTimeMap.get(tid);
+			System.out.println(timeLabel);
+			//writer.write(String.format("TimeID%s,",kid));
+			for(int kid=0;kid<this.K;kid++){
+				writer.write(this.thetaTK[tid][kid]+",");
 			}
 			writer.write("\n");
 		}

@@ -52,18 +52,20 @@ public class Main {
 		//System.out.println(users.tagCountMap.size());
 		
 		//i think a better way to do is a simple version, then enrich it.
+		
+		resultPath= "out/outGROST/";
+		GrosToT tot = new GrosToT(users,testUsers);
+		//runModel(tot,"out/outGROST/");
+		
 		resultPath= "out/outTTEQAA/";
 		TTEQAAModel tteqaa = new TTEQAAModel(users,testUsers);
 		runModel(tteqaa,"out/outTTEQAA/");
-		
-		System.exit(1);;
+		//System.exit(1);
 		resultPath= "out/outTTEQA/";
-		TTEQAAModel tteqa = new TTEQAAModel(users,testUsers);
-		runModel(tteqa,"out/outTTEQA/");
+		TTEQAModel tteqa = new TTEQAModel(users,testUsers);
+		//runModel(tteqa,"out/outTTEQA/");
 		
-		resultPath= "out/outGROST/";
-		TTEQAAModel tot = new TTEQAAModel(users,testUsers);
-		runModel(tot,"out/outGROST/");
+		
 		
 		
 		

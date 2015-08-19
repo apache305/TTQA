@@ -5,9 +5,18 @@ import Main.Users;
 public class Evaluation {
 	
 	
-	public static void run( String testFile){
-		//debug
-		Users users= new Users(testFile);
+	public static void run(){
+		// test question routhing problem.
+		
+		
+		
+		// show user activities...
+		
+		
+		//show user expertise...
+		
+		
+		
 		
 		
 		
@@ -17,17 +26,6 @@ public class Evaluation {
 	
 	
 	
-	public static void checkPerplexity(){
-		
-		
-		
-		
-	}
-	
-	
-	public static void debug(String [] args){
-		
-		 run("ntest.txt");
-	}
+
 
 }
