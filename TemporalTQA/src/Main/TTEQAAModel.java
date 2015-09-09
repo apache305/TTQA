@@ -247,7 +247,7 @@ public class TTEQAAModel extends LDABasedModel{
 			
 			//backupProb[k] *= ( this.nku[k][uid] + this.f )/(this.sumku[k] + this.U*this.f ) ;
 		
-			//indeed, if add this, perplex will increase. fuck!
+			//indeed, if add this, perplex will increase. 
 			//backupProb[k] *= ( this.nukt[uid][k][timeID] + this.d )/(this.sumukt[uid][k] + this.T*this.d ) ;
 			backupProb[k] *= ( this.nuke[uid][k][expLevel] + this.e )/(this.sumuke[uid][k] + this.E*this.e ) ;
 
@@ -334,7 +334,7 @@ public class TTEQAAModel extends LDABasedModel{
 		//thetaTK
 		for(int tid=0;tid<this.T;tid++){
 			for(int kid=0;kid<this.K;kid++){
-				this.thetaTK[tid][kid]=(this.ntk[tid][kid] + this.c )/(this.sumkt[tid] + this.K*this.c);
+				this.thetaTK[tid][kid]=(this.ntk[tid][kid] + this.c )/(this.sumtk[tid] + this.K*this.c);
 			}
 		}
 		
@@ -538,11 +538,11 @@ public class TTEQAAModel extends LDABasedModel{
 		}
 		writer.close();
 		
-		//thetaKT
+		//thetaTK
 		writer = new BufferedWriter(new FileWriter(outputPath+ "thetaTK.txt"));
 		for(int tid=7;tid<this.T;tid++){
 			String timeLabel = this.trainU.indexToTimeMap.get(tid);
-			System.out.println(timeLabel);
+			writer.write(String.format("TimeID%s,",timeLabel));
 			//writer.write(String.format("TimeID%s,",kid));
 			for(int kid=0;kid<this.K;kid++){
 				writer.write(this.thetaTK[tid][kid]+",");
