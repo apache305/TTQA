@@ -49,10 +49,7 @@ public class DataWoker {
 		String taglen=itemlist.get(6);
 		int tlen=Integer.parseInt(taglen);
 		QuestionPost p= new QuestionPost();
-		if( qid.equals("null") ||  quid.equals("null") || date.equals("null")  ){
-			System.out.println("skip an error data");
-			return 0;
-		}
+		
 		p.qid=qid;
 		if(!this.useridMap.containsKey(quid)){
 			//new user
@@ -70,11 +67,8 @@ public class DataWoker {
 		}else{
 			p.acceptaid=null;
 		}
-		if(!score.equals("null")){
-			p.score=Integer.parseInt(score);
-		}else{
-			p.score=0;
-		}
+		p.score=Integer.parseInt(score);
+		
 		ArrayList<String> taglist= new ArrayList<String>();
 		ArrayList<String> words=new ArrayList<String>();
 		for(int i=7;i<7+tlen;i++){
@@ -104,10 +98,7 @@ public class DataWoker {
 
 		AnswerPost a=new AnswerPost();
 		//QuestionPost p= new QuestionPost();
-		if( aid.equals("null") ||  auid.equals("null") || date.equals("null") || qid.equals("null") ){
-			System.out.println("skip an error data");
-			return 0;
-		}
+		
 		a.aid=aid;
 		if(!this.useridMap.containsKey(auid)){
 			//new user
@@ -118,11 +109,8 @@ public class DataWoker {
 		a.user=u;
 		a.date=date;
 		
-		if(!score.equals("null")){
-			a.score=Integer.parseInt(score);
-		}else{
-			a.score=0;
-		}
+		a.score=Integer.parseInt(score);
+		
 		
 		ArrayList<String> words=new ArrayList<String>();
 		
@@ -131,8 +119,10 @@ public class DataWoker {
 		}
 		a.words=words;
 		
-		
-		assert this.quesitonMap.containsKey(qid);
+		if(!this.quesitonMap.containsKey(qid)){
+			return 0;
+		}
+
 		QuestionPost q= this.quesitonMap.get(qid);
 		q.answers.add(a);
 		a.question=q;
@@ -144,10 +134,10 @@ public class DataWoker {
 	}
 	
 	private void processEachLine(ArrayList<String> itemlist){
-		if(itemlist.get(0)=="1"){
+		if(itemlist.get(0).equals("1")){
 			//question
 			this.newQuesitonPost(itemlist);
-		}else if(itemlist.get(0)=="2"){
+		}else if(itemlist.get(0).equals("2")){
 			//answer
 			this.newAnswerPost(itemlist);
 		}
@@ -186,6 +176,9 @@ public class DataWoker {
 	public static void main(String [] args){
 		//get question posts
 		//get answer posts
+		
+		DataWoker debug= new DataWoker();
+		debug.ProcessOriData();
 		
 		
 		

@@ -21,6 +21,7 @@ public class QuestionPost {
 	
 	public QuestionPost() {
 		// TODO Auto-generated constructor stub
+		this.answers = new ArrayList<AnswerPost>();
 
 		
 	}
