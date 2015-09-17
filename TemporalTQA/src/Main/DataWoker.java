@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 import Util.FileTool;
@@ -21,6 +22,10 @@ public class DataWoker {
 	public DataWoker(){
 		//this class is used to prepare .... data.
 		
+		this.useridMap= new HashMap<String,User>();
+		this.quesitonMap=new HashMap<String,QuestionPost>();
+		this.answerMap = new HashMap<String,AnswerPost>();
+		
 	}
 	
 	
@@ -34,16 +39,110 @@ public class DataWoker {
 		this.readLinesAsTaglist(this.datasource);
 		
 	}
-	public void newQuesitonPost(ArrayList<String> itemlist){
+	public int newQuesitonPost(ArrayList<String> itemlist){
+		//typeid,ids,quid,date,acceptaid,score,taglen," ".join(taglist)," ".join(BodyP)
+		String qid=itemlist.get(1);
+		String quid=itemlist.get(2);
+		String date=itemlist.get(3);
+		String acceptaid=itemlist.get(4);
+		String score=itemlist.get(5);
+		String taglen=itemlist.get(6);
+		int tlen=Integer.parseInt(taglen);
+		QuestionPost p= new QuestionPost();
+		if( qid.equals("null") ||  quid.equals("null") || date.equals("null")  ){
+			System.out.println("skip an error data");
+			return 0;
+		}
+		p.qid=qid;
+		if(!this.useridMap.containsKey(quid)){
+			//new user
+			User u = new User(quid);
+			this.useridMap.put(quid, u);
+		}
+		User u= this.useridMap.get(quid);
 		
+		p.user=u;
 		
+
+		p.date=date;
+		if(!acceptaid.equals("null"))	{
+			p.acceptaid=acceptaid;
+		}else{
+			p.acceptaid=null;
+		}
+		if(!score.equals("null")){
+			p.score=Integer.parseInt(score);
+		}else{
+			p.score=0;
+		}
+		ArrayList<String> taglist= new ArrayList<String>();
+		ArrayList<String> words=new ArrayList<String>();
+		for(int i=7;i<7+tlen;i++){
+			taglist.add(itemlist.get(i));
+		}
+		p.tags=taglist;
+		for(int i=7+tlen;i<itemlist.size();i++){
+			words.add(itemlist.get(i));
+		}
+		p.words=words;
+		
+		//put the new question into the map;
+		u.questionPosts.add(p);
+		this.quesitonMap.put(qid, p);
+		
+		return 1;
+
 	}
-	public void newAnswerPost(ArrayList<String> itemlist){
+	public int newAnswerPost(ArrayList<String> itemlist){
+		//typeid,ids,auid,date,pid,score," ".join(BodyP)))
 		
-	}
-	public void newUser(ArrayList<String> itemlist){
+		String aid=itemlist.get(1);
+		String auid=itemlist.get(2);
+		String date=itemlist.get(3);
+		String qid= itemlist.get(4);
+		String score=itemlist.get(5);
+
+		AnswerPost a=new AnswerPost();
+		//QuestionPost p= new QuestionPost();
+		if( aid.equals("null") ||  auid.equals("null") || date.equals("null") || qid.equals("null") ){
+			System.out.println("skip an error data");
+			return 0;
+		}
+		a.aid=aid;
+		if(!this.useridMap.containsKey(auid)){
+			//new user
+			User u = new User(auid);
+			this.useridMap.put(auid, u);
+		}
+		User u= this.useridMap.get(auid);
+		a.user=u;
+		a.date=date;
 		
+		if(!score.equals("null")){
+			a.score=Integer.parseInt(score);
+		}else{
+			a.score=0;
+		}
+		
+		ArrayList<String> words=new ArrayList<String>();
+		
+		for(int i=6;i<itemlist.size();i++){
+			words.add(itemlist.get(i));
+		}
+		a.words=words;
+		
+		
+		assert this.quesitonMap.containsKey(qid);
+		QuestionPost q= this.quesitonMap.get(qid);
+		q.answers.add(a);
+		a.question=q;
+		if(qid.equals(q.acceptaid)){
+			q.acceptAnswer=a;
+		}
+		return 1;
+
 	}
+	
 	private void processEachLine(ArrayList<String> itemlist){
 		if(itemlist.get(0)=="1"){
 			//question
@@ -52,12 +151,7 @@ public class DataWoker {
 			//answer
 			this.newAnswerPost(itemlist);
 		}
-		
-		
-		
-		
-		
-		
+
 	}
 	
 	public void readLinesAsTaglist(String file){
@@ -87,13 +181,7 @@ public class DataWoker {
 		
 	}
 	
-	
-	public void readLineFile(){
-		ArrayList<ArrayList<String>> userInfoLines = new ArrayList<ArrayList<String>>();
-		FileTool.readLinesAsTaglist( this.trainFile, userInfoLines);
-		for(ArrayList<String> userInfo: userInfoLines)
-			
-	}
+
 	
 	public static void main(String [] args){
 		//get question posts
