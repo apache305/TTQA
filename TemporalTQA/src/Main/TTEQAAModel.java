@@ -238,18 +238,20 @@ public class TTEQAAModel extends LDABasedModel{
 		for(int k=0;k<this.K;k++){
 			backupProb[k]  =  ( this.nuk[uid][k] + this.a )/(this.sumuk[uid] + this.K*this.a ) ;
 			
+			
+			//should modify this, seems like it is not correct
 			for(int eachTagID:tagIDs){  // if remove this, can not detect topic. tested!
 				backupProb[k] *=  ( this.nkv[k][eachTagID] + tagL+ this.b )/(this.sumkv[k] + tagL+ this.V*this.b ) ;
 			}
 			//but if remove this , it still works.
 			//if only keep this, good result.
-			backupProb[k] *= ( this.nkt[k][timeID] + this.c )/(this.sumkt[k] + this.T*this.c ) ;
+			//backupProb[k] *= ( this.nkt[k][timeID] + this.c )/(this.sumkt[k] + this.T*this.c ) ;
 			
-			//backupProb[k] *= ( this.nku[k][uid] + this.f )/(this.sumku[k] + this.U*this.f ) ;
+			backupProb[k] *= ( this.nku[k][uid] + this.f )/(this.sumku[k] + this.U*this.f ) ;
 		
 			//indeed, if add this, perplex will increase. 
 			//backupProb[k] *= ( this.nukt[uid][k][timeID] + this.d )/(this.sumukt[uid][k] + this.T*this.d ) ;
-			backupProb[k] *= ( this.nuke[uid][k][expLevel] + this.e )/(this.sumuke[uid][k] + this.E*this.e ) ;
+			//backupProb[k] *= ( this.nuke[uid][k][expLevel] + this.e )/(this.sumuke[uid][k] + this.E*this.e ) ;
 
 		}
 		

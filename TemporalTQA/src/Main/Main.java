@@ -54,15 +54,17 @@ public class Main {
 		//i think a better way to do is a simple version, then enrich it.
 		
 		resultPath= "out/outGROST/";
-		GrosToT tot = new GrosToT(users,testUsers);
+		System.out.println("Grostt Model");
+		//GrosToT tot = new GrosToT(users,testUsers);
 		//runModel(tot,"out/outGROST/");
 		
 		resultPath= "out/outTTEQAA/";
+		System.out.println("TTEQAA Model");
 		TTEQAAModel tteqaa = new TTEQAAModel(users,testUsers);
 		runModel(tteqaa,"out/outTTEQAA/");
 		//System.exit(1);
 		resultPath= "out/outTTEQA/";
-		TTEQAModel tteqa = new TTEQAModel(users,testUsers);
+		//TTEQAModel tteqa = new TTEQAModel(users,testUsers);
 		//runModel(tteqa,"out/outTTEQA/");
 		
 		

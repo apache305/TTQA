@@ -14,20 +14,36 @@ import Util.FileTool;
 
 public class Users extends DataSetFormat{
 	public String trainFile =null;
+	
+	
+	//those are the basic statistic information about the data set
 	public ArrayList<User> users;
-	public Map<String,Integer> userToIndexMap;
+	public Map<String,Integer> userToIndexMap;  //user id to user object
 	
 	public Map<String, Integer> tagToIndexMap;
 	public ArrayList<String> indexToTagMap;
-	public Map<String, Integer> tagCountMap;
+	public Map<String, Integer> tagCountMap;  //all tag count
+	
+	public String timeLevel="Month";
 	
 	public Map<String, Integer> timeToIndexMap;
 	public ArrayList<String> indexToTimeMap;
 	public Map<String, Integer> timeCountMap;
 	
-	public int voteStep;
-	public double [] voteMap;
+	public Map<String, Integer> termToIndexMap;
+	public ArrayList<String> indexToTermMap;
+	public Map<String, Integer> termCountMap;
 	
+	public Map<String, Integer> voteToIndexMap;
+	public ArrayList<String> indexToVoteMap;
+	public Map<String, Integer> VoteCountMap;
+	
+	public int voteStep;//only for our model
+	public double [] voteMap;//only for our model.
+	
+	
+	//need to change these stuff.
+	//don't need to sort. 
 	public String [] years={"2008","2009"};
 	public String [] months={"01","02","03","04","05","06","07","08","09","10","11","12"};
 	
@@ -37,7 +53,7 @@ public class Users extends DataSetFormat{
 		this.trainFile=trainFile;
 		//this.users= new HashMap<String,User>();
 		this.users= new ArrayList<User>();
-		this.userToIndexMap= new HashMap<String,Integer>();
+		this.userToIndexMap= new HashMap<String,Integer>();// userid to  it's ids in the arraylist.
 		
 		
 		//tag count
@@ -45,13 +61,18 @@ public class Users extends DataSetFormat{
 		this.indexToTagMap = new ArrayList<String>();
 		this.tagCountMap   = new HashMap<String,Integer>();
 		
+		//term count
+		this.termToIndexMap = new HashMap<String,Integer>();
+		this.indexToTermMap = new ArrayList<String>();
+		this.termCountMap   = new HashMap<String,Integer>();
+		
 		//time count
 		this.timeToIndexMap = new HashMap<String,Integer>();
 		this.indexToTimeMap = new ArrayList<String>();
 		this.timeCountMap   = new HashMap<String,Integer>();	
 		
 		//vote count
-		this.voteStep=3;// low medium high
+		this.voteStep=3;// low medium high  or just low high
 		this.voteMap = new double [this.voteStep];
 		
 		
