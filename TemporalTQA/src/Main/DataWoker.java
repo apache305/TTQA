@@ -1,8 +1,10 @@
 package Main;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,7 +15,7 @@ import Util.FileTool;
 
 public class DataWoker {
 	
-	public String datasource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/all_in_one.txt";
+	public String datasource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/all80.2.txt";
 	public Map<String,User> useridMap;
 	public Map<String,QuestionPost> quesitonMap;
 	public Map<String,AnswerPost> answerMap;
@@ -26,6 +28,8 @@ public class DataWoker {
 		this.quesitonMap=new HashMap<String,QuestionPost>();
 		this.answerMap = new HashMap<String,AnswerPost>();
 		
+		
+		
 	}
 	
 	
@@ -37,8 +41,21 @@ public class DataWoker {
 		
 		
 		this.readLinesAsTaglist(this.datasource);
+		System.out.println(this.useridMap.size());//8109
+		System.out.println(this.quesitonMap.size());//67741
+		System.out.println(this.answerMap.size());//643729
+
+		
+		
+		//start to calculate these.
 		
 	}
+	
+	public void filterUserByFrequency(int freq){
+		//use script to process. 
+	}
+
+	
 	public int newQuesitonPost(ArrayList<String> itemlist){
 		//typeid,ids,quid,date,acceptaid,score,taglen," ".join(taglist)," ".join(BodyP)
 		String qid=itemlist.get(1);
@@ -98,6 +115,7 @@ public class DataWoker {
 
 		AnswerPost a=new AnswerPost();
 		//QuestionPost p= new QuestionPost();
+		this.answerMap.put(aid, a);
 		
 		a.aid=aid;
 		if(!this.useridMap.containsKey(auid)){
@@ -122,6 +140,8 @@ public class DataWoker {
 		if(!this.quesitonMap.containsKey(qid)){
 			return 0;
 		}
+		
+		u.answerPosts.add(a);
 
 		QuestionPost q= this.quesitonMap.get(qid);
 		q.answers.add(a);
