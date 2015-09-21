@@ -712,7 +712,7 @@ public class TTEQAAModel extends LDABasedModel{
 			for(int tid=0;tid<this.T;tid++){
 				
 				String timeLabel = this.trainSet.indexToTimeMap.get(tid);
-				System.out.println(timeLabel);
+				//System.out.println(timeLabel);
 				//writer.write(timeLabel+":"+this.thetaKT[kid][tid]+"\t");
 				writer.write(this.thetaKT[kid][tid]+",");
 			}

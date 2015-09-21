@@ -26,8 +26,8 @@ public class GrosToT extends LDABasedModel{
 	int T;//time number
 
 	
-	Users trainU=null;
-	Users testU=null;
+	DataWoker trainSet=null;
+	DataWoker testSet=null;
 	
 	
 	int iterNum;//number of iterations.
@@ -65,10 +65,10 @@ public class GrosToT extends LDABasedModel{
 	
 	
 	
-	public GrosToT(Users trainUsers, Users testUsers){
+	public GrosToT(DataWoker trainUsers, DataWoker testUsers){
 		this.setDefaultParameteres();
-		this.trainU=trainUsers;
-		this.testU=testUsers;
+		this.trainSet=trainUsers;
+		this.testSet=testUsers;
 	}
 	
 	/*public GrosToT(int a,int b,int c,int d, int topicNum,int iterNum){
@@ -92,9 +92,9 @@ public class GrosToT extends LDABasedModel{
 	
 	public void initModel(){
 		//init those probabilities;
-		this.U= this.trainU.users.size();//number of user.
-		this.T= this.trainU.timeCountMap.size();//number of time label
-		this.V= this.trainU.tagCountMap.size();//number of tag
+		this.U= this.trainSet.users.size();//number of user.
+		this.T= this.trainSet.timeCountMap.size();//number of time label
+		this.V= this.trainSet.termCountMap.size();//number of words
 		this.thetaUG = new double [this.U][this.G];
 		this.nug= new int[this.U][this.G];
 		this.sumug= new int[this.U];
@@ -119,7 +119,7 @@ public class GrosToT extends LDABasedModel{
 		//first random to generate g, and k.
 		Random r = new Random();
 		for(int i=0;i<this.U;i++ ){
-			User u=this.trainU.users.get(i);
+			User u=this.trainSet.users.get(i);
 			ArrayList<AnswerPost> anses = u.answerPosts;
 			this.topicLabel[i]= new int[anses.size()	];
 			this.groupLabel[i]= new int [anses.size()];
@@ -140,13 +140,13 @@ public class GrosToT extends LDABasedModel{
 				this.ngk[initialGroupLabel][initialTopicLabel]++;
 				this.sumgk[initialGroupLabel]++;
 				
-				//for each tag
-				for(int tagID:eachPost.Qtags){
-					this.nkv[initialTopicLabel][tagID]++;
+				//for each word
+				for(int wid:eachPost.words){
+					this.nkv[initialTopicLabel][wid]++;
 					this.sumkv[initialTopicLabel]++;
 				}
 				
-				int timeID=eachPost.Atime;
+				int timeID=eachPost.dateid;
 				
 				this.nkgt[initialTopicLabel][initialGroupLabel][timeID]++;
 				this.sumkgt[initialTopicLabel][initialGroupLabel]++;
@@ -169,15 +169,16 @@ public class GrosToT extends LDABasedModel{
 			
 			
 			for(int i=0;i<this.U;i++ ){
-				User u=this.trainU.users.get(i);
+				User u=this.trainSet.users.get(i);
 				ArrayList<AnswerPost> anses = u.answerPosts;
 				for(int j=0;j<anses.size();j++){
 					AnswerPost eachPost= anses.get(j);
-					int timeID=eachPost.Atime;
-					int [] tagIDs=eachPost.Qtags;
-					int newGroupLabel = this.gibbsSampleGroupLabel(i, j, tagIDs, timeID);
+					int timeID=eachPost.dateid;
+					//int [] tagIDs=eachPost.Qtags;
+					ArrayList<Integer> words = eachPost.words;
+					int newGroupLabel = this.gibbsSampleGroupLabel(i, j, words, timeID);
 					this.groupLabel[i][j]=newGroupLabel;
-					int newTopicLabel = this.gibbsSampleTopicLabel(i, j, tagIDs, timeID);
+					int newTopicLabel = this.gibbsSampleTopicLabel(i, j, words, timeID);
 					this.topicLabel[i][j]=newTopicLabel;
 					
 				}
@@ -185,7 +186,7 @@ public class GrosToT extends LDABasedModel{
 		}
 	}
 	
-	public int gibbsSampleGroupLabel(int uid,int pid,int [] tagIDs, int timeID){
+	public int gibbsSampleGroupLabel(int uid,int pid,ArrayList<Integer> words, int timeID){
 		int oldGroupID=this.groupLabel[uid][pid];
 		int oldTopicID=this.topicLabel[uid][pid];
 		
@@ -246,7 +247,7 @@ public class GrosToT extends LDABasedModel{
 	}
 	
 	
-	public int gibbsSampleTopicLabel(int uid,int pid,int [] tagIDs, int timeID){
+	public int gibbsSampleTopicLabel(int uid,int pid,ArrayList<Integer> words, int timeID){
 		int oldTopicID=this.topicLabel[uid][pid];
 		int oldGroupID=this.groupLabel[uid][pid];
 		
@@ -258,20 +259,42 @@ public class GrosToT extends LDABasedModel{
 		this.sumkgt[oldTopicID][oldGroupID]--;
 
 		
-		for(int eachTagID: tagIDs){
-			this.nkv[oldTopicID][eachTagID]--;
+		//need counter for this words.
+		Map<Integer,Integer> wordFreq = new HashMap<Integer,Integer>();
+		
+		for(int eachWord:words){
+			this.nkv[oldTopicID][eachWord]--;
 			this.sumkv[oldTopicID]--;
+			if(!wordFreq.containsKey(eachWord)){
+				wordFreq.put(eachWord,0);
+			}
+			int oldc=wordFreq.get(eachWord);
+			wordFreq.put(eachWord, oldc+1);
 		}
-		
-		
+				
+
 		double [] backupProb =  new double [this.K];
-		int tagL=tagIDs.length;
+		//int tagL=tagIDs.length;
 		for(int k=0;k<this.K;k++){
 			backupProb[k]  =  ( this.ngk[oldGroupID][k] + this.a )/(this.sumgk[oldGroupID] + this.K*this.a);
 			backupProb[k] *= ( this.nkgt[k][oldGroupID][timeID]+this.d)/(this.sumkgt[k][oldGroupID] +this.T*this.d);
-			for(int eachTagID:tagIDs){  // if remove this, can not detect topic. tested!
-				backupProb[k] *=  ( this.nkv[k][eachTagID] + tagL+ this.b )/(this.sumkv[k] + tagL+ this.V*this.b ) ;
+			
+			int count=0;
+			for(int word: wordFreq.keySet()){
+				//
+				int freq=wordFreq.get(word);
+				for(int eachFreq=0;eachFreq<freq;eachFreq++){
+					backupProb[k]*=(this.nkv[k][word]+this.b+eachFreq)
+							/(this.sumkv[k]+this.b*this.V + count);
+					count++;
+				}
+				
 			}
+			
+			
+			//for(int eachTagID:tagIDs){  // if remove this, can not detect topic. tested!
+			//	backupProb[k] *=  ( this.nkv[k][eachTagID] + tagL+ this.b )/(this.sumkv[k] + tagL+ this.V*this.b ) ;
+			//}
 
 		}
 		
@@ -303,8 +326,8 @@ public class GrosToT extends LDABasedModel{
 		this.sumkgt[newSampledTopic][oldGroupID]++;
 
 		
-		for(int eachTagID: tagIDs){
-			this.nkv[newSampledTopic][eachTagID]++;
+		for(int word: words){
+			this.nkv[newSampledTopic][word]++;
 			this.sumkv[newSampledTopic]++;
 		}
 		
@@ -351,38 +374,41 @@ public class GrosToT extends LDABasedModel{
 		
 		double  total_result=0.0;
 		int post_number=0;
-		int tag_number=0;
+		int word_number=0;
 		double final_perplex=0.0;
-		for (User u : this.testU.users){
+		for (User u : this.testSet.users){
 			int uid=0;
-			if ( !this.trainU.userToIndexMap.containsKey(u.userId) ){
+			if ( !this.trainSet.useridToIndex.containsKey(u.userId) ){
 				continue;
 			}
-			uid=this.trainU.userToIndexMap.get(u.userId);
+			uid=this.trainSet.useridToIndex.get(u.userId);
 			//System.out.println(u.userId);
 			//System.out.println(u.answerPosts.size());
 			
 			for(AnswerPost eachPost: u.answerPosts){
-				int [] tids = eachPost.Qtags;
+				//int [] tids = eachPost.Qtags;
 				
 				//compute for each post.
 				double curPostW=0.0;
 				
-				ArrayList<String> tags = new ArrayList<String>();
-				for( int tid : tids){
-					String testOriTag = this.testU.indexToTagMap.get(tid);
-					if(this.trainU.tagToIndexMap.containsKey(testOriTag)){
-						tags.add( testOriTag);
+
+				ArrayList<Integer> fakewords=eachPost.words;
+				ArrayList<Integer> realwords=new ArrayList<Integer>();
+				
+				for( int wid : fakewords){
+					String testOriWord = this.testSet.indexToTermMap.get(wid);
+					if(this.trainSet.termToIndexMap.containsKey(testOriWord)){
+						realwords.add( this.trainSet.termToIndexMap.get(testOriWord));
 					}
 					
 				}
+
 				
-				int tag_n= tags.size();
-				if(tag_n==0){
+				int word_n=realwords.size();
+				if(word_n==0){
 					continue;
 				}
-				
-				//double tempW=0.0;
+
 				
 				//for each post
 				double forAllW=0.0;
@@ -390,12 +416,11 @@ public class GrosToT extends LDABasedModel{
 					
 					for(int topic_id=0;topic_id < this.K; topic_id++){
 						double tempW=1.0;
-						for(String tag: tags){
+						for(int wid: realwords){
 							//System.out.println(tag);
-							int cur_tid=this.trainU.tagToIndexMap.get(tag);
+							//int cur_tid=this.trainSet.tagToIndexMap.get(wid);
 							//p(topic|u) * p(tag|topic);
-							
-							tempW *=  this.thetaKV[topic_id][cur_tid];
+							tempW *=  this.thetaKV[topic_id][wid];
 							assert (tempW!=0.0 );
 						}
 						assert(tempW!=1.0);
@@ -408,7 +433,7 @@ public class GrosToT extends LDABasedModel{
 				
 				post_number+=1;
 				total_result += Math.log(forAllW);
-				tag_number+=tag_n;
+				word_number+=word_n;
 				
 			}
 			
@@ -416,7 +441,7 @@ public class GrosToT extends LDABasedModel{
 
 		}
 		
-		final_perplex =  Math.exp(-1.0  *  total_result  / tag_number);
+		final_perplex =  Math.exp(-1.0  *  total_result  / word_number);
 		System.out.println(final_perplex);
 		
 	}
@@ -427,7 +452,7 @@ public class GrosToT extends LDABasedModel{
 		//thetaUG
 		BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath+ "thetaUG.txt"));
 		for(int uid = 0;uid<this.U;uid++){
-			writer.write( this.trainU.users.get(uid).userId +",");
+			writer.write( this.trainSet.users.get(uid).userId +",");
 			for(int gid =0 ;gid<this.G;gid++){
 				writer.write(this.thetaUG[uid][gid]+",");
 			}
@@ -436,11 +461,11 @@ public class GrosToT extends LDABasedModel{
 		writer.close();
 		
 		//thetaKV
-		writer = new BufferedWriter(new FileWriter(outputPath+ "thetaKV.txt"));
+		writer = new BufferedWriter(new FileWriter(outputPath+ "thetaKW.txt"));
 		for(int kid=0;kid<this.K;kid++){
 			writer.write(String.format("Topic%d",kid));
 			for(int vid=0;vid<this.V;vid++){
-				String tag=this.trainU.indexToTagMap.get(vid);
+				String tag=this.trainSet.indexToTagMap.get(vid);
 				writer.write(tag+":"+this.thetaKV[kid][vid]+"\t");
 			}
 			writer.write("\n");
@@ -448,12 +473,12 @@ public class GrosToT extends LDABasedModel{
 		writer.close();
 		
 		//ordered version.
-		writer = new BufferedWriter(new FileWriter(outputPath+ "thetaKV.sorted.txt"));
+		writer = new BufferedWriter(new FileWriter(outputPath+ "thetaKW.sorted.txt"));
 		for(int kid=0;kid<this.K;kid++){
 			writer.write(String.format("Topic%d",kid));
 			ArrayList<Map.Entry<String, Double>> dp= new ArrayList<Map.Entry<String, Double>>();
 			for(int vid=0;vid<this.V;vid++){
-				String tag=this.trainU.indexToTagMap.get(vid);
+				String tag=this.trainSet.indexToTagMap.get(vid);
 				//AbstractMap.SimpleEntry<String, Integer>("exmpleString", 42);
 				Map.Entry<String, Double> pairs =new  AbstractMap.SimpleEntry<String , Double> (tag,this.thetaKV[kid][vid]);
 				dp.add(pairs);
