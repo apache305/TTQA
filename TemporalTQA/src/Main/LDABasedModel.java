@@ -8,7 +8,7 @@ public class LDABasedModel {
 		
 	}
 	
-	public LDABasedModel(DataSetFormat Train,DataSetFormat Test){
+	public LDABasedModel(DataWoker Train,DataWoker Test){
 		
 	}
 	public void initModel(){

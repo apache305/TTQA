@@ -40,6 +40,11 @@ public class DataWoker {
 	public ArrayList<String> indexToTermMap;
 	public Map<String, Integer> termCountMap;
 	
+	public int maxvote=0;//max vote score.
+	public int voteStep=3;//low, medium, high.
+	public double [] voteMap;//only for our model.
+	
+	
 	
 
 
@@ -72,11 +77,55 @@ public class DataWoker {
 		this.timeCountMap   = new HashMap<String,Integer>();	
 		
 		
+		this.voteMap = new double [this.voteStep];
+		
+		
 		
 
 
 	}
+	public void initVoteMap(){
+		//first to find the vote freq map;
+		
+		//System.out.println(max_vote);
+		double one_step=  Math.log(this.maxvote)/(double)this.voteStep;
+		for (int i=0;i<this.voteStep;i++){
+			this.voteMap[i]=(i+1)*one_step;
+		}
+		
+
+		
+	}
 	
+	public int getVoteLevel(int score){
+		double cur_vote_log=0.0 ;
+		if (score>=0){
+			cur_vote_log=Math.log(score);
+		}else{
+			return 0;
+		}
+		int vote_level=0;
+		for(;vote_level< this.voteStep ;vote_level++){
+			if( cur_vote_log <= this.voteMap[vote_level]){
+				break;
+			}
+		}
+		if(vote_level==this.voteStep){
+			return this.voteStep-1;
+		}else{
+			return vote_level;
+		}
+	
+	}
+	
+	public void updateAllVoteLevel(){
+		for(QuestionPost q : this.quesitonMap.values()){
+			q.vote_level= this.getVoteLevel(q.score);
+		}
+		for(AnswerPost a : this.answerMap.values()){
+			a.vote_level=this.getVoteLevel(a.score);
+		}
+	}
 	
 	
 	public void ProcessOriData(){
@@ -86,6 +135,7 @@ public class DataWoker {
 		
 		
 		this.readLinesAsTaglist(this.datasource);
+		this.initVoteMap();
 		
 		
 
@@ -154,8 +204,8 @@ public class DataWoker {
 				this.indexToTagMap.add(tag);
 				this.tagCountMap.put(tag, 0);
 			}
-			int oldCount= this.tagCountMap.get(tag);
-			this.tagCountMap.put(tag, oldCount+1);
+			//int oldCount= this.tagCountMap.get(tag);
+			//this.tagCountMap.put(tag, oldCount+1);
 			taglist.add(this.tagToIndexMap.get(tag));
 		}
 		p.tags=taglist;
@@ -187,12 +237,19 @@ public class DataWoker {
 		String date=itemlist.get(3);
 		String qid= itemlist.get(4);
 		String score=itemlist.get(5);
+		
+		if(!this.quesitonMap.containsKey(qid)){
+			return 0;
+		}//che shenm dan
 
 		AnswerPost a=new AnswerPost();
 		//QuestionPost p= new QuestionPost();
 		this.answerMap.put(aid, a);
 		
 		a.aid=aid;
+		a.tags= this.quesitonMap.get(qid).tags;
+		
+		
 		if(!this.useridToIndex.containsKey(auid)){
 			User u = new User(auid);
 			this.useridToIndex.put(auid, this.users.size());
@@ -203,6 +260,8 @@ public class DataWoker {
 
 		a.user=u;
 		String month=date.substring(0, this.timeLevel);
+		
+		
 		
 		if(!this.timeToIndexMap.containsKey(month)){
 			this.timeToIndexMap.put(month,this.indexToTimeMap.size());
@@ -219,6 +278,15 @@ public class DataWoker {
 		
 		ArrayList<Integer> words=new ArrayList<Integer>();
 		
+		//need to count tag
+		for(int eachtag : a.tags){
+			String tag= this.indexToTagMap.get(eachtag);
+			int oldC=this.tagCountMap.get(tag);
+			this.tagCountMap.put(tag, oldC+1);
+		}
+		
+		this.maxvote=Math.max(maxvote, a.score);
+		
 		for(int i=6;i<itemlist.size();i++){
 			String word= itemlist.get(i);
 			if(!this.termToIndexMap.containsKey(word)){
@@ -232,9 +300,7 @@ public class DataWoker {
 		}
 		a.words=words;
 		
-		if(!this.quesitonMap.containsKey(qid)){
-			return 0;
-		}
+		
 		
 		u.answerPosts.add(a);
 

@@ -14,21 +14,27 @@ import java.util.Random;
 
 public class TTEQAAModel extends LDABasedModel{
 	
-	float a;
-	float b;
-	float c;
-	float d;
-	float e;
-	float f;
+	float a1;//alpha
+	float a2;//alpha
+	float b1;//beta
+	float b2;//beta
+	float delta;//delta
+	float lambda;//lambda
+	float eta;//
+	float gamma;
 	int U;//user number
 	int K;//topic number
 	int V;//tag number
+	int W;//word number
 	int T;//time number
 	int E; //vote level number;
 
 	
-	Users trainU=null;
-	Users testU=null;
+	//Users trainU=null;
+	//Users testU=null;
+	
+	DataWoker trainSet=null;
+	DataWoker testSet=null;
 	
 	
 	int iterNum;//number of iterations.
@@ -45,6 +51,10 @@ public class TTEQAAModel extends LDABasedModel{
 	int [][] nkv;//number of topic k in tag j; K*V
 	int [] sumkv;//sum for each topic. K
 	
+	double [][] thetaKW;//topic -word distribution K*W
+	int [][] nkw;//number of topic k in word j; K*W
+	int [] sumkw;//number of topic k in word j; K
+	
 	
 	double [][] thetaKT;//  topic - time distribution K*T 
 	int [][] nkt;//number of topic k in time j; K*T
@@ -59,23 +69,31 @@ public class TTEQAAModel extends LDABasedModel{
 	int [][][] nukt;//number of user i 's topic j in time k; U*K*T
 	int [][] sumukt;//sum of user i's each topic. U*K;
 	
+	double [][][] thetaKTU;
+	int [][][] nktu;
+	int [][] sumktu;
 	
-	double [][][] thetaUKE;// topic -expertise per user. distrbution U*K*E;
+	double [][][] thetaKEU;
+	int [][][] nkeu;
+	int [][] sumkeu;
+	
+	
+	double [][][] thetaUKE;// topic -expertise per user. distribution U*K*E;
 	int [][][] nuke;
 	int [][] sumuke;
 	
 	
-	//each users' each posts' topic label.
+	//each users' each posts' topic label.  only for answer post.
 	int [][] topicLabel;
 	
 	
 	
 	
 	
-	public TTEQAAModel(Users trainUsers, Users testUsers){
+	public TTEQAAModel(DataWoker trainUsers, DataWoker testUsers){
 		this.setDefaultParameteres();
-		this.trainU=trainUsers;
-		this.testU=testUsers;
+		this.trainSet=trainUsers;
+		this.testSet=testUsers;
 		
 	}
 	
@@ -90,21 +108,26 @@ public class TTEQAAModel extends LDABasedModel{
 	
 	public void setDefaultParameteres(){
 		this.K=30;
-		this.a=(float) 50.0/(float)this.K;
-		this.b=0.001f;
-		this.c=0.01f;
-		this.d=0.01f;
-		this.e=0.01f;
-		this.iterNum=100;
+		this.a1=(float) 50.0/(float)this.K;
+		this.a2=this.a1;
+		this.b1=0.001f;
+		this.b2=0.001f;
+		this.lambda=0.01f;
+		this.delta=0.01f;
+		this.gamma=0.01f;
+		this.eta=0.01f;
+
+		this.iterNum=300;
 	}
 	
 	
 	public void initModel(){
 		//init those probabilities;
-		this.U= this.trainU.users.size();//number of user.
-		this.T= this.trainU.timeCountMap.size();//number of time label
-		this.V= this.trainU.tagCountMap.size();//number of tag
-		this.E= this.trainU.voteStep;//number of expertise.
+		this.U= this.trainSet.users.size();//number of user.
+		this.T= this.trainSet.timeCountMap.size();//number of time label
+		this.V= this.trainSet.tagCountMap.size();//number of tag
+		this.W= this.trainSet.termCountMap.size();//number of words
+		this.E= this.trainSet.voteStep;//number of expertise.//
 		this.thetaUK = new double [this.U][this.K];
 		this.nuk= new int[this.U][this.K];
 		this.sumuk= new int[this.U];
@@ -116,6 +139,10 @@ public class TTEQAAModel extends LDABasedModel{
 		this.thetaKV= new double[this.K][this.V];
 		this.nkv=new int [this.K][this.V];
 		this.sumkv= new int[this.K];
+		
+		this.thetaKW=new double[this.K][this.W];//topic -word distribution K*W
+		this.nkw=new int [this.K][this.W];//number of topic k in word j; K*W
+		this.sumkw =new int[this.K];//number of topic k in word j; K
 		
 		this.thetaKT=new double[this.K][this.T];
 		this.nkt= new int[this.K][this.T];
@@ -129,6 +156,15 @@ public class TTEQAAModel extends LDABasedModel{
 		this.nukt= new int[this.U][this.K][this.T];
 		this.sumukt=new int[this.U][this.K];
 		
+		this.thetaKTU=new double[this.K][this.T][this.U];
+		this.nktu=new int[this.K][this.T][this.U];
+		this.sumktu=new int[this.K][this.T];
+		
+		this.thetaKEU=new double[this.K][this.E][this.U];
+		this.nkeu=new int[this.K][this.E][this.U];
+		this.sumkeu=new int[this.K][this.E];
+		
+		
 		this.thetaUKE = new double [this.U][this.K][this.E];
 		this.nuke= new int [this.U][this.K][this.E];
 		this.sumuke=new int [this.U][this.K];
@@ -137,7 +173,7 @@ public class TTEQAAModel extends LDABasedModel{
 		this.topicLabel = new int [this.U][];
 		Random r = new Random();
 		for(int i=0;i<this.U;i++ ){
-			User u=this.trainU.users.get(i);
+			User u=this.trainSet.users.get(i);
 			ArrayList<AnswerPost> anses = u.answerPosts;
 			this.topicLabel[i]= new int[anses.size()	];
 			for(int j=0;j<anses.size();j++){
@@ -153,7 +189,7 @@ public class TTEQAAModel extends LDABasedModel{
 				this.sumku[initialTopicLabel]++;
 				
 				
-				int timeID=eachPost.Atime;
+				int timeID=eachPost.dateid;
 				this.nkt[initialTopicLabel][timeID]++;
 				this.sumkt[initialTopicLabel]++;
 				
@@ -163,15 +199,29 @@ public class TTEQAAModel extends LDABasedModel{
 				this.nukt[i][initialTopicLabel][timeID]++;
 				this.sumukt[i][initialTopicLabel]++;
 				
+				this.nktu[initialTopicLabel][timeID][i]++;
+				this.sumktu[initialTopicLabel][timeID]++;
+				
+			
+				
 				int expertiseLevel = eachPost.vote_level;
 				this.nuke[i][initialTopicLabel][expertiseLevel]++;
 				this.sumuke[i][initialTopicLabel]++;
 				
+				this.nkeu[initialTopicLabel][expertiseLevel][i]++;
+				this.sumkeu[initialTopicLabel][expertiseLevel]++;
+				
 				
 				//for each tag
-				for(int tagID:eachPost.Qtags){
+				for(int tagID:eachPost.tags){
 					this.nkv[initialTopicLabel][tagID]++;
 					this.sumkv[initialTopicLabel]++;
+				}
+				
+				//for each word
+				for(int wordID:eachPost.words){
+					this.nkw[initialTopicLabel][wordID]++;
+					this.sumkw[initialTopicLabel]++;
 				}
 				
 			}
@@ -190,14 +240,15 @@ public class TTEQAAModel extends LDABasedModel{
 			
 			
 			for(int i=0;i<this.U;i++ ){
-				User u=this.trainU.users.get(i);
+				User u=this.trainSet.users.get(i);
 				ArrayList<AnswerPost> anses = u.answerPosts;
 				for(int j=0;j<anses.size();j++){
 					AnswerPost eachPost= anses.get(j);
-					int timeID=eachPost.Atime;
-					int [] tagIDs=eachPost.Qtags;
+					int timeID=eachPost.dateid;
+					ArrayList<Integer> tags= eachPost.tags ;
+					ArrayList<Integer> words = eachPost.words;
 					int expLevel = eachPost.vote_level;
-					int newTopicLabel = this.gibbsSample(i,j,tagIDs,timeID,expLevel);
+					int newTopicLabel = this.gibbsSample(i,j,tags,words, timeID,expLevel);
 					this.topicLabel[i][j]=newTopicLabel;
 					
 				}
@@ -205,7 +256,7 @@ public class TTEQAAModel extends LDABasedModel{
 		}
 	}
 	
-	public int gibbsSample(int uid,int pid,int [] tagIDs, int timeID,int expLevel){
+	public int gibbsSample(int uid,int pid,ArrayList<Integer>tags,ArrayList<Integer> words, int timeID,int expLevel){
 		int oldTopicID=this.topicLabel[uid][pid];
 		
 		//remove current stuff.
@@ -215,10 +266,29 @@ public class TTEQAAModel extends LDABasedModel{
 		this.nku[oldTopicID][uid]--;
 		this.sumku[oldTopicID]--;
 		
-		for(int eachTagID: tagIDs){
+		
+		
+		
+		for(int eachTagID: tags){
 			this.nkv[oldTopicID][eachTagID]--;
 			this.sumkv[oldTopicID]--;
 		}
+		
+		//need counter for this words.
+		Map<Integer,Integer> wordFreq = new HashMap<Integer,Integer>();
+		
+		for(int eachWord:words){
+			this.nkw[oldTopicID][eachWord]--;
+			this.sumkw[oldTopicID]--;
+			if(!wordFreq.containsKey(eachWord)){
+				wordFreq.put(eachWord,0);
+			}
+			int oldc=wordFreq.get(eachWord);
+			wordFreq.put(eachWord, oldc+1);
+		}
+		
+		
+		
 		
 		this.nkt[oldTopicID][timeID]--;
 		this.sumkt[oldTopicID]--;
@@ -228,29 +298,51 @@ public class TTEQAAModel extends LDABasedModel{
 		
 		this.nukt[uid][oldTopicID][timeID]--;
 		this.sumukt[uid][oldTopicID]--;
+		this.nktu[oldTopicID][timeID][uid]--;
+		this.sumktu[oldTopicID][timeID]--;
 		
 		this.nuke[uid][oldTopicID][expLevel]--;
 		this.sumuke[uid][oldTopicID]--;
+		this.nkeu[oldTopicID][expLevel][uid]--;
+		this.sumkeu[oldTopicID][expLevel]--;
 		
 		//souihaite ca marche.
 		double [] backupProb =  new double [this.K];
-		int tagL=tagIDs.length;
+		
+		int tagL=tags.size();
 		for(int k=0;k<this.K;k++){
-			backupProb[k]  =  ( this.nuk[uid][k] + this.a )/(this.sumuk[uid] + this.K*this.a ) ;
+			backupProb[k]  =  ( this.nuk[uid][k] + this.a1 )/(this.sumuk[uid] + this.K*this.a1 ) ;
 			
 			
 			//should modify this, seems like it is not correct
-			for(int eachTagID:tagIDs){  // if remove this, can not detect topic. tested!
-				backupProb[k] *=  ( this.nkv[k][eachTagID] + tagL+ this.b )/(this.sumkv[k] + tagL+ this.V*this.b ) ;
+			//for(int eachTagID:tags){  // if remove this, can not detect topic. tested!
+				//backupProb[k] *=  ( this.nkv[k][eachTagID] + tagL+ this.b )/(this.sumkv[k] + tagL+ this.V*this.b ) ;
+			//}
+			int count=0;
+			for(int tag:tags){
+				backupProb[k]*=(this.nkv[k][tag]+this.gamma)/(this.sumkv[k]+this.gamma*this.V+count );
+				count++;
 			}
-			//but if remove this , it still works.
+			count=0;
+			for(int word: wordFreq.keySet()){
+				//
+				int freq=wordFreq.get(word);
+				for(int eachFreq=0;eachFreq<freq;eachFreq++){
+					backupProb[k]*=(this.nkw[k][word]+this.delta+eachFreq)
+							/(this.sumkw[k]+this.delta*this.W + count);
+					count++;
+				}
+				
+			}
+
+
 			//if only keep this, good result.
-			//backupProb[k] *= ( this.nkt[k][timeID] + this.c )/(this.sumkt[k] + this.T*this.c ) ;
+			backupProb[k] *= ( this.nkt[k][timeID] + this.b2 )/(this.sumkt[k] + this.T*this.b2 ) ;
 			
-			backupProb[k] *= ( this.nku[k][uid] + this.f )/(this.sumku[k] + this.U*this.f ) ;
+			//backupProb[k] *= ( this.nku[k][uid] + this.f )/(this.sumku[k] + this.U*this.f ) ;
 		
 			//indeed, if add this, perplex will increase. 
-			//backupProb[k] *= ( this.nukt[uid][k][timeID] + this.d )/(this.sumukt[uid][k] + this.T*this.d ) ;
+			//backupProb[k] *= ( this.nukt[uid][k][timeID] + this.b2 )/(this.sumukt[uid][k] + this.T*this.b2 ) ;
 			//backupProb[k] *= ( this.nuke[uid][k][expLevel] + this.e )/(this.sumuke[uid][k] + this.E*this.e ) ;
 
 		}
@@ -284,9 +376,13 @@ public class TTEQAAModel extends LDABasedModel{
 		this.nku[newSampledTopic][uid]++;
 		this.sumku[newSampledTopic]++;
 		
-		for(int eachTagID: tagIDs){
+		for(int eachTagID: tags){
 			this.nkv[newSampledTopic][eachTagID]++;
 			this.sumkv[newSampledTopic]++;
+		}
+		for(int word: words){
+			this.nkw[newSampledTopic][word]++;
+			this.sumkw[newSampledTopic]++;
 		}
 		
 		this.nkt[newSampledTopic][timeID]++;
@@ -297,9 +393,14 @@ public class TTEQAAModel extends LDABasedModel{
 		
 		this.nukt[uid][newSampledTopic][timeID]++;
 		this.sumukt[uid][newSampledTopic]++;
+		this.nktu[newSampledTopic][timeID][uid]--;
+		this.sumktu[newSampledTopic][timeID]--;
 		
 		this.nuke[uid][newSampledTopic][expLevel]++;
 		this.sumuke[uid][newSampledTopic]++;
+		
+		this.nkeu[newSampledTopic][expLevel][uid]--;
+		this.sumkeu[newSampledTopic][expLevel]--;
 		
 		return newSampledTopic;
 	}
@@ -309,42 +410,63 @@ public class TTEQAAModel extends LDABasedModel{
 		//thetaUK
 		for(int uid = 0;uid<this.U;uid++){
 			for(int kid =0 ;kid<this.K;kid++){
-				this.thetaUK[uid][kid]=( this.nuk[uid][kid] + this.a )/(this.sumuk[uid] + this.K*this.a );
+				this.thetaUK[uid][kid]=( this.nuk[uid][kid] + this.a1 )/(this.sumuk[uid] + this.K*this.a1 );
 			}
 		}
 		
 		for(int kid =0 ;kid<this.K;kid++){
 			for(int uid = 0;uid<this.U;uid++){
-				this.thetaKU[kid][uid]=( this.nku[kid][uid] + this.f )/(this.sumku[kid] + this.U*this.f );
+				this.thetaKU[kid][uid]=( this.nku[kid][uid] + this.a2 )/(this.sumku[kid] + this.U*this.a2 );
 			}
 		}
 		
 		//thetaKV
 		for(int kid=0;kid<this.K;kid++){
 			for(int vid=0;vid<this.V;vid++){
-				this.thetaKV[kid][vid]=(this.nkv[kid][vid] +  this.b )/(this.sumkv[kid] + this.V*this.b);
+				this.thetaKV[kid][vid]=(this.nkv[kid][vid] +  this.gamma )/(this.sumkv[kid] + this.V*this.gamma);
 			}
 		}
 		
 		//thetaKT
 		for(int kid=0;kid<this.K;kid++){
 			for(int tid=0;tid<this.T;tid++){
-				this.thetaKT[kid][tid]=(this.nkt[kid][tid] + this.c )/(this.sumkt[kid] + this.T*this.c);
+				this.thetaKT[kid][tid]=(this.nkt[kid][tid] + this.b2 )/(this.sumkt[kid] + this.T*this.b2);
 			}
 		}
 		
 		//thetaTK
 		for(int tid=0;tid<this.T;tid++){
 			for(int kid=0;kid<this.K;kid++){
-				this.thetaTK[tid][kid]=(this.ntk[tid][kid] + this.c )/(this.sumtk[tid] + this.K*this.c);
+				this.thetaTK[tid][kid]=(this.ntk[tid][kid] + this.b1 )/(this.sumtk[tid] + this.K*this.b1);
 			}
 		}
+		
+		//thetaKTU
+		for(int kid=0;kid<this.K;kid++){
+			for(int tid=0;tid<this.T;tid++){
+				for(int uid=0;uid<this.U;uid++){
+					this.thetaKTU[kid][tid][uid]=( this.nktu[kid][tid][uid] + this.lambda )/(this.sumktu[kid][tid] + this.U*this.lambda ) ;
+				}
+			}
+		}
+		
+		//thetaKEU
+		for(int kid=0;kid<this.K;kid++){
+			for(int eid=0;eid<this.E;eid++){
+				for(int uid=0;uid<this.U;uid++){
+					this.thetaKEU[kid][eid][uid]=( this.nkeu[kid][eid][uid] + this.eta )/(this.sumkeu[kid][eid] + this.U*this.eta ) ;
+				}
+			}
+		}
+		
+		
+		
 		
 		//thetaUKT
 		for(int uid=0;uid<this.U;uid++){
 			for(int kid=0;kid<this.K;kid++){
 				for(int tid=0;tid<this.T;tid++){
-					this.thetaUKT[uid][kid][tid]=( this.nukt[uid][kid][tid] + this.d )/(this.sumukt[uid][kid] + this.T*this.d ) ;
+					this.thetaUKT[uid][kid][tid]=( this.nukt[uid][kid][tid] + this.lambda )/(this.sumukt[uid][kid] + this.T*this.lambda ) ;
 				}
 			}
 		}
@@ -353,7 +475,7 @@ public class TTEQAAModel extends LDABasedModel{
 		for(int uid=0;uid<this.U;uid++){
 			for(int kid=0;kid<this.K;kid++){
 				for(int eid=0;eid<this.E;eid++){
-					this.thetaUKE[uid][kid][eid]=( this.nuke[uid][kid][eid] + this.e )/(this.sumuke[uid][kid] + this.E*this.e ) ;
+					this.thetaUKE[uid][kid][eid]=( this.nuke[uid][kid][eid] + this.lambda )/(this.sumuke[uid][kid] + this.E*this.lambda ) ;
 				}
 			}
 		}
