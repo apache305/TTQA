@@ -117,7 +117,7 @@ public class TTEQAAModel extends LDABasedModel{
 		this.gamma=0.01f;
 		this.eta=0.01f;
 
-		this.iterNum=300;
+		this.iterNum=10;
 	}
 	
 	
@@ -393,14 +393,14 @@ public class TTEQAAModel extends LDABasedModel{
 		
 		this.nukt[uid][newSampledTopic][timeID]++;
 		this.sumukt[uid][newSampledTopic]++;
-		this.nktu[newSampledTopic][timeID][uid]--;
-		this.sumktu[newSampledTopic][timeID]--;
+		this.nktu[newSampledTopic][timeID][uid]++;
+		this.sumktu[newSampledTopic][timeID]++;
 		
 		this.nuke[uid][newSampledTopic][expLevel]++;
 		this.sumuke[uid][newSampledTopic]++;
 		
-		this.nkeu[newSampledTopic][expLevel][uid]--;
-		this.sumkeu[newSampledTopic][expLevel]--;
+		this.nkeu[newSampledTopic][expLevel][uid]++;
+		this.sumkeu[newSampledTopic][expLevel]++;
 		
 		return newSampledTopic;
 	}
@@ -424,6 +424,13 @@ public class TTEQAAModel extends LDABasedModel{
 		for(int kid=0;kid<this.K;kid++){
 			for(int vid=0;vid<this.V;vid++){
 				this.thetaKV[kid][vid]=(this.nkv[kid][vid] +  this.gamma )/(this.sumkv[kid] + this.V*this.gamma);
+			}
+		}
+		
+		//thetaKW
+		for(int kid=0;kid<this.K;kid++){
+			for(int wid=0;wid<this.W;wid++){
+				this.thetaKW[kid][wid]=(this.nkw[kid][wid] +  this.delta )/(this.sumkv[kid] + this.W*this.delta);
 			}
 		}
 		
@@ -566,6 +573,7 @@ public class TTEQAAModel extends LDABasedModel{
 				post_number+=1;
 				total_result += Math.log(forAllW);
 				tag_number+=tag_n;
+				word_number+=word_n;
 				
 			}
 			
@@ -573,7 +581,7 @@ public class TTEQAAModel extends LDABasedModel{
 
 		}
 		
-		final_perplex =  Math.exp(-1.0  *  total_result  / tag_number);
+		final_perplex =  Math.exp(-1.0  *  total_result  / (float)(tag_number+word_number));
 		System.out.println(final_perplex);
 		
 	}
