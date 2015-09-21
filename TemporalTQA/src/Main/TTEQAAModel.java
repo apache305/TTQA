@@ -479,9 +479,7 @@ public class TTEQAAModel extends LDABasedModel{
 				}
 			}
 		}
-		
-		
-		
+	
 	}
 	
 	public void computePer(){
@@ -492,33 +490,54 @@ public class TTEQAAModel extends LDABasedModel{
 		double  total_result=0.0;
 		int post_number=0;
 		int tag_number=0;
+		int word_number=0;
 		double final_perplex=0.0;
-		for (User u : this.testU.users){
+		int 	UinTrain = 0;
+		for (User u : this.testSet.users){
 			int uid=0;
-			if ( !this.trainU.userToIndexMap.containsKey(u.userId) ){
+			if ( !this.trainSet.useridToIndex.containsKey(u.userId) ){
 				continue;
 			}
-			uid=this.trainU.userToIndexMap.get(u.userId);
+			UinTrain++;
+			uid=this.trainSet.useridToIndex.get(u.userId);
 			//System.out.println(u.userId);
 			//System.out.println(u.answerPosts.size());
 			
 			for(AnswerPost eachPost: u.answerPosts){
-				int [] tids = eachPost.Qtags;
+				
+				ArrayList<Integer> faketags= eachPost.tags;
+				ArrayList<Integer> fakewords=eachPost.words;
 				
 				//compute for each post.
 				double curPostW=0.0;
 				
-				ArrayList<String> tags = new ArrayList<String>();
-				for( int tid : tids){
-					String testOriTag = this.testU.indexToTagMap.get(tid);
-					if(this.trainU.tagToIndexMap.containsKey(testOriTag)){
-						tags.add( testOriTag);
+				ArrayList<Integer> realtags=new ArrayList<Integer>();
+				ArrayList<Integer> realwords=new ArrayList<Integer>();
+				
+
+				for( int tid : faketags){
+					String testOriTag = this.testSet.indexToTagMap.get(tid);
+					if(this.trainSet.tagToIndexMap.containsKey(testOriTag)){
+						realtags.add( this.trainSet.tagToIndexMap.get(testOriTag));
 					}
 					
 				}
 				
-				int tag_n= tags.size();
+				for( int wid : fakewords){
+					String testOriWord = this.testSet.indexToTermMap.get(wid);
+					if(this.trainSet.termToIndexMap.containsKey(testOriWord)){
+						realwords.add( this.trainSet.termToIndexMap.get(testOriWord));
+					}
+					
+				}
+				
+				int tag_n= realtags.size();
 				if(tag_n==0){
+					continue;
+				}
+				
+				int word_n=realwords.size();
+				if(word_n==0){
 					continue;
 				}
 				
@@ -528,13 +547,16 @@ public class TTEQAAModel extends LDABasedModel{
 				double forAllW=0.0;
 				for(int topic_id=0;topic_id < this.K; topic_id++){
 					double tempW=1.0;
-					for(String tag: tags){
+					for(int tag: realtags){
 						//System.out.println(tag);
-						int cur_tid=this.trainU.tagToIndexMap.get(tag);
+						//int cur_tid=this.trainU.tagToIndexMap.get(tag);
 						//p(topic|u) * p(tag|topic);
-						
-						tempW *= this.thetaKV[topic_id][cur_tid];
+						tempW *= this.thetaKV[topic_id][tag];
 						assert (tempW!=0.0 );
+					}
+					for(int word: realwords){
+						tempW *= this.thetaKW[topic_id][word];
+						assert(tempW!=0.0);
 					}
 					assert(tempW!=1.0);
 					tempW *= this.thetaUK[uid][topic_id] ;
@@ -562,7 +584,7 @@ public class TTEQAAModel extends LDABasedModel{
 		//thetaUK
 		BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath+ "thetaUK.txt"));
 		for(int uid = 0;uid<this.U;uid++){
-			writer.write( this.trainU.users.get(uid).userId +",");
+			writer.write( this.trainSet.users.get(uid).userId +",");
 			for(int kid =0 ;kid<this.K;kid++){
 				writer.write(this.thetaUK[uid][kid]+",");
 			}
@@ -575,7 +597,7 @@ public class TTEQAAModel extends LDABasedModel{
 		for(int kid = 0;kid<this.K;kid++){
 			writer.write(String.format("Topic%d",kid));
 			for(int uid =0 ;uid<this.U;uid++){
-				String userID=this.trainU.users.get(uid).userId;
+				String userID=this.trainSet.users.get(uid).userId;
 				writer.write(userID+":"+this.thetaUK[uid][kid]+",");
 			}
 			writer.write("\n");
@@ -588,7 +610,7 @@ public class TTEQAAModel extends LDABasedModel{
 			writer.write(String.format("Topic%d",kid));
 			ArrayList<Map.Entry<String, Double>> dp= new ArrayList<Map.Entry<String, Double>>();
 			for(int uid=0;uid<this.U;uid++){
-				String userid=this.trainU.users.get(uid).userId;
+				String userid=this.trainSet.users.get(uid).userId;
 				//AbstractMap.SimpleEntry<String, Integer>("exmpleString", 42);
 				Map.Entry<String, Double> pairs =new  AbstractMap.SimpleEntry<String , Double> (userid,this.thetaKU[kid][uid]);
 				dp.add(pairs);
@@ -614,7 +636,7 @@ public class TTEQAAModel extends LDABasedModel{
 		for(int kid=0;kid<this.K;kid++){
 			writer.write(String.format("Topic%d",kid));
 			for(int vid=0;vid<this.V;vid++){
-				String tag=this.trainU.indexToTagMap.get(vid);
+				String tag=this.trainSet.indexToTagMap.get(vid);
 				writer.write(tag+":"+this.thetaKV[kid][vid]+"\t");
 			}
 			writer.write("\n");
@@ -627,9 +649,45 @@ public class TTEQAAModel extends LDABasedModel{
 			writer.write(String.format("Topic%d",kid));
 			ArrayList<Map.Entry<String, Double>> dp= new ArrayList<Map.Entry<String, Double>>();
 			for(int vid=0;vid<this.V;vid++){
-				String tag=this.trainU.indexToTagMap.get(vid);
+				String tag=this.trainSet.indexToTagMap.get(vid);
 				//AbstractMap.SimpleEntry<String, Integer>("exmpleString", 42);
 				Map.Entry<String, Double> pairs =new  AbstractMap.SimpleEntry<String , Double> (tag,this.thetaKV[kid][vid]);
+				dp.add(pairs);
+			}
+			Collections.sort(dp, new Comparator<Entry<String,Double>>(){
+				public int compare(Entry<String, Double> arg0,Entry<String, Double> arg1) {
+					// TODO Auto-generated method stub
+					return -1*arg0.getValue().compareTo(arg1.getValue());
+				}
+			});
+			for(int i=0;i<10;i++){
+				//only output top 10;
+				writer.write(String.format("%s:%f\t", dp.get(i).getKey(),dp.get(i).getValue()));
+			}
+			writer.write("\n");
+		}
+		writer.close();
+		//thetaKW
+		writer = new BufferedWriter(new FileWriter(outputPath+ "thetaKW.txt"));
+		for(int kid=0;kid<this.K;kid++){
+			writer.write(String.format("Topic%d",kid));
+			for(int wid=0;wid<this.W;wid++){
+				String word=this.trainSet.indexToTermMap.get(wid);
+				writer.write(word+":"+this.thetaKW[kid][wid]+"\t");
+			}
+			writer.write("\n");
+		}
+		writer.close();
+		
+		//ordered version.
+		writer = new BufferedWriter(new FileWriter(outputPath+ "thetaKW.sorted.txt"));
+		for(int kid=0;kid<this.K;kid++){
+			writer.write(String.format("Topic%d",kid));
+			ArrayList<Map.Entry<String, Double>> dp= new ArrayList<Map.Entry<String, Double>>();
+			for(int wid=0;wid<this.W;wid++){
+				String word=this.trainSet.indexToTermMap.get(wid);
+				//AbstractMap.SimpleEntry<String, Integer>("exmpleString", 42);
+				Map.Entry<String, Double> pairs =new  AbstractMap.SimpleEntry<String , Double> (word,this.thetaKW[kid][wid]);
 				dp.add(pairs);
 			}
 			Collections.sort(dp, new Comparator<Entry<String,Double>>(){
@@ -651,9 +709,9 @@ public class TTEQAAModel extends LDABasedModel{
 		writer = new BufferedWriter(new FileWriter(outputPath+ "thetaKT.txt"));
 		for(int kid=0;kid<this.K;kid++){
 			writer.write(String.format("Topic%d,",kid));
-			for(int tid=7;tid<this.T;tid++){
+			for(int tid=0;tid<this.T;tid++){
 				
-				String timeLabel = this.trainU.indexToTimeMap.get(tid);
+				String timeLabel = this.trainSet.indexToTimeMap.get(tid);
 				System.out.println(timeLabel);
 				//writer.write(timeLabel+":"+this.thetaKT[kid][tid]+"\t");
 				writer.write(this.thetaKT[kid][tid]+",");
@@ -664,8 +722,8 @@ public class TTEQAAModel extends LDABasedModel{
 		
 		//thetaTK
 		writer = new BufferedWriter(new FileWriter(outputPath+ "thetaTK.txt"));
-		for(int tid=7;tid<this.T;tid++){
-			String timeLabel = this.trainU.indexToTimeMap.get(tid);
+		for(int tid=0;tid<this.T;tid++){
+			String timeLabel = this.trainSet.indexToTimeMap.get(tid);
 			writer.write(String.format("TimeID%s,",timeLabel));
 			//writer.write(String.format("TimeID%s,",kid));
 			for(int kid=0;kid<this.K;kid++){
@@ -678,7 +736,7 @@ public class TTEQAAModel extends LDABasedModel{
 		//thetaUKT
 		writer = new BufferedWriter(new FileWriter(outputPath+ "UserthetaKT.txt"));
 		for(int uid=0;uid<this.U;uid++){
-			writer.write( this.trainU.users.get(uid).userId +",");
+			writer.write( this.trainSet.users.get(uid).userId +",");
 			for(int kid=0;kid<this.K;kid++){
 				writer.write(String.format("Topic%d,",kid));
 				for(int tid=0;tid<this.T;tid++){
@@ -693,7 +751,7 @@ public class TTEQAAModel extends LDABasedModel{
 		//thetaUKE
 		writer = new BufferedWriter(new FileWriter(outputPath+ "UserthetaKE.txt"));
 		for(int uid=0;uid<this.U;uid++){
-			writer.write( this.trainU.users.get(uid).userId +",");
+			writer.write( this.trainSet.users.get(uid).userId +",");
 			for(int kid=0;kid<this.K;kid++){
 				writer.write(String.format("Topic%d,",kid));
 				for(int eid=0;eid<this.E;eid++){
