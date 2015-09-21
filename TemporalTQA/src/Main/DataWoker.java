@@ -15,8 +15,8 @@ import Util.FileTool;
 
 public class DataWoker {
 	
-	public String trainsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/alla100.2.train.txt";
-	public String testsource ="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/alla100.2.test.txt";
+	
+	public String datasource;
 	//public Map<String,User> useridMap;
 	public Map<String,QuestionPost> quesitonMap; 
 	public Map<String,AnswerPost> answerMap;
@@ -45,8 +45,9 @@ public class DataWoker {
 
 	
 	
-	public DataWoker(){
+	public DataWoker(String datasource){
 		//this class is used to prepare .... data.
+		this.datasource=datasource;
 		
 		this.users= new ArrayList<User>();
 		this.useridToIndex = new HashMap<String,Integer>();
@@ -84,10 +85,12 @@ public class DataWoker {
 		//could change these later..
 		
 		
-		this.readLinesAsTaglist(this.trainsource);
+		this.readLinesAsTaglist(this.datasource);
 		System.out.println(this.users.size());//8109
 		System.out.println(this.quesitonMap.size());//67741
 		System.out.println(this.answerMap.size());//643729
+		
+
 		
 
 	}
@@ -137,7 +140,10 @@ public class DataWoker {
 			if(!this.tagToIndexMap.containsKey(tag)){
 				this.tagToIndexMap.put(tag,this.indexToTagMap.size())	;
 				this.indexToTagMap.add(tag);
+				this.tagCountMap.put(tag, 0);
 			}
+			int oldCount= this.tagCountMap.get(tag);
+			this.tagCountMap.put(tag, oldCount+1);
 			taglist.add(this.tagToIndexMap.get(tag));
 		}
 		p.tags=taglist;
@@ -147,6 +153,8 @@ public class DataWoker {
 				this.termToIndexMap.put(word,this.indexToTermMap.size())	;
 				this.indexToTermMap.add(word);
 			}
+			int oldCount= this.termCountMap.get(word);
+			this.termCountMap.put(word, oldCount+1);
 			words.add(this.termToIndexMap.get(word));
 		}
 		p.words=words;
@@ -257,9 +265,12 @@ public class DataWoker {
 	public static void main(String [] args){
 		//get question posts
 		//get answer posts
-		
-		DataWoker debug= new DataWoker();
-		debug.ProcessOriData();
+		String trainsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/alla100.2.train.txt";
+		String testsource ="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/alla100.2.test.txt";
+		DataWoker debug1= new DataWoker(trainsource);
+		DataWoker debug2=new DataWoker(testsource);
+		debug1.ProcessOriData();
+		debug2.ProcessOriData();
 		
 		
 	
