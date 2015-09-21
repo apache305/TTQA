@@ -86,13 +86,17 @@ public class DataWoker {
 		
 		
 		this.readLinesAsTaglist(this.datasource);
+		
+		
+
+		
+
+	}
+	
+	public void printStat(){
 		System.out.println(this.users.size());//8109
 		System.out.println(this.quesitonMap.size());//67741
 		System.out.println(this.answerMap.size());//643729
-		
-
-		
-
 	}
 	
 
@@ -128,9 +132,10 @@ public class DataWoker {
 		if(!this.timeToIndexMap.containsKey(month)){
 			this.timeToIndexMap.put(month,this.indexToTimeMap.size());
 			this.indexToTimeMap.add(month);
+			this.timeCountMap.put(month, 0);
 		}
-		int oldTimeCount = this.timeCountMap.get(month);
-		this.timeCountMap.put(month, oldTimeCount+1);
+		//int oldTimeCount = this.timeCountMap.get(month);
+		//this.timeCountMap.put(month, oldTimeCount+1);
 		p.dateid=this.timeToIndexMap.get(month);
 		p.date=date;
 		if(!acceptaid.equals("null"))	{
@@ -159,9 +164,10 @@ public class DataWoker {
 			if(!this.termToIndexMap.containsKey(word)){
 				this.termToIndexMap.put(word,this.indexToTermMap.size())	;
 				this.indexToTermMap.add(word);
+				this.termCountMap.put(word, 0);
 			}
-			int oldCount= this.termCountMap.get(word);
-			this.termCountMap.put(word, oldCount+1);
+			//int oldCount= this.termCountMap.get(word);
+			//this.termCountMap.put(word, oldCount+1);
 			words.add(this.termToIndexMap.get(word));
 		}
 		p.words=words;
@@ -201,6 +207,7 @@ public class DataWoker {
 		if(!this.timeToIndexMap.containsKey(month)){
 			this.timeToIndexMap.put(month,this.indexToTimeMap.size());
 			this.indexToTimeMap.add(month);
+			this.timeCountMap.put(month, 0);
 		}
 		int oldTimeCount = this.timeCountMap.get(month);
 		this.timeCountMap.put(month, oldTimeCount+1);
@@ -217,7 +224,10 @@ public class DataWoker {
 			if(!this.termToIndexMap.containsKey(word)){
 				this.termToIndexMap.put(word,this.indexToTermMap.size())	;
 				this.indexToTermMap.add(word);
+				this.termCountMap.put(word, 0);
 			}
+			int oldCount=this.termCountMap.get(word);
+			this.termCountMap.put(word, oldCount+1);
 			words.add(this.termToIndexMap.get(word));
 		}
 		a.words=words;
@@ -286,7 +296,10 @@ public class DataWoker {
 		DataWoker debug1= new DataWoker(trainsource);
 		DataWoker debug2=new DataWoker(testsource);
 		debug1.ProcessOriData();
+		debug1.printStat();
+		//for
 		debug2.ProcessOriData();
+		debug2.printStat();
 
 		
 	}
