@@ -48,6 +48,17 @@ public class Main {
 		Users testUsers = new Users(testFile);
 		//only for debug
 		
+		String trainsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/alla100.2.train.txt";
+		String testsource ="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/alla100.2.test.txt";
+		DataWoker trainset= new DataWoker(trainsource);
+		DataWoker testset=new DataWoker(testsource);
+		trainset.ProcessOriData();
+		testset.ProcessOriData();
+
+		
+		
+		
+		
 		//System.out.println(users.tagCountMap.keySet().size());
 		//System.out.println(users.tagCountMap.size());
 		
@@ -60,7 +71,7 @@ public class Main {
 		
 		resultPath= "out/outTTEQAA/";
 		System.out.println("TTEQAA Model");
-		TTEQAAModel tteqaa = new TTEQAAModel(users,testUsers);
+		TTEQAAModel tteqaa = new TTEQAAModel(trainset,testset);
 		runModel(tteqaa,"out/outTTEQAA/");
 		//System.exit(1);
 		resultPath= "out/outTTEQA/";
