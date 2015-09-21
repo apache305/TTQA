@@ -15,21 +15,65 @@ import Util.FileTool;
 
 public class DataWoker {
 	
-	public String datasource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/all80.2.txt";
-	public Map<String,User> useridMap;
-	public Map<String,QuestionPost> quesitonMap;
+	public String trainsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/alla100.2.train.txt";
+	public String testsource ="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/alla100.2.test.txt";
+	//public Map<String,User> useridMap;
+	public Map<String,QuestionPost> quesitonMap; 
 	public Map<String,AnswerPost> answerMap;
+	
+	public ArrayList<User> users = new ArrayList<User>();
+	public Map<String,Integer> useridToIndex=new HashMap<String,Integer>();
+	
+	
+	
+	public Map<String, Integer> tagToIndexMap;
+	public ArrayList<String> indexToTagMap;
+	public Map<String, Integer> tagCountMap;  //all tag count
+	
+	public String timeLevel="Month";
+	
+	public Map<String, Integer> timeToIndexMap;
+	public ArrayList<String> indexToTimeMap;
+	public Map<String, Integer> timeCountMap;
+	
+	public Map<String, Integer> termToIndexMap;
+	public ArrayList<String> indexToTermMap;
+	public Map<String, Integer> termCountMap;
+	
+	
+
+
 	
 	
 	public DataWoker(){
 		//this class is used to prepare .... data.
 		
-		this.useridMap= new HashMap<String,User>();
+		this.users= new ArrayList<User>();
+		this.useridToIndex = new HashMap<String,Integer>();
+
 		this.quesitonMap=new HashMap<String,QuestionPost>();
 		this.answerMap = new HashMap<String,AnswerPost>();
 		
 		
+		//tag count
+		this.tagToIndexMap = new HashMap<String,Integer>();
+		this.indexToTagMap = new ArrayList<String>();
+		this.tagCountMap   = new HashMap<String,Integer>();
 		
+		//term count
+		this.termToIndexMap = new HashMap<String,Integer>();
+		this.indexToTermMap = new ArrayList<String>();
+		this.termCountMap   = new HashMap<String,Integer>();
+		
+		//time count
+		this.timeToIndexMap = new HashMap<String,Integer>();
+		this.indexToTimeMap = new ArrayList<String>();
+		this.timeCountMap   = new HashMap<String,Integer>();	
+		
+		
+		
+
+
 	}
 	
 	
@@ -40,20 +84,16 @@ public class DataWoker {
 		//could change these later..
 		
 		
-		this.readLinesAsTaglist(this.datasource);
-		System.out.println(this.useridMap.size());//8109
+		this.readLinesAsTaglist(this.trainsource);
+		System.out.println(this.users.size());//8109
 		System.out.println(this.quesitonMap.size());//67741
 		System.out.println(this.answerMap.size());//643729
+		
 
-		
-		
-		//start to calculate these.
-		
 	}
 	
-	public void filterUserByFrequency(int freq){
-		//use script to process. 
-	}
+
+
 
 	
 	public int newQuesitonPost(ArrayList<String> itemlist){
@@ -68,12 +108,16 @@ public class DataWoker {
 		QuestionPost p= new QuestionPost();
 		
 		p.qid=qid;
-		if(!this.useridMap.containsKey(quid)){
-			//new user
+		
+		if(!this.useridToIndex.containsKey(quid)){
 			User u = new User(quid);
-			this.useridMap.put(quid, u);
+			this.useridToIndex.put(quid, this.users.size());
+			this.users.add(u);
+			
 		}
-		User u= this.useridMap.get(quid);
+		User u = this.users.get(this.useridToIndex.get(quid)  );
+		
+
 		
 		p.user=u;
 		
@@ -86,14 +130,24 @@ public class DataWoker {
 		}
 		p.score=Integer.parseInt(score);
 		
-		ArrayList<String> taglist= new ArrayList<String>();
-		ArrayList<String> words=new ArrayList<String>();
+		ArrayList<Integer> taglist= new ArrayList<Integer>();
+		ArrayList<Integer> words=new ArrayList<Integer>();
 		for(int i=7;i<7+tlen;i++){
-			taglist.add(itemlist.get(i));
+			String tag= itemlist.get(i);
+			if(!this.tagToIndexMap.containsKey(tag)){
+				this.tagToIndexMap.put(tag,this.indexToTagMap.size())	;
+				this.indexToTagMap.add(tag);
+			}
+			taglist.add(this.tagToIndexMap.get(tag));
 		}
 		p.tags=taglist;
 		for(int i=7+tlen;i<itemlist.size();i++){
-			words.add(itemlist.get(i));
+			String word= itemlist.get(i);
+			if(!this.termToIndexMap.containsKey(word)){
+				this.termToIndexMap.put(word,this.indexToTermMap.size())	;
+				this.indexToTermMap.add(word);
+			}
+			words.add(this.termToIndexMap.get(word));
 		}
 		p.words=words;
 		
@@ -118,22 +172,29 @@ public class DataWoker {
 		this.answerMap.put(aid, a);
 		
 		a.aid=aid;
-		if(!this.useridMap.containsKey(auid)){
-			//new user
+		if(!this.useridToIndex.containsKey(auid)){
 			User u = new User(auid);
-			this.useridMap.put(auid, u);
+			this.useridToIndex.put(auid, this.users.size());
+			this.users.add(u);
+			
 		}
-		User u= this.useridMap.get(auid);
+		User u = this.users.get(this.useridToIndex.get(auid)  );
+
 		a.user=u;
 		a.date=date;
 		
 		a.score=Integer.parseInt(score);
 		
 		
-		ArrayList<String> words=new ArrayList<String>();
+		ArrayList<Integer> words=new ArrayList<Integer>();
 		
 		for(int i=6;i<itemlist.size();i++){
-			words.add(itemlist.get(i));
+			String word= itemlist.get(i);
+			if(!this.termToIndexMap.containsKey(word)){
+				this.termToIndexMap.put(word,this.indexToTermMap.size())	;
+				this.indexToTermMap.add(word);
+			}
+			words.add(this.termToIndexMap.get(word));
 		}
 		a.words=words;
 		
@@ -201,11 +262,7 @@ public class DataWoker {
 		debug.ProcessOriData();
 		
 		
-		
-		
-		
-		
-
+	
 		
 		
 	}

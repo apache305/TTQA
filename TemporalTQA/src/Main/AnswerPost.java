@@ -13,7 +13,7 @@ public class AnswerPost{
 	public User user;
 	public String date;
 	public QuestionPost question;
-	public ArrayList<String> words;
+	public ArrayList<Integer> words;
 	public AnswerPost(){
 		
 	}

@@ -15,8 +15,8 @@ public class QuestionPost {
 	public AnswerPost acceptAnswer;// acceptaid;
 	public String  acceptaid;
 	public int score;
-	public ArrayList<String> tags;
-	public ArrayList<String> words;
+	public ArrayList<Integer> tags;
+	public ArrayList<Integer> words;
 	public ArrayList<AnswerPost> answers;
 	
 	public QuestionPost() {
