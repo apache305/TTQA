@@ -12,6 +12,7 @@ public class QuestionPost {
 	public String qid;
 	public User user;
 	public String date;
+	public int dateid;
 	public AnswerPost acceptAnswer;// acceptaid;
 	public String  acceptaid;
 	public int score;

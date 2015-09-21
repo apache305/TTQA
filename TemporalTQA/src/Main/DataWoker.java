@@ -30,7 +30,7 @@ public class DataWoker {
 	public ArrayList<String> indexToTagMap;
 	public Map<String, Integer> tagCountMap;  //all tag count
 	
-	public String timeLevel="Month";
+	public int timeLevel=7;//"Month";
 	
 	public Map<String, Integer> timeToIndexMap;
 	public ArrayList<String> indexToTimeMap;
@@ -123,8 +123,15 @@ public class DataWoker {
 
 		
 		p.user=u;
+		String month=date.substring(0, this.timeLevel);
 		
-
+		if(!this.timeToIndexMap.containsKey(month)){
+			this.timeToIndexMap.put(month,this.indexToTimeMap.size());
+			this.indexToTimeMap.add(month);
+		}
+		int oldTimeCount = this.timeCountMap.get(month);
+		this.timeCountMap.put(month, oldTimeCount+1);
+		p.dateid=this.timeToIndexMap.get(month);
 		p.date=date;
 		if(!acceptaid.equals("null"))	{
 			p.acceptaid=acceptaid;
@@ -189,6 +196,15 @@ public class DataWoker {
 		User u = this.users.get(this.useridToIndex.get(auid)  );
 
 		a.user=u;
+		String month=date.substring(0, this.timeLevel);
+		
+		if(!this.timeToIndexMap.containsKey(month)){
+			this.timeToIndexMap.put(month,this.indexToTimeMap.size());
+			this.indexToTimeMap.add(month);
+		}
+		int oldTimeCount = this.timeCountMap.get(month);
+		this.timeCountMap.put(month, oldTimeCount+1);
+		a.dateid=this.timeToIndexMap.get(month);
 		a.date=date;
 		
 		a.score=Integer.parseInt(score);
@@ -271,10 +287,7 @@ public class DataWoker {
 		DataWoker debug2=new DataWoker(testsource);
 		debug1.ProcessOriData();
 		debug2.ProcessOriData();
-		
-		
-	
-		
+
 		
 	}
 
