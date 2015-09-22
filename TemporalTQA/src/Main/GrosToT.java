@@ -412,28 +412,23 @@ public class GrosToT extends LDABasedModel{
 				
 				//for each post
 				double forAllW=0.0;
-				for (int group_id=0;group_id<this.G;group_id++){
-					
-					for(int topic_id=0;topic_id < this.K; topic_id++){
-						double tempW=1.0;
-						for(int wid: realwords){
-							//System.out.println(tag);
-							//int cur_tid=this.trainSet.tagToIndexMap.get(wid);
-							//p(topic|u) * p(tag|topic);
-							tempW *=  this.thetaKV[topic_id][wid];
-							assert (tempW!=0.0 );
+				
+				
+				for(int wid:realwords){
+					double prob_word=0;
+					for(int group_id=0;group_id<this.G;group_id++){
+						for(int topic_id=0;topic_id<this.K;topic_id++){
+							double ugk=this.thetaUG[uid][group_id] * this.thetaGK[group_id][topic_id] ;
+							ugk*= this.thetaKV[topic_id][wid];
+							prob_word+=ugk;
 						}
-						assert(tempW!=1.0);
-						tempW *= this.thetaUG[uid][group_id] * this.thetaGK[group_id][topic_id] ;
-						forAllW+=tempW;//accumulate for each topic.
 					}
-					
+					forAllW+=Math.log(prob_word);
 				}
-				
-				
-				post_number+=1;
-				total_result += Math.log(forAllW);
+				total_result +=forAllW;
 				word_number+=word_n;
+				
+				
 				
 			}
 			
@@ -441,7 +436,7 @@ public class GrosToT extends LDABasedModel{
 
 		}
 		
-		final_perplex =  Math.exp(-1.0  *  total_result  / word_number);
+		final_perplex =  Math.exp(-1.0  *  total_result  / (double)word_number);
 		System.out.println(final_perplex);
 		
 	}
@@ -465,7 +460,7 @@ public class GrosToT extends LDABasedModel{
 		for(int kid=0;kid<this.K;kid++){
 			writer.write(String.format("Topic%d",kid));
 			for(int vid=0;vid<this.V;vid++){
-				String tag=this.trainSet.indexToTagMap.get(vid);
+				String tag=this.trainSet.indexToTermMap.get(vid);
 				writer.write(tag+":"+this.thetaKV[kid][vid]+"\t");
 			}
 			writer.write("\n");
