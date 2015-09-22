@@ -71,8 +71,8 @@ public class Main {
 		
 		resultPath= "out/outTTEQAA/";
 		System.out.println("TTEQAA Model");
-		//TTEQAAModel tteqaa = new TTEQAAModel(trainset,testset);
-		//runModel(tteqaa,"out/outTTEQAA/");
+		TTEQAAModel tteqaa = new TTEQAAModel(trainset,testset);
+		runModel(tteqaa,"out/outTTEQAA/");
 		//System.exit(1);
 		resultPath= "out/outTTEQA/";
 		//TTEQAModel tteqa = new TTEQAModel(users,testUsers);

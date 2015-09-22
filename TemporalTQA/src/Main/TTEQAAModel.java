@@ -110,14 +110,14 @@ public class TTEQAAModel extends LDABasedModel{
 		this.K=30;
 		this.a1=(float) 50.0/(float)this.K;
 		this.a2=this.a1;
-		this.b1=0.001f;
-		this.b2=0.001f;
+		this.b1=0.01f;
+		this.b2=0.01f;
 		this.lambda=0.01f;
 		this.delta=0.01f;
 		this.gamma=0.01f;
 		this.eta=0.01f;
 
-		this.iterNum=10;
+		this.iterNum=0;
 	}
 	
 	
@@ -224,6 +224,8 @@ public class TTEQAAModel extends LDABasedModel{
 					this.sumkw[initialTopicLabel]++;
 				}
 				
+			
+				
 			}
 		}
 		System.out.println("init model finishled");
@@ -236,7 +238,10 @@ public class TTEQAAModel extends LDABasedModel{
 	public void trainModel(){
 		for(int it=0;it<this.iterNum;it++){
 			//for each iteration
-			System.out.println(String.format("Round:%d", it));
+			if(it%10==0){
+				System.out.println(String.format("Round:%d", it));
+			}
+			//
 			
 			
 			for(int i=0;i<this.U;i++ ){
@@ -428,9 +433,10 @@ public class TTEQAAModel extends LDABasedModel{
 		}
 		
 		//thetaKW
+		//fuck this bug!!!!!
 		for(int kid=0;kid<this.K;kid++){
 			for(int wid=0;wid<this.W;wid++){
-				this.thetaKW[kid][wid]=(this.nkw[kid][wid] +  this.delta )/(this.sumkv[kid] + this.W*this.delta);
+				this.thetaKW[kid][wid]=(this.nkw[kid][wid] +  this.delta )/(this.sumkw[kid] + this.W*this.delta);
 			}
 		}
 		
@@ -552,26 +558,52 @@ public class TTEQAAModel extends LDABasedModel{
 				//double tempW=0.0;
 				
 				
-				double forAllW=0.0;
-				for(int word:realwords){
-					double prob_word=0;
-					for(int topic_id=0;topic_id<this.K;topic_id++){
-						double uk=this.thetaUK[uid][topic_id];
-						uk*=this.thetaKW[topic_id][word];
-						prob_word+=uk;
+				/*double forAllW=0.0;
+				for(int topic_id=0;topic_id<this.K;topic_id++){
+					
+					//double uk=this.thetaUK[uid][topic_id];
+					for(int gid=0;gid<50;gid++){
+						double uk= Math.random()*  Math.random();
+						for(int word:realwords){						
+								uk*=this.thetaKW[topic_id][word];
+						}
+							//p(w1)
+						forAllW+=uk;
 					}
-					forAllW+=Math.log(prob_word);
 				}
-				total_result +=forAllW;
-				word_number+=word_n;				
-				post_number+=1;
-
+				double x=Math.log(forAllW);*/
+				
+				double forAllW=0.0;
+				
+				
+				for(int topic_id=0;topic_id<this.K;topic_id++){
+						
+					double uk = this.thetaUK[uid][topic_id];
+					for(int wid:realwords){
+							uk*=this.thetaKW[topic_id][wid];
+								//prob_word+=ugk;
+					}
+					forAllW += uk;
+				}
+				
+				
+				
+				double x=Math.log(forAllW);
+				
+				//System.out.println(x);
+				if(Double.isInfinite(x)){
+					continue;
+				}
+				total_result +=x;
+				word_number+=word_n;			
+				post_number++;
 				
 			}
 			
 			//break;
 
 		}
+		System.out.println("test post number:"+post_number);
 		
 		final_perplex =  Math.exp(-1.0  *  total_result  / (float)(word_number));
 		System.out.println(final_perplex);

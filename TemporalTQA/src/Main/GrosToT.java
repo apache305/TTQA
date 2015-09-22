@@ -87,7 +87,7 @@ public class GrosToT extends LDABasedModel{
 		this.b=0.01f;
 		this.c=(float) 50.0/(float)this.G;
 		this.d=0.01f;
-		this.iterNum=10;
+		this.iterNum=0;
 	}
 	
 	public void initModel(){
@@ -162,8 +162,9 @@ public class GrosToT extends LDABasedModel{
 	public void trainModel(){
 		for(int it=0;it<this.iterNum;it++){
 			//for each iteration
-			System.out.println(String.format("Round:%d", it));
-			
+			if(it%10==0){
+				System.out.println(String.format("Round:%d", it));
+			}
 			//first sample gi
 			
 			
@@ -381,20 +382,22 @@ public class GrosToT extends LDABasedModel{
 			if ( !this.trainSet.useridToIndex.containsKey(u.userId) ){
 				continue;
 			}
+			//UinTrain++;
 			uid=this.trainSet.useridToIndex.get(u.userId);
 			//System.out.println(u.userId);
 			//System.out.println(u.answerPosts.size());
 			
 			for(AnswerPost eachPost: u.answerPosts){
-				//int [] tids = eachPost.Qtags;
+				
+				//ArrayList<Integer> faketags= eachPost.tags;
+				ArrayList<Integer> fakewords=eachPost.words;
 				
 				//compute for each post.
 				double curPostW=0.0;
 				
-
-				ArrayList<Integer> fakewords=eachPost.words;
+				//ArrayList<Integer> realtags=new ArrayList<Integer>();
 				ArrayList<Integer> realwords=new ArrayList<Integer>();
-				
+				//ArrayList<Integer> fakewords=eachPost.words;
 				for( int wid : fakewords){
 					String testOriWord = this.testSet.indexToTermMap.get(wid);
 					if(this.trainSet.termToIndexMap.containsKey(testOriWord)){
@@ -402,44 +405,51 @@ public class GrosToT extends LDABasedModel{
 					}
 					
 				}
-
+				
+				//int tag_n= realtags.size();
+				//if(tag_n==0){
+					//continue;
+				//}
 				
 				int word_n=realwords.size();
 				if(word_n==0){
 					continue;
 				}
-
+				
 				
 				//for each post
 				double forAllW=0.0;
 				
-				
-				for(int wid:realwords){
-					double prob_word=0;
-					for(int group_id=0;group_id<this.G;group_id++){
-						for(int topic_id=0;topic_id<this.K;topic_id++){
-							double ugk=this.thetaUG[uid][group_id] * this.thetaGK[group_id][topic_id] ;
-							ugk*= this.thetaKV[topic_id][wid];
-							prob_word+=ugk;
+				for(int group_id=0;group_id<this.G;group_id++){
+					for(int topic_id=0;topic_id<this.K;topic_id++){
+						
+						double ugk = this.thetaUG[uid][group_id]*this.thetaGK[group_id][topic_id];
+						for(int wid:realwords){
+								ugk*=this.thetaKV[topic_id][wid];
+								//prob_word+=ugk;
 						}
+						forAllW += ugk;
 					}
-					System.out.println(prob_word);
-					forAllW+=Math.log(prob_word);
 				}
-				total_result +=forAllW;
-				word_number+=word_n;
+				double x=Math.log(forAllW);
 				
-				
+				//System.out.println(x);
+				if(Double.isInfinite(x)){
+					continue;
+				}
+				total_result +=x;
+				word_number+=word_n;			
+				post_number++;
 				
 			}
 			
 			//break;
 
 		}
+		System.out.println("test post number:"+post_number);
 		
-		final_perplex =  Math.exp(-1.0  *  total_result  / (double)word_number);
+		final_perplex =  Math.exp(-1.0  *  total_result  / (float)(word_number));
 		System.out.println(final_perplex);
-		
 	}
 	
 	public void outputResult(String outputPath) throws IOException{
@@ -457,7 +467,7 @@ public class GrosToT extends LDABasedModel{
 		writer.close();
 		
 		//thetaKV
-		writer = new BufferedWriter(new FileWriter(outputPath+ "thetaKW.txt"));
+		writer = new BufferedWriter(new FileWriter(outputPath+ "thetaKV.txt"));
 		for(int kid=0;kid<this.K;kid++){
 			writer.write(String.format("Topic%d",kid));
 			for(int vid=0;vid<this.V;vid++){
@@ -469,7 +479,7 @@ public class GrosToT extends LDABasedModel{
 		writer.close();
 		
 		//ordered version.
-		writer = new BufferedWriter(new FileWriter(outputPath+ "thetaKW.sorted.txt"));
+		writer = new BufferedWriter(new FileWriter(outputPath+ "thetaKV.sorted.txt"));
 		for(int kid=0;kid<this.K;kid++){
 			writer.write(String.format("Topic%d",kid));
 			ArrayList<Map.Entry<String, Double>> dp= new ArrayList<Map.Entry<String, Double>>();
