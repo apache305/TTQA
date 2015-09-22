@@ -87,7 +87,7 @@ public class GrosToT extends LDABasedModel{
 		this.b=0.01f;
 		this.c=(float) 50.0/(float)this.G;
 		this.d=0.01f;
-		this.iterNum=100;
+		this.iterNum=10;
 	}
 	
 	public void initModel(){
@@ -423,6 +423,7 @@ public class GrosToT extends LDABasedModel{
 							prob_word+=ugk;
 						}
 					}
+					System.out.println(prob_word);
 					forAllW+=Math.log(prob_word);
 				}
 				total_result +=forAllW;
@@ -473,7 +474,7 @@ public class GrosToT extends LDABasedModel{
 			writer.write(String.format("Topic%d",kid));
 			ArrayList<Map.Entry<String, Double>> dp= new ArrayList<Map.Entry<String, Double>>();
 			for(int vid=0;vid<this.V;vid++){
-				String tag=this.trainSet.indexToTagMap.get(vid);
+				String tag=this.trainSet.indexToTermMap.get(vid);
 				//AbstractMap.SimpleEntry<String, Integer>("exmpleString", 42);
 				Map.Entry<String, Double> pairs =new  AbstractMap.SimpleEntry<String , Double> (tag,this.thetaKV[kid][vid]);
 				dp.add(pairs);

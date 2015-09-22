@@ -488,6 +488,7 @@ public class TTEQAAModel extends LDABasedModel{
 		}
 	
 	}
+
 	
 	public void computePer(){
 		//p(tag) or p(word) = p(k|u)p(k|v)
@@ -512,23 +513,23 @@ public class TTEQAAModel extends LDABasedModel{
 			
 			for(AnswerPost eachPost: u.answerPosts){
 				
-				ArrayList<Integer> faketags= eachPost.tags;
+				//ArrayList<Integer> faketags= eachPost.tags;
 				ArrayList<Integer> fakewords=eachPost.words;
 				
 				//compute for each post.
 				double curPostW=0.0;
 				
-				ArrayList<Integer> realtags=new ArrayList<Integer>();
+				//ArrayList<Integer> realtags=new ArrayList<Integer>();
 				ArrayList<Integer> realwords=new ArrayList<Integer>();
 				
 
-				for( int tid : faketags){
-					String testOriTag = this.testSet.indexToTagMap.get(tid);
-					if(this.trainSet.tagToIndexMap.containsKey(testOriTag)){
-						realtags.add( this.trainSet.tagToIndexMap.get(testOriTag));
-					}
+				//for( int tid : faketags){
+					//String testOriTag = this.testSet.indexToTagMap.get(tid);
+					//if(this.trainSet.tagToIndexMap.containsKey(testOriTag)){
+						//realtags.add( this.trainSet.tagToIndexMap.get(testOriTag));
+					//}
 					
-				}
+				//}
 				
 				for( int wid : fakewords){
 					String testOriWord = this.testSet.indexToTermMap.get(wid);
@@ -538,10 +539,10 @@ public class TTEQAAModel extends LDABasedModel{
 					
 				}
 				
-				int tag_n= realtags.size();
-				if(tag_n==0){
-					continue;
-				}
+				//int tag_n= realtags.size();
+				//if(tag_n==0){
+					//continue;
+				//}
 				
 				int word_n=realwords.size();
 				if(word_n==0){
@@ -552,28 +553,19 @@ public class TTEQAAModel extends LDABasedModel{
 				
 				
 				double forAllW=0.0;
-				for(int topic_id=0;topic_id < this.K; topic_id++){
-					double tempW=1.0;
-					for(int tag: realtags){
-						//System.out.println(tag);
-						//int cur_tid=this.trainU.tagToIndexMap.get(tag);
-						//p(topic|u) * p(tag|topic);
-						tempW *= this.thetaKV[topic_id][tag];
-						assert (tempW!=0.0 );
+				for(int word:realwords){
+					double prob_word=0;
+					for(int topic_id=0;topic_id<this.K;topic_id++){
+						double uk=this.thetaUK[uid][topic_id];
+						uk*=this.thetaKW[topic_id][word];
+						prob_word+=uk;
 					}
-					for(int word: realwords){
-						tempW *= this.thetaKW[topic_id][word];
-						assert(tempW!=0.0);
-					}
-					assert(tempW!=1.0);
-					tempW *= this.thetaUK[uid][topic_id] ;
-					forAllW+=tempW;//accumulate for each topic.
+					forAllW+=Math.log(prob_word);
 				}
-				
+				total_result +=forAllW;
+				word_number+=word_n;				
 				post_number+=1;
-				total_result += Math.log(forAllW);
-				tag_number+=tag_n;
-				word_number+=word_n;
+
 				
 			}
 			
@@ -581,7 +573,7 @@ public class TTEQAAModel extends LDABasedModel{
 
 		}
 		
-		final_perplex =  Math.exp(-1.0  *  total_result  / (float)(tag_number+word_number));
+		final_perplex =  Math.exp(-1.0  *  total_result  / (float)(word_number));
 		System.out.println(final_perplex);
 		
 	}
