@@ -264,7 +264,61 @@ public class LDA extends LDABasedModel{
 	}
 	
 	
+	public ArrayList<ArrayList<String>> getTopWords(){
+		//from trainset.
+		ArrayList<ArrayList<String>> topicTopWords=new ArrayList<ArrayList<String>>();
+
+		for(int kid=0;kid<this.K;kid++){
+			topicTopWords.add(new ArrayList<String>());
+			ArrayList<Map.Entry<String, Double>> dp= new ArrayList<Map.Entry<String, Double>>();
+			for(int wid=0;wid<this.W;wid++){
+				String word=this.trainSet.indexToTermMap.get(wid);
+				//AbstractMap.SimpleEntry<String, Integer>("exmpleString", 42);
+				Map.Entry<String, Double> pairs =new  AbstractMap.SimpleEntry<String , Double> (word,this.thetaKW[kid][wid]);
+				dp.add(pairs);
+			}
+			Collections.sort(dp, new Comparator<Entry<String,Double>>(){
+				public int compare(Entry<String, Double> arg0,Entry<String, Double> arg1) {
+					// TODO Auto-generated method stub
+					return -1*arg0.getValue().compareTo(arg1.getValue());
+				}
+			});
+			for(int i=0;i<10;i++){
+				//only output top 10;
+				topicTopWords.get(kid).add(dp.get(i).getKey());
+				//writer.write(String.format("%s:%f\t", dp.get(i).getKey(),dp.get(i).getValue()));
+			}
+			//writer.write("\n");
+		}
+		return topicTopWords;
+		
+		
+	}
+	
 	public void computeCoherence(){
+		ArrayList<ArrayList<String>> topicTopWords= this.getTopWords();
+		double total_score=0.0;
+		for(int kid=0;kid<this.K;kid++){
+			for(int i=0;i<10;i++){
+				String w1=topicTopWords.get(kid).get(i);
+				int wid1=this.testSet.termToIndexMap.get(w1);
+				int occ1= this.testSet.termCountMap.get(w1);
+				for(int j=0;j<10;j++){
+					
+					String w2=topicTopWords.get(kid).get(j);
+					int wid2=this.testSet.termToIndexMap.get(w2);
+					int occ2= this.testSet.termCountMap.get(w2);
+					int cooc12=this.testSet.cooc[wid1][wid2]+this.testSet.cooc[wid2][wid1];
+					
+					double score= Math.log(    ((double)cooc12 + 1.0) / ( (double)(occ1+occ2)) );
+					total_score+=score;
+					//System.out.println(score+";"+total_score);
+				}
+			}
+		}
+		System.out.println("coherence score:"+total_score);
+		
+		
 		
 	}
 	

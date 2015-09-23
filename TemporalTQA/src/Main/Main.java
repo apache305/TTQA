@@ -54,6 +54,9 @@ public class Main {
 		DataWoker testset=new DataWoker(testsource);
 		trainset.ProcessOriData();
 		testset.ProcessOriData();
+		
+		
+		testset.computeCoOccurForTest();
 
 		
 		
@@ -73,6 +76,7 @@ public class Main {
 		System.out.println("LDA Model");
 		LDA lda= new LDA(trainset,testset);
 		runModel(lda,"out/outLDA/");
+		lda.computeCoherence();
 		
 		resultPath= "out/outTTEQAA/";
 		System.out.println("TTEQAA Model");

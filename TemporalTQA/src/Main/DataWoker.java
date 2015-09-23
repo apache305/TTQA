@@ -44,6 +44,8 @@ public class DataWoker {
 	public int voteStep=3;//low, medium, high.
 	public double [] voteMap;//only for our model.
 	
+	public int cooc[][];
+	
 	
 	
 
@@ -230,12 +232,17 @@ public class DataWoker {
 
 	}
 	public void computeCoOccurForTest(){
-		int cooc[][]= new int[this.termCountMap.size()][this.termCountMap.size()];
-		
-		
-		
-		
-		
+		this.cooc= new int[this.termCountMap.size()][this.termCountMap.size()];
+		for (User u : this.users){
+			for(AnswerPost eachPost : u.answerPosts){
+				ArrayList<Integer> words=eachPost.words;
+				for(int i=0;i<words.size();i++){
+					for(int j=i+1;j<words.size();j++	){
+						this.cooc[ words.get(i)][words.get(j)]++;
+					}
+				}
+			}
+		}
 	}
 	public int newAnswerPost(ArrayList<String> itemlist){
 		//typeid,ids,auid,date,pid,score," ".join(BodyP)))
