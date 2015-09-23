@@ -66,13 +66,18 @@ public class Main {
 		
 		resultPath= "out/outGROST/";
 		System.out.println("Grostt Model");
-		GrosToT tot = new GrosToT(trainset,testset);
-		runModel(tot,"out/outGROST/");
+		//GrosToT tot = new GrosToT(trainset,testset);
+		//runModel(tot,"out/outGROST/");
+		
+		resultPath="out/outLDA/";
+		System.out.println("LDA Model");
+		LDA lda= new LDA(trainset,testset);
+		runModel(lda,"out/outLDA/");
 		
 		resultPath= "out/outTTEQAA/";
 		System.out.println("TTEQAA Model");
-		TTEQAAModel tteqaa = new TTEQAAModel(trainset,testset);
-		runModel(tteqaa,"out/outTTEQAA/");
+		//TTEQAAModel tteqaa = new TTEQAAModel(trainset,testset);
+		//runModel(tteqaa,"out/outTTEQAA/");
 		//System.exit(1);
 		resultPath= "out/outTTEQA/";
 		//TTEQAModel tteqa = new TTEQAModel(users,testUsers);

@@ -229,6 +229,14 @@ public class DataWoker {
 		return 1;
 
 	}
+	public void computeCoOccurForTest(){
+		int cooc[][]= new int[this.termCountMap.size()][this.termCountMap.size()];
+		
+		
+		
+		
+		
+	}
 	public int newAnswerPost(ArrayList<String> itemlist){
 		//typeid,ids,auid,date,pid,score," ".join(BodyP)))
 		
