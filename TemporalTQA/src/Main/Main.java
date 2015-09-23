@@ -79,26 +79,35 @@ public class Main {
 		resultPath= "out/outGROST/";
 		System.out.println("Grostt Model");
 		GrosToT tot = new GrosToT(trainset,testset,iternum);
-		runModel(tot,"out/outGROST/",filter);
+		//runModel(tot,"out/outGROST/",filter);
 		
 		resultPath="out/outLDA/";
 		System.out.println("LDA Model");
 		LDA lda= new LDA(trainset,testset,iternum);
-		runModel(lda,"out/outLDA/",filter);
+		//runModel(lda,"out/outLDA/",filter);
+		
+		
+		resultPath= "out/outUQA/";
+		System.out.println("UQA Model");
+		UQAModel uqa = new UQAModel(trainset,testset,iternum);
+		runModel(uqa,"out/outUQA/",filter);
 		
 		resultPath= "out/outTTEQAA/";
 		System.out.println("TTEQAA Model");
 		TTEQAAModel tteqaa = new TTEQAAModel(trainset,testset,iternum);
-		runModel(tteqaa,"out/outTTEQAA/",filter);
-		//System.exit(1);
+		//runModel(tteqaa,"out/outTTEQAA/",filter);
+		
 		//resultPath= "out/outTTEQA/";
 		//TTEQAModel tteqa = new TTEQAModel(users,testUsers);
 		//runModel(tteqa,"out/outTTEQA/");
 		System.out.println("filter size:"+filter.size());
 		//final perplxity
+		System.exit(1);
 		tot.computePer(filter);
 		lda.computePer(filter);
+		uqa.computePer(filter);
 		tteqaa.computePer(filter);
+		
 		
 		
 		

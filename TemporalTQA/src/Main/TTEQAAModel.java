@@ -344,13 +344,13 @@ public class TTEQAAModel extends LDABasedModel{
 
 
 			//if only keep this, good result.
-			//backupProb[k] *= ( this.nkt[k][timeID] + this.b2 )/(this.sumkt[k] + this.T*this.b2 ) ;
+			backupProb[k] *= ( this.nkt[k][timeID] + this.b2 )/(this.sumkt[k] + this.T*this.b2 ) ;
 			
-			backupProb[k] *= ( this.nku[k][uid] + this.a1 )/(this.sumku[k] + this.U*this.a1 ) ;
+			//backupProb[k] *= ( this.nku[k][uid] + this.a1 )/(this.sumku[k] + this.U*this.a1 ) ;
 		
 			//indeed, if add this, perplex will increase. 
 			//backupProb[k] *= ( this.nukt[uid][k][timeID] + this.b2 )/(this.sumukt[uid][k] + this.T*this.b2 ) ;
-			//backupProb[k] *= ( this.nuke[uid][k][expLevel] + this.eta )/(this.sumuke[uid][k] + this.E*this.eta ) ;
+			backupProb[k] *= ( this.nuke[uid][k][expLevel] + this.eta )/(this.sumuke[uid][k] + this.E*this.eta ) ;
 
 		}
 		

@@ -198,7 +198,7 @@ public class LDA extends LDABasedModel{
 			//for(int eachTagID:tags){  // if remove this, can not detect topic. tested!
 			backupProb[k] *=  ( this.nkw[k][wordID] +  this.b )/(this.sumkw[k] + this.W*this.b ) ;
 			
-			//backupProb[k] *= ( this.nku[k][uid] + this.a1 )/(this.sumku[k] + this.U*this.a1 ) ;
+			//backupProb[k] *= ( this.nku[k][uid] + this.a )/(this.sumku[k] + this.U*this.a ) ;
 
 		}
 		
