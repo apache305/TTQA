@@ -9,7 +9,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import Util.FileTool;
 
@@ -44,7 +46,8 @@ public class DataWoker {
 	public int voteStep=3;//low, medium, high.
 	public double [] voteMap;//only for our model.
 	
-	public int cooc[][];
+	public int singleOccDocument[];
+	public int coOccDocument[][];
 	
 	
 	
@@ -232,13 +235,29 @@ public class DataWoker {
 
 	}
 	public void computeCoOccurForTest(){
-		this.cooc= new int[this.termCountMap.size()][this.termCountMap.size()];
+		//this.cooc= new int[this.termCountMap.size()][this.termCountMap.size()];
+		
+		this.singleOccDocument= new int [this.termCountMap.size()];
+		this.coOccDocument= new int [this.termCountMap.size()][this.termCountMap.size()];
+		
 		for (User u : this.users){
 			for(AnswerPost eachPost : u.answerPosts){
 				ArrayList<Integer> words=eachPost.words;
+				Set<Integer> filter=new HashSet<Integer>();
 				for(int i=0;i<words.size();i++){
-					for(int j=i+1;j<words.size();j++	){
-						this.cooc[ words.get(i)][words.get(j)]++;
+					filter.add(words.get(i));//each words id.
+				}
+				ArrayList<Integer> filterWords= new ArrayList<Integer>();
+				for(int wid: filter){
+					filterWords.add(wid);
+				}
+
+				for(int i=0;i<filterWords.size();i++){
+					singleOccDocument[filterWords.get(i) ]++;
+
+					for(int j=i+1;j<filterWords.size();j++	){
+						this.coOccDocument[filterWords.get(i)][filterWords.get(j)]++;
+						//this.cooc[ words.get(i)][words.get(j)]++;
 					}
 				}
 			}

@@ -87,7 +87,7 @@ public class GrosToT extends LDABasedModel{
 		this.b=0.01f;
 		this.c=(float) 50.0/(float)this.G;
 		this.d=0.01f;
-		this.iterNum=0;
+		this.iterNum=100;
 	}
 	
 	public void initModel(){
@@ -403,25 +403,29 @@ public class GrosToT extends LDABasedModel{
 	public void computeCoherence(){
 		ArrayList<ArrayList<String>> topicTopWords= this.getTopWords();
 		double total_score=0.0;
+		double item=0;
 		for(int kid=0;kid<this.K;kid++){
 			for(int i=0;i<10;i++){
 				String w1=topicTopWords.get(kid).get(i);
 				int wid1=this.testSet.termToIndexMap.get(w1);
-				int occ1= this.testSet.termCountMap.get(w1);
-				for(int j=0;j<10;j++){
+				int occ1= this.testSet.singleOccDocument[wid1];//number of document has word1.
+				//System.out.println(w1+";"+occ1);
+				for(int j=i+1;j<10;j++){
 					
 					String w2=topicTopWords.get(kid).get(j);
 					int wid2=this.testSet.termToIndexMap.get(w2);
-					int occ2= this.testSet.termCountMap.get(w2);
-					int cooc12=this.testSet.cooc[wid1][wid2]+this.testSet.cooc[wid2][wid1];
+					//int occ2= this.testSet.singleOccDocument[wid2];//number of document has words2
+					int cooc12=this.testSet.coOccDocument[wid1][wid2]+this.testSet.coOccDocument[wid2][wid1];
+					//System.out.println(w1+";"+w2+";"+cooc12);
 					
-					double score= Math.log(    ((double)cooc12 + 1.0) / ( (double)(occ1+occ2)) );
+					double score= Math.log( ((double)cooc12 + 1.0) / ( (double)(occ1)) );
 					total_score+=score;
-					
+					item++;
+					//System.out.println(score+";"+total_score);
 				}
 			}
 		}
-		System.out.println("coherence score:"+total_score);
+		System.out.println("average coherence score:"+total_score/item);
 		
 		
 	}

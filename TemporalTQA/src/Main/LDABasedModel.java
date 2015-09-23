@@ -26,4 +26,7 @@ public class LDABasedModel {
 	public void computePer(){
 		
 	}
+	public void computeCoherence(){
+		
+	}
 }
