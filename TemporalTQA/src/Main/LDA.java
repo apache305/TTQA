@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
+import java.util.Set;
 
 public class LDA extends LDABasedModel{
 	
@@ -57,10 +58,11 @@ public class LDA extends LDABasedModel{
 	
 	
 	
-	public LDA(DataWoker trainUsers, DataWoker testUsers){
+	public LDA(DataWoker trainUsers, DataWoker testUsers,int iternum){
 		this.setDefaultParameteres();
 		this.trainSet=trainUsers;
 		this.testSet=testUsers;
+		this.iterNum=iternum;
 		
 	}
 	
@@ -79,7 +81,7 @@ public class LDA extends LDABasedModel{
 		this.b=0.01f;
 
 
-		this.iterNum=200;
+		
 	}
 	
 	
@@ -326,7 +328,7 @@ public class LDA extends LDABasedModel{
 		
 	}
 	
-	public void computePer(){
+	public void computePer(Set<String> filterPostId){
 		double  total_result=0.0;
 		int post_number=0;
 		int tag_number=0;
@@ -348,7 +350,10 @@ public class LDA extends LDABasedModel{
 				
 				//compute for each post.
 				double curPostW=0.0;
-				
+				String postid=eachPost.aid;
+				if(filterPostId.contains(postid)){
+					continue;
+				}
 				ArrayList<Integer> realwords=new ArrayList<Integer>();
 				
 

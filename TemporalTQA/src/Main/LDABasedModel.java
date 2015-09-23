@@ -1,6 +1,7 @@
 package Main;
 
 import java.io.IOException;
+import java.util.Set;
 
 public class LDABasedModel {
 	
@@ -8,7 +9,7 @@ public class LDABasedModel {
 		
 	}
 	
-	public LDABasedModel(DataWoker Train,DataWoker Test){
+	public LDABasedModel(DataWoker Train,DataWoker Test,int iternum){
 		
 	}
 	public void initModel(){
@@ -23,7 +24,7 @@ public class LDABasedModel {
 	public void outputResult(String outputPath) throws IOException{
 		
 	}
-	public void computePer(){
+	public void computePer(Set<String> filterPostId){
 		
 	}
 	public void computeCoherence(){

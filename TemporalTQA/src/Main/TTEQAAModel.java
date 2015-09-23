@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
+import java.util.Set;
 
 public class TTEQAAModel extends LDABasedModel{
 	
@@ -90,10 +91,11 @@ public class TTEQAAModel extends LDABasedModel{
 	
 	
 	
-	public TTEQAAModel(DataWoker trainUsers, DataWoker testUsers){
+	public TTEQAAModel(DataWoker trainUsers, DataWoker testUsers,int iternum){
 		this.setDefaultParameteres();
 		this.trainSet=trainUsers;
 		this.testSet=testUsers;
+		this.iterNum=iternum;
 		
 	}
 	
@@ -556,7 +558,7 @@ public class TTEQAAModel extends LDABasedModel{
 	}
 
 	
-	public void computePer(){
+	public void computePer(Set<String> filterPostId){
 		//p(tag) or p(word) = p(k|u)p(k|v)
 		
 		//test dataset =
@@ -581,6 +583,11 @@ public class TTEQAAModel extends LDABasedModel{
 				
 				//ArrayList<Integer> faketags= eachPost.tags;
 				ArrayList<Integer> fakewords=eachPost.words;
+				String postid=eachPost.aid;
+				if(filterPostId.contains(postid)){
+					continue;
+				}
+				
 				
 				//compute for each post.
 				double curPostW=0.0;
@@ -652,6 +659,7 @@ public class TTEQAAModel extends LDABasedModel{
 				
 				//System.out.println(x);
 				if(Double.isInfinite(x)){
+					filterPostId.add(postid);		
 					continue;
 				}
 				total_result +=x;

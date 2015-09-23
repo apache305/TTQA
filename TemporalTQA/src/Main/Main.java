@@ -2,10 +2,12 @@ package Main;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Main {
 	
-	public static void runModel(LDABasedModel xx, String outputPathDir){
+	public static void runModel(LDABasedModel xx, String outputPathDir,Set<String> filter){
 		
 
 		xx.initModel();
@@ -24,7 +26,9 @@ public class Main {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		xx.computePer();
+		
+		
+		xx.computePer(filter);
 		xx.computeCoherence();
 		
 		
@@ -68,24 +72,33 @@ public class Main {
 		
 		//i think a better way to do is a simple version, then enrich it.
 		
+		Set<String> filter=new HashSet<String>();
+		
+		int iternum=100;
+		
 		resultPath= "out/outGROST/";
 		System.out.println("Grostt Model");
-		GrosToT tot = new GrosToT(trainset,testset);
-		runModel(tot,"out/outGROST/");
+		GrosToT tot = new GrosToT(trainset,testset,iternum);
+		runModel(tot,"out/outGROST/",filter);
 		
 		resultPath="out/outLDA/";
 		System.out.println("LDA Model");
-		LDA lda= new LDA(trainset,testset);
-		//runModel(lda,"out/outLDA/");
+		LDA lda= new LDA(trainset,testset,iternum);
+		runModel(lda,"out/outLDA/",filter);
 		
 		resultPath= "out/outTTEQAA/";
 		System.out.println("TTEQAA Model");
-		TTEQAAModel tteqaa = new TTEQAAModel(trainset,testset);
-		//runModel(tteqaa,"out/outTTEQAA/");
+		TTEQAAModel tteqaa = new TTEQAAModel(trainset,testset,iternum);
+		runModel(tteqaa,"out/outTTEQAA/",filter);
 		//System.exit(1);
-		resultPath= "out/outTTEQA/";
+		//resultPath= "out/outTTEQA/";
 		//TTEQAModel tteqa = new TTEQAModel(users,testUsers);
 		//runModel(tteqa,"out/outTTEQA/");
+		System.out.println("filter size:"+filter.size());
+		//final perplxity
+		tot.computePer(filter);
+		lda.computePer(filter);
+		tteqaa.computePer(filter);
 		
 		
 		

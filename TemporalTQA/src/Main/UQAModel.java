@@ -11,23 +11,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
+import java.util.Set;
 
 public class UQAModel extends LDABasedModel{
 	
-	float a1;//alpha
-	float a2;//alpha
-	float b1;//beta
-	float b2;//beta
-	float delta;//delta
-	float lambda;//lambda
-	float eta;//
-	float gamma;
+	float a;//alpha
+	float b;//beta
 	int U;//user number
 	int K;//topic number
-	int V;//tag number
 	int W;//word number
-	int T;//time number
-	int E; //vote level number;
+
 
 	
 	//Users trainU=null;
@@ -43,10 +36,11 @@ public class UQAModel extends LDABasedModel{
 	int [][] nuk;// number of user i in topic j. U*K
 	int [] sumuk;//sum for each user. 
 	
+	double [][] thetaKU;// topic-user distribution  K*U  activities.
+	int [][] nku;// number of topic i in user j. K*U
+	int [] sumku;//sum for each topic. 
 
-	double [][] thetaKV;// topic - tag distribution  K*V
-	int [][] nkv;//number of topic k in tag j; K*V
-	int [] sumkv;//sum for each topic. K
+
 	
 	double [][] thetaKW;//topic -word distribution K*W
 	int [][] nkw;//number of topic k in word j; K*W
@@ -54,18 +48,21 @@ public class UQAModel extends LDABasedModel{
 	
 	
 
+
+	
 	
 	//each users' each posts' topic label.  only for answer post.
-	int [][] topicLabel;
+	int [][][] topicLabel;
 	
 	
 	
 	
 	
-	public UQAModel(DataWoker trainUsers, DataWoker testUsers){
+	public UQAModel(DataWoker trainUsers, DataWoker testUsers,int iternum){
 		this.setDefaultParameteres();
 		this.trainSet=trainUsers;
 		this.testSet=testUsers;
+		this.iterNum=iternum;
 		
 	}
 	
@@ -80,72 +77,63 @@ public class UQAModel extends LDABasedModel{
 	
 	public void setDefaultParameteres(){
 		this.K=30;
-		this.a1=(float) 50.0/(float)this.K;
-		this.a2=this.a1;
-		this.b1=0.01f;
-		this.b2=0.01f;
-		this.lambda=0.01f;
-		this.delta=0.01f;
-		this.gamma=0.01f;
-		this.eta=0.01f;
+		this.a=(float) 50.0/(float)this.K;
+		this.b=0.01f;
 
-		this.iterNum=0;
+
+		
 	}
 	
 	
 	public void initModel(){
 		//init those probabilities;
 		this.U= this.trainSet.users.size();//number of user.
-		this.T= this.trainSet.timeCountMap.size();//number of time label
-		this.V= this.trainSet.tagCountMap.size();//number of tag
+	
+	
 		this.W= this.trainSet.termCountMap.size();//number of words
-		this.E= this.trainSet.voteStep;//number of expertise.//
+	
 		this.thetaUK = new double [this.U][this.K];
 		this.nuk= new int[this.U][this.K];
 		this.sumuk= new int[this.U];
 		
+		this.thetaKU = new double [this.K][this.U];
+		this.nku= new int[this.K][this.U];
+		this.sumku= new int[this.K];
 		
-		this.thetaKV= new double[this.K][this.V];
-		this.nkv=new int [this.K][this.V];
-		this.sumkv= new int[this.K];
+		
 		
 		this.thetaKW=new double[this.K][this.W];//topic -word distribution K*W
 		this.nkw=new int [this.K][this.W];//number of topic k in word j; K*W
 		this.sumkw =new int[this.K];//number of topic k in word j; K
-	
 		
-	
-
 		
-		this.topicLabel = new int [this.U][];
+		this.topicLabel = new int [this.U][][];
 		Random r = new Random();
 		for(int i=0;i<this.U;i++ ){
 			User u=this.trainSet.users.get(i);
 			ArrayList<AnswerPost> anses = u.answerPosts;
-			this.topicLabel[i]= new int[anses.size()	];
+			this.topicLabel[i]= new int[anses.size()	][];
 			for(int j=0;j<anses.size();j++){
-				int initialTopicLabel = r.nextInt(this.K);//0 to K-1
-				this.topicLabel[i][j]=initialTopicLabel;
 				
 				AnswerPost eachPost= anses.get(j);
-				//update those counts.
-				this.nuk[i][initialTopicLabel]++;
-				this.sumuk[i]++;
-			
 				
-				//for each tag
-				for(int tagID:eachPost.tags){
-					this.nkv[initialTopicLabel][tagID]++;
-					this.sumkv[initialTopicLabel]++;
-				}
-				
-				//for each word
-				for(int wordID:eachPost.words){
+				int allWords= eachPost.words.size();
+				this.topicLabel[i][j]=new int[allWords];
+				for( int k=0;k<allWords;k++){
+					int initialTopicLabel = r.nextInt(this.K);//0 to K-1
+					this.topicLabel[i][j][k]=initialTopicLabel;
+					
+					this.nuk[i][initialTopicLabel]++;
+					this.sumuk[i]++;
+					
+					this.nku[initialTopicLabel][i]++;
+					this.sumku[initialTopicLabel]++;
+					
+
+					int wordID=eachPost.words.get(k);
 					this.nkw[initialTopicLabel][wordID]++;
 					this.sumkw[initialTopicLabel]++;
 				}
-				
-			
 				
 			}
 		}
@@ -170,75 +158,47 @@ public class UQAModel extends LDABasedModel{
 				ArrayList<AnswerPost> anses = u.answerPosts;
 				for(int j=0;j<anses.size();j++){
 					AnswerPost eachPost= anses.get(j);
-					int timeID=eachPost.dateid;
-					ArrayList<Integer> tags= eachPost.tags ;
 					ArrayList<Integer> words = eachPost.words;
-					int expLevel = eachPost.vote_level;
-					int newTopicLabel = this.gibbsSample(i,j,tags,words, timeID,expLevel);
-					this.topicLabel[i][j]=newTopicLabel;
-					
+					for(int k=0;k<eachPost.words.size();k++){
+						int word=eachPost.words.get(k);
+						int newTopicLabel = this.gibbsSample(i,j,k,word);
+						this.topicLabel[i][j][k]=newTopicLabel;
+					}
+
 				}
 			}
 		}
 	}
 	
-	public int gibbsSample(int uid,int pid,ArrayList<Integer>tags,ArrayList<Integer> words, int timeID,int expLevel){
-		int oldTopicID=this.topicLabel[uid][pid];
+	public int gibbsSample(int uid,int pid,int kid, int wordID){
+		int oldTopicID=this.topicLabel[uid][pid][kid];
 		
 		//remove current stuff.
 		this.nuk[uid][oldTopicID]--;
 		this.sumuk[uid]--;
 		
-	
+		this.nku[oldTopicID][uid]--;
+		this.sumku[oldTopicID]--;
 		
-		for(int eachTagID: tags){
-			this.nkv[oldTopicID][eachTagID]--;
-			this.sumkv[oldTopicID]--;
-		}
+
+		this.nkw[oldTopicID][wordID]--;
+		this.sumkw[oldTopicID]--;
+
 		
-		//need counter for this words.
-		Map<Integer,Integer> wordFreq = new HashMap<Integer,Integer>();
-		
-		for(int eachWord:words){
-			this.nkw[oldTopicID][eachWord]--;
-			this.sumkw[oldTopicID]--;
-			if(!wordFreq.containsKey(eachWord)){
-				wordFreq.put(eachWord,0);
-			}
-			int oldc=wordFreq.get(eachWord);
-			wordFreq.put(eachWord, oldc+1);
-		}
-		
-		
-		
-	
+
 		
 		//souihaite ca marche.
 		double [] backupProb =  new double [this.K];
 		
-		int tagL=tags.size();
 		for(int k=0;k<this.K;k++){
-			backupProb[k]  =  ( this.nuk[uid][k] + this.a1 )/(this.sumuk[uid] + this.K*this.a1 ) ;
+			backupProb[k]  =  ( this.nuk[uid][k] + this.a )/(this.sumuk[uid] + this.K*this.a ) ;
 			
 			
 			//should modify this, seems like it is not correct
-
-			for(int tag:tags){
-				backupProb[k]*=(this.nkv[k][tag]+this.gamma)/(this.sumkv[k]+this.gamma*this.V );
-			}
-			for(int word	:words){
-				backupProb[k]*=(this.nkw[k][word]+this.delta)/(this.sumkv[k]+this.delta*this.W );
-			}
+			//for(int eachTagID:tags){  // if remove this, can not detect topic. tested!
+			backupProb[k] *=  ( this.nkw[k][wordID] +  this.b )/(this.sumkw[k] + this.W*this.b ) ;
 			
-
-			//if only keep this, good result.
-			//backupProb[k] *= ( this.nkt[k][timeID] + this.b2 )/(this.sumkt[k] + this.T*this.b2 ) ;
-			
-			//backupProb[k] *= ( this.nku[k][uid] + this.f )/(this.sumku[k] + this.U*this.f ) ;
-		
-			//indeed, if add this, perplex will increase. 
-			//backupProb[k] *= ( this.nukt[uid][k][timeID] + this.b2 )/(this.sumukt[uid][k] + this.T*this.b2 ) ;
-			//backupProb[k] *= ( this.nuke[uid][k][expLevel] + this.e )/(this.sumuke[uid][k] + this.E*this.e ) ;
+			//backupProb[k] *= ( this.nku[k][uid] + this.a1 )/(this.sumku[k] + this.U*this.a1 ) ;
 
 		}
 		
@@ -262,23 +222,20 @@ public class UQAModel extends LDABasedModel{
 		//update count
 		//assert(newSampledTopic>=0);
 		//assert(newSampledTopic<this.K);
-		this.topicLabel[uid][pid]=newSampledTopic;
+		this.topicLabel[uid][pid][kid]=newSampledTopic;
 		
 		//update current stuff.
 		this.nuk[uid][newSampledTopic]++;
 		this.sumuk[uid]++;
-	
 		
-		for(int eachTagID: tags){
-			this.nkv[newSampledTopic][eachTagID]++;
-			this.sumkv[newSampledTopic]++;
-		}
-		for(int word: words){
-			this.nkw[newSampledTopic][word]++;
-			this.sumkw[newSampledTopic]++;
-		}
+		this.nku[newSampledTopic][uid]++;
+		this.sumku[newSampledTopic]++;
+
+
+		this.nkw[newSampledTopic][wordID]++;
+		this.sumkw[newSampledTopic]++;
 		
-	
+
 		
 		return newSampledTopic;
 	}
@@ -288,31 +245,167 @@ public class UQAModel extends LDABasedModel{
 		//thetaUK
 		for(int uid = 0;uid<this.U;uid++){
 			for(int kid =0 ;kid<this.K;kid++){
-				this.thetaUK[uid][kid]=( this.nuk[uid][kid] + this.a1 )/(this.sumuk[uid] + this.K*this.a1 );
+				this.thetaUK[uid][kid]=( this.nuk[uid][kid] + this.a )/(this.sumuk[uid] + this.K*this.a );
 			}
 		}
 		
-			
-		//thetaKV
-		for(int kid=0;kid<this.K;kid++){
-			for(int vid=0;vid<this.V;vid++){
-				this.thetaKV[kid][vid]=(this.nkv[kid][vid] +  this.gamma )/(this.sumkv[kid] + this.V*this.gamma);
+		for(int kid =0 ;kid<this.K;kid++){
+			for(int uid = 0;uid<this.U;uid++){
+				this.thetaKU[kid][uid]=( this.nku[kid][uid] + this.a )/(this.sumku[kid] + this.U*this.a );
 			}
 		}
 		
+
 		//thetaKW
 		//fuck this bug!!!!!
 		for(int kid=0;kid<this.K;kid++){
 			for(int wid=0;wid<this.W;wid++){
-				this.thetaKW[kid][wid]=(this.nkw[kid][wid] +  this.delta )/(this.sumkw[kid] + this.W*this.delta);
+				this.thetaKW[kid][wid]=(this.nkw[kid][wid] +  this.b )/(this.sumkw[kid] + this.W*this.b);
 			}
 		}
-		
+	}
 	
+	
+	public ArrayList<ArrayList<String>> getTopWords(){
+		//from trainset.
+		ArrayList<ArrayList<String>> topicTopWords=new ArrayList<ArrayList<String>>();
+
+		for(int kid=0;kid<this.K;kid++){
+			topicTopWords.add(new ArrayList<String>());
+			ArrayList<Map.Entry<String, Double>> dp= new ArrayList<Map.Entry<String, Double>>();
+			for(int wid=0;wid<this.W;wid++){
+				String word=this.trainSet.indexToTermMap.get(wid);
+				//AbstractMap.SimpleEntry<String, Integer>("exmpleString", 42);
+				Map.Entry<String, Double> pairs =new  AbstractMap.SimpleEntry<String , Double> (word,this.thetaKW[kid][wid]);
+				dp.add(pairs);
+			}
+			Collections.sort(dp, new Comparator<Entry<String,Double>>(){
+				public int compare(Entry<String, Double> arg0,Entry<String, Double> arg1) {
+					// TODO Auto-generated method stub
+					return -1*arg0.getValue().compareTo(arg1.getValue());
+				}
+			});
+			for(int i=0;i<10;i++){
+				//only output top 10;
+				topicTopWords.get(kid).add(dp.get(i).getKey());
+				//writer.write(String.format("%s:%f\t", dp.get(i).getKey(),dp.get(i).getValue()));
+			}
+			//writer.write("\n");
+		}
+		return topicTopWords;
+		
+		
+	}
+	
+	public void computeCoherence(){
+		ArrayList<ArrayList<String>> topicTopWords= this.getTopWords();
+		double total_score=0.0;
+		double item=0;
+		for(int kid=0;kid<this.K;kid++){
+			for(int i=0;i<10;i++){
+				String w1=topicTopWords.get(kid).get(i);
+				int wid1=this.testSet.termToIndexMap.get(w1);
+				int occ1= this.testSet.singleOccDocument[wid1];//number of document has word1.
+				//System.out.println(w1+";"+occ1);
+				for(int j=i+1;j<10;j++){
+					
+					String w2=topicTopWords.get(kid).get(j);
+					int wid2=this.testSet.termToIndexMap.get(w2);
+					//int occ2= this.testSet.singleOccDocument[wid2];//number of document has words2
+					int cooc12=this.testSet.coOccDocument[wid1][wid2]+this.testSet.coOccDocument[wid2][wid1];
+					//System.out.println(w1+";"+w2+";"+cooc12);
+					
+					double score= Math.log( ((double)cooc12 + 1.0) / ( (double)(occ1)) );
+					total_score+=score;
+					item++;
+					//System.out.println(score+";"+total_score);
+				}
+			}
+		}
+		System.out.println("average coherence score:"+total_score/item);
+		
+		
+		
+	}
+	
+	public void computePer(Set<String> filterPostId){
+		double  total_result=0.0;
+		int post_number=0;
+		int tag_number=0;
+		int word_number=0;
+		double final_perplex=0.0;
+		int 	UinTrain = 0;
+		for (User u : this.testSet.users){
+			int uid=0;
+			if ( !this.trainSet.useridToIndex.containsKey(u.userId) ){
+				continue;
+			}
+			UinTrain++;
+			uid=this.trainSet.useridToIndex.get(u.userId);
+			
+			for(AnswerPost eachPost: u.answerPosts){
+				
+				//ArrayList<Integer> faketags= eachPost.tags;
+				ArrayList<Integer> fakewords=eachPost.words;
+				
+				//compute for each post.
+				double curPostW=0.0;
+				String postid=eachPost.aid;
+				if(filterPostId.contains(postid)){
+					continue;
+				}
+				ArrayList<Integer> realwords=new ArrayList<Integer>();
+				
+
+
+				
+				for( int wid : fakewords){
+					String testOriWord = this.testSet.indexToTermMap.get(wid);
+					if(this.trainSet.termToIndexMap.containsKey(testOriWord)){
+						realwords.add( this.trainSet.termToIndexMap.get(testOriWord));
+					}
+					
+				}
+				
+	
+				
+				int word_n=realwords.size();
+				if(word_n==0){
+					continue;
+				}
+				
+				//double tempW=0.0;
+				
+				
+				double forAllW=0.0;
+				for(int word:realwords){
+					double perword=0.0;
+					for(int topic_id=0;topic_id<this.K;topic_id++){
+						perword+=this.thetaUK[uid][topic_id]*this.thetaKW[topic_id][word];
+					}
+					forAllW+= Math.log(perword);
+				}
+
+				total_result +=forAllW;
+				word_number+=word_n;			
+				post_number++;
+				
+			}
+			
+			//break;
+
+		}
+		System.out.println("test post number:"+post_number);
+		
+		final_perplex =  Math.exp(-1.0  *  total_result  / (float)(word_number));
+		System.out.println(final_perplex);
+		
+		
+		
 	}
 
 	
-	public void computePer(){
+	public void computePerWrong(){
 		//p(tag) or p(word) = p(k|u)p(k|v)
 		
 		//test dataset =
@@ -371,7 +464,23 @@ public class UQAModel extends LDABasedModel{
 					continue;
 				}
 				
-
+				//double tempW=0.0;
+				
+				
+				/*double forAllW=0.0;
+				for(int topic_id=0;topic_id<this.K;topic_id++){
+					
+					//double uk=this.thetaUK[uid][topic_id];
+					for(int gid=0;gid<50;gid++){
+						double uk= Math.random()*  Math.random();
+						for(int word:realwords){						
+								uk*=this.thetaKW[topic_id][word];
+						}
+							//p(w1)
+						forAllW+=uk;
+					}
+				}
+				double x=Math.log(forAllW);*/
 				
 				double forAllW=0.0;
 				
@@ -408,6 +517,7 @@ public class UQAModel extends LDABasedModel{
 		final_perplex =  Math.exp(-1.0  *  total_result  / (float)(word_number));
 		System.out.println(final_perplex);
 		
+		
 	}
 	
 	public void outputResult(String outputPath) throws IOException{
@@ -424,31 +534,27 @@ public class UQAModel extends LDABasedModel{
 		}
 		writer.close();
 		
-
-		
-		
-		
-		//thetaKV
-		writer = new BufferedWriter(new FileWriter(outputPath+ "thetaKV.txt"));
-		for(int kid=0;kid<this.K;kid++){
+		//thetaKU
+		writer = new BufferedWriter(new FileWriter(outputPath+ "thetaKU.txt"));
+		for(int kid = 0;kid<this.K;kid++){
 			writer.write(String.format("Topic%d",kid));
-			for(int vid=0;vid<this.V;vid++){
-				String tag=this.trainSet.indexToTagMap.get(vid);
-				writer.write(tag+":"+this.thetaKV[kid][vid]+"\t");
+			for(int uid =0 ;uid<this.U;uid++){
+				String userID=this.trainSet.users.get(uid).userId;
+				writer.write(userID+":"+this.thetaUK[uid][kid]+",");
 			}
 			writer.write("\n");
 		}
 		writer.close();
 		
-		//ordered version.
-		writer = new BufferedWriter(new FileWriter(outputPath+ "thetaKV.sorted.txt"));
+		//orderedVersion
+		writer = new BufferedWriter(new FileWriter(outputPath+ "thetaKU.sorted.txt"));
 		for(int kid=0;kid<this.K;kid++){
 			writer.write(String.format("Topic%d",kid));
 			ArrayList<Map.Entry<String, Double>> dp= new ArrayList<Map.Entry<String, Double>>();
-			for(int vid=0;vid<this.V;vid++){
-				String tag=this.trainSet.indexToTagMap.get(vid);
+			for(int uid=0;uid<this.U;uid++){
+				String userid=this.trainSet.users.get(uid).userId;
 				//AbstractMap.SimpleEntry<String, Integer>("exmpleString", 42);
-				Map.Entry<String, Double> pairs =new  AbstractMap.SimpleEntry<String , Double> (tag,this.thetaKV[kid][vid]);
+				Map.Entry<String, Double> pairs =new  AbstractMap.SimpleEntry<String , Double> (userid,this.thetaKU[kid][uid]);
 				dp.add(pairs);
 			}
 			Collections.sort(dp, new Comparator<Entry<String,Double>>(){
@@ -464,7 +570,10 @@ public class UQAModel extends LDABasedModel{
 			writer.write("\n");
 		}
 		writer.close();
-		//thetaKW
+		
+		
+		
+		
 		writer = new BufferedWriter(new FileWriter(outputPath+ "thetaKW.txt"));
 		for(int kid=0;kid<this.K;kid++){
 			writer.write(String.format("Topic%d",kid));
@@ -499,14 +608,11 @@ public class UQAModel extends LDABasedModel{
 			}
 			writer.write("\n");
 		}
-		writer.close();
 		
 		
-
-		
-		
+	
 		System.out.println("done");
-
+		writer.close();
 		
 	}
 }

@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 import java.util.Random;
 
@@ -65,10 +66,11 @@ public class GrosToT extends LDABasedModel{
 	
 	
 	
-	public GrosToT(DataWoker trainUsers, DataWoker testUsers){
+	public GrosToT(DataWoker trainUsers, DataWoker testUsers,int iternum){
 		this.setDefaultParameteres();
 		this.trainSet=trainUsers;
 		this.testSet=testUsers;
+		this.iterNum=iternum;
 	}
 	
 	/*public GrosToT(int a,int b,int c,int d, int topicNum,int iterNum){
@@ -87,7 +89,7 @@ public class GrosToT extends LDABasedModel{
 		this.b=0.01f;
 		this.c=(float) 50.0/(float)this.G;
 		this.d=0.01f;
-		this.iterNum=100;
+		
 	}
 	
 	public void initModel(){
@@ -430,7 +432,7 @@ public class GrosToT extends LDABasedModel{
 		
 	}
 	
-	public void computePer(){
+	public void computePer(Set<String> filterPostId){
 		//p(tag) or p(word) = p(g|u)(k|g)(v|k)
 
 		
@@ -455,6 +457,10 @@ public class GrosToT extends LDABasedModel{
 				
 				//compute for each post.
 				double curPostW=0.0;
+				String postid=eachPost.aid;
+				if(filterPostId.contains(postid)){
+					continue;
+				}
 				
 				//ArrayList<Integer> realtags=new ArrayList<Integer>();
 				ArrayList<Integer> realwords=new ArrayList<Integer>();
@@ -496,6 +502,7 @@ public class GrosToT extends LDABasedModel{
 				
 				//System.out.println(x);
 				if(Double.isInfinite(x)){
+					filterPostId.add(postid);					
 					continue;
 				}
 				total_result +=x;
