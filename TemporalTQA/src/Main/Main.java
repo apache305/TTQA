@@ -29,7 +29,8 @@ public class Main {
 		
 		
 		xx.computePer(filter);
-		xx.computeCoherence();
+		xx.computeCoherence(xx.trainSet);
+		xx.computeCoherence(xx.testSet);
 		
 		
 	}
@@ -60,8 +61,8 @@ public class Main {
 		trainset.ProcessOriData();
 		testset.ProcessOriData();
 		
-		
-		testset.computeCoOccurForTest();
+		trainset.computeCoOccur();
+		testset.computeCoOccur();
 
 		
 		
@@ -79,12 +80,12 @@ public class Main {
 		resultPath= "out/outGROST/";
 		System.out.println("Grostt Model");
 		GrosToT tot = new GrosToT(trainset,testset,iternum);
-		//runModel(tot,"out/outGROST/",filter);
+		runModel(tot,"out/outGROST/",filter);
 		
 		resultPath="out/outLDA/";
 		System.out.println("LDA Model");
 		LDA lda= new LDA(trainset,testset,iternum);
-		//runModel(lda,"out/outLDA/",filter);
+		runModel(lda,"out/outLDA/",filter);
 		
 		
 		resultPath= "out/outUQA/";
@@ -95,18 +96,15 @@ public class Main {
 		resultPath= "out/outTTEQAA/";
 		System.out.println("TTEQAA Model");
 		TTEQAAModel tteqaa = new TTEQAAModel(trainset,testset,iternum);
-		//runModel(tteqaa,"out/outTTEQAA/",filter);
+		runModel(tteqaa,"out/outTTEQAA/",filter);
 		
-		//resultPath= "out/outTTEQA/";
-		//TTEQAModel tteqa = new TTEQAModel(users,testUsers);
-		//runModel(tteqa,"out/outTTEQA/");
-		System.out.println("filter size:"+filter.size());
-		//final perplxity
-		System.exit(1);
+
+		
 		tot.computePer(filter);
 		lda.computePer(filter);
 		uqa.computePer(filter);
 		tteqaa.computePer(filter);
+		System.exit(1);
 		
 		
 		

@@ -234,7 +234,7 @@ public class DataWoker {
 		return 1;
 
 	}
-	public void computeCoOccurForTest(){
+	public void computeCoOccur(){
 		//this.cooc= new int[this.termCountMap.size()][this.termCountMap.size()];
 		
 		this.singleOccDocument= new int [this.termCountMap.size()];

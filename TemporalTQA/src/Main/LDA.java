@@ -59,6 +59,8 @@ public class LDA extends LDABasedModel{
 	
 	
 	public LDA(DataWoker trainUsers, DataWoker testUsers,int iternum){
+		super.trainSet=trainUsers;
+		super.testSet=testUsers;
 		this.setDefaultParameteres();
 		this.trainSet=trainUsers;
 		this.testSet=testUsers;
@@ -297,27 +299,35 @@ public class LDA extends LDABasedModel{
 		
 	}
 	
-	public void computeCoherence(){
+	public void computeCoherence( DataWoker dataset){
 		ArrayList<ArrayList<String>> topicTopWords= this.getTopWords();
 		double total_score=0.0;
 		double item=0;
 		for(int kid=0;kid<this.K;kid++){
 			for(int i=0;i<10;i++){
 				String w1=topicTopWords.get(kid).get(i);
-				int wid1=this.testSet.termToIndexMap.get(w1);
-				int occ1= this.testSet.singleOccDocument[wid1];//number of document has word1.
+				if(!dataset.termCountMap.containsKey(w1)){
+					continue;
+				}
+				int wid1=dataset.termToIndexMap.get(w1);
+				int occ1=dataset.singleOccDocument[wid1];//number of document has word1.
 				//System.out.println(w1+";"+occ1);
 				for(int j=i+1;j<10;j++){
 					
 					String w2=topicTopWords.get(kid).get(j);
-					int wid2=this.testSet.termToIndexMap.get(w2);
-					//int occ2= this.testSet.singleOccDocument[wid2];//number of document has words2
-					int cooc12=this.testSet.coOccDocument[wid1][wid2]+this.testSet.coOccDocument[wid2][wid1];
-					//System.out.println(w1+";"+w2+";"+cooc12);
-					
+					if(!dataset.termCountMap.containsKey(w2)){
+						continue;
+					}
+	
+					int wid2=dataset.termToIndexMap.get(w2);
+					int cooc12=dataset.coOccDocument[wid1][wid2]+dataset.coOccDocument[wid2][wid1];
+						
 					double score= Math.log( ((double)cooc12 + 1.0) / ( (double)(occ1)) );
+
 					total_score+=score;
 					item++;
+					
+					
 					//System.out.println(score+";"+total_score);
 				}
 			}
