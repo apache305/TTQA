@@ -78,6 +78,14 @@ public class Main {
 		
 		int iternum=100;
 		int topNum=100;
+		
+		resultPath="out/TEM/";
+		System.out.println("TEM model");
+		TEMModel tem=new TEMModel(trainset,testset,iternum);
+		tem.K=topNum;
+		runModel(tem,"out/TEM/",filter);
+		System.exit(1);
+		
 		resultPath= "out/outGROST/";
 		System.out.println("Grostt Model");
 		GrosToT tot = new GrosToT(trainset,testset,iternum);

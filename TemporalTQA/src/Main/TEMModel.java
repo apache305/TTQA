@@ -6,11 +6,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import tem.com.ComUtil;
-import tem.com.FileUtil;
-import tem.conf.PathConfig;
-import tem.main.ModelComFunc;
-import tem.main.TEMModelSampling.modelparameters;
+import Util.ComUtil;
+import Util.FileUtil;
+import Util.ModelComFunc;
+import Util.TEMModelSampling.modelparameters;
 
 /**
  * Class for Topic Expertise Model
@@ -174,20 +173,23 @@ public class TEMModel extends LDABasedModel  {
 		fgmm = new FGMM();
 
 		for (int u = 0; u < this.U; u++) {
-			for (int n = 0; n < docSet.docs.get(u).docWords.length; n++) {
-				if (docSet.docs.get(u).docWords[n] != null)
+			//for each post.
+			for (int n = 0; n < this.trainSet.users.get(u).answerPosts.size(); n++) {
+				AnswerPost eachPost=this.trainSet.users.get(u).answerPosts.get(n);
+				if (eachPost!= null)
 					fgmm.idmap.put(u + "_" + n, fgmm.idmap.size());
 			}
 		}
 		GMMData = new float[fgmm.idmap.size()][1];
 		int[] clusterids = new int[fgmm.idmap.size()];
 		int count = 0;
-		for (int u = 0; u < docSet.docs.size(); u++) {
-			for (int n = 0; n < docSet.docs.get(u).docWords.length; n++) {
-				if (docSet.docs.get(u).docWords[n] != null) {
-					float vote = Float.parseFloat(docSet.indexToVoteMap
-							.get(docSet.docs.get(u).votes[n])) + 0f;
+		for (int u = 0; u < this.U; u++) {
+			for (int n = 0; n < this.trainSet.users.get(u).answerPosts.size(); n++) {
+				AnswerPost eachPost=this.trainSet.users.get(u).answerPosts.get(n);
+				if (eachPost!= null){
+					//float vote = Float.parseFloat(docSet.indexToVoteMap.get(docSet.docs.get(u).votes[n])) + 0f;
 					// System.out.println(vote);
+					float vote= (float)eachPost.score;
 					GMMData[count][0] = vote;
 					clusterids[count] = E[u][n];
 					count++;
@@ -197,7 +199,7 @@ public class TEMModel extends LDABasedModel  {
 		fgmm.init2(GMMData, expertNum, clusterids);
 	}
 
-	public void inferenceModel(Documents docSet, String minPostNum)
+	public void inferenceModel(String minPostNum)
 			throws IOException {
 		if (iterations < saveStep + beginSaveIters) {
 			System.err
@@ -229,7 +231,7 @@ public class TEMModel extends LDABasedModel  {
 				// Firstly update parameters
 				updateEstimatedParameters();
 				// Secondly print model variables
-				saveIteratedModel(i, docSet, minPostNum);
+				// saveIteratedModel(i, docSet, minPostNum);
 			}
 
 			if (i % 50 == 0) {
@@ -249,13 +251,14 @@ public class TEMModel extends LDABasedModel  {
 			}
 
 			// Use Gibbs Sampling to update Z[][][] and E[][][]
-			for (int u = 0; u < docSet.docs.size(); u++) {
+			for (int u = 0; u < this.U; u++) {
 				if (u % 100 == 0)
 					System.out.println("\tNow u = " + u);
-				for (int n = 0; n < docSet.docs.get(u).docWords.length; n++) {
+				for (int n = 0; n <  this.trainSet.users.get(u).answerPosts.size() ; n++) {
 					// System.out.println("\tNow u: " + u + "\tn: " + n);
-					if (docSet.docs.get(u).docWords[n] != null)
-						sampleTopicZandExpertE(docSet, u, n);
+					AnswerPost a=this.trainSet.users.get(u).answerPosts.get(n);
+					if (a != null)
+						sampleTopicZandExpertE(a, u, n);
 					// for (int l = 0; l <
 					// docSet.docs.get(u).docWords[n].length; l++) {
 					// sampleTopicZandExpertE(docSet, u, n, l);
@@ -278,14 +281,14 @@ public class TEMModel extends LDABasedModel  {
 			ComUtil.print(fgmm.p_mu[k], " ", "\n\t");
 	}
 
-	private void sampleTopicZandExpertE(Documents docSet, int u, int n) {
+	private void sampleTopicZandExpertE(AnswerPost a, int u, int n) {
 		// get unique terms and tags
 		ArrayList<Integer> UniqueWords = new ArrayList<Integer>();
 		ArrayList<Integer> wCounts = new ArrayList<Integer>();
 		ArrayList<Integer> UniqueTags = new ArrayList<Integer>();
 		ArrayList<Integer> tCounts = new ArrayList<Integer>();
-		ComUtil.uniqe(docSet.docs.get(u).docWords[n], UniqueWords, wCounts);
-		ComUtil.uniqe(docSet.docs.get(u).tags[n], UniqueTags, tCounts);
+		ComUtil.uniqe(a.words, UniqueWords, wCounts);
+		ComUtil.uniqe(a.tags, UniqueTags, tCounts);
 
 		// decrease counts
 		int oldTopic = Z[u][n];
@@ -295,13 +298,13 @@ public class TEMModel extends LDABasedModel  {
 		CKUE[oldTopic][u][oldExpert]--; // K*U*E
 		CKUEsum[oldTopic][u]--; // K*U
 
-		for (int l = 0; l < docSet.docs.get(u).docWords[n].length; l++) {
-			int term = docSet.docs.get(u).docWords[n][l];
+		for (int l = 0; l < a.words.size(); l++) {
+			int term = a.words.get(l);
 			CKV[oldTopic][term]--; // K*V
 			CKVsum[oldTopic]--; // K
 		}
-		for (int l = 0; l < docSet.docs.get(u).tags[n].length; l++) {
-			int tag = docSet.docs.get(u).tags[n][l];
+		for (int l = 0; l < a.tags.size(); l++) {
+			int tag = a.tags.get(l);
 			CKT[oldTopic][tag]--; // K*T
 			CKTsum[oldTopic]--; // K
 		}
@@ -387,14 +390,16 @@ public class TEMModel extends LDABasedModel  {
 		CUKsum[u]++;// U
 		CKUE[newTopic][u][newExpert]++; // K*U*E
 		CKUEsum[newTopic][u]++; // K*U
+		
+		
 
-		for (int l = 0; l < docSet.docs.get(u).docWords[n].length; l++) {
-			int term = docSet.docs.get(u).docWords[n][l];
+		for (int l = 0; l < a.words.size(); l++) {
+			int term =a.words.get(l);
 			CKV[newTopic][term]++; // K*V
 			CKVsum[newTopic]++; // K
 		}
-		for (int l = 0; l < docSet.docs.get(u).tags[n].length; l++) {
-			int tag = docSet.docs.get(u).tags[n][l];
+		for (int l = 0; l < a.tags.size(); l++) {
+			int tag = a.tags.get(l);
 			CKT[newTopic][tag]++; // K*T
 			CKTsum[newTopic]++; // K
 		}
@@ -438,7 +443,7 @@ public class TEMModel extends LDABasedModel  {
 		// }
 	}
 
-	public void saveIteratedModel(int iteration, Documents docSet,
+	/*public void saveIteratedModel(int iteration, Documents docSet,
 			String minPostNum) throws IOException {
 		// model.params model.theta model.phi model.psi model.varphi model.tau
 		String resPath = PathConfig.modelResPath + "USER" + minPostNum
@@ -510,7 +515,7 @@ public class TEMModel extends LDABasedModel  {
 			ztagsLines.add(line);
 		}
 		FileUtil.writeLines(resPath + ".ztags", ztagsLines);
-	}
+	}*/
 
 	public class TwordsComparable implements Comparator<Integer> {
 		public float[] sortProb; // Store probability of each word in topic k

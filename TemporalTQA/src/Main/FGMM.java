@@ -9,9 +9,9 @@ package Main;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import tem.com.ComUtil;
-import tem.com.MathUtil;
-import tem.com.MatrixUtil;
+import Util.ComUtil;
+import Util.MathUtil;
+import Util.MatrixUtil;
 
 public class FGMM implements java.io.Serializable {
 	public double[] mu0;
