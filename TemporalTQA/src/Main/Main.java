@@ -83,7 +83,15 @@ public class Main {
 		System.out.println("TEM model");
 		TEMModel tem=new TEMModel(trainset,testset,iternum);
 		tem.K=topNum;
-		runModel(tem,"out/TEM/",filter);
+		//runModel(tem,"out/TEM/",filter);
+		
+		
+		resultPath= "out/outTTEQAA/";
+		System.out.println("TTEQAA Model");
+		TTEQAAModel tteqaa = new TTEQAAModel(trainset,testset,iternum);
+		tteqaa.K=topNum;
+		runModel(tteqaa,"out/outTTEQAA/",filter);
+		
 		System.exit(1);
 		
 		resultPath= "out/outGROST/";
@@ -105,11 +113,7 @@ public class Main {
 		uqa.K=topNum;
 		runModel(uqa,"out/outUQA/",filter);
 		
-		resultPath= "out/outTTEQAA/";
-		System.out.println("TTEQAA Model");
-		TTEQAAModel tteqaa = new TTEQAAModel(trainset,testset,iternum);
-		tteqaa.K=topNum;
-		runModel(tteqaa,"out/outTTEQAA/",filter);
+		
 		
 
 		

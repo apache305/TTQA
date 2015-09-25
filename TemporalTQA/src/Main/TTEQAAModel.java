@@ -118,7 +118,7 @@ public class TTEQAAModel extends LDABasedModel{
 		this.b2=0.01f;
 		this.lambda=0.01f;
 		this.delta=0.01f;
-		this.gamma=0.01f;
+		this.gamma=0.001f;
 		this.eta=0.01f;
 
 		this.iterNum=100;
@@ -334,7 +334,7 @@ public class TTEQAAModel extends LDABasedModel{
 			}
 			count=0;
 			for(int word: wordFreq.keySet()){
-				//
+				
 				int freq=wordFreq.get(word);
 				for(int eachFreq=0;eachFreq<freq;eachFreq++){
 					backupProb[k]*=(this.nkw[k][word]+this.delta+eachFreq)

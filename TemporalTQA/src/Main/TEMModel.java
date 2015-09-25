@@ -14,7 +14,7 @@ import java.util.Map.Entry;
 
 import Util.ComUtil;
 import Util.ModelComFunc;
-import Util.TEMModelSampling.modelparameters;
+
 
 /**
  * Class for Topic Expertise Model
@@ -211,7 +211,7 @@ public class TEMModel extends LDABasedModel  {
 				System.out.println(String.format("Round:%d", i));
 			}
 			//
-			if (i % 1 == 0) {
+			/*if (i % 1 == 0) {
 				System.out.print("\t");
 				for (int k = 0; k < fgmm.ksize; k++)
 					System.out.print(fgmm.clusterDataIndex.get(k).size() + " ");
@@ -224,9 +224,9 @@ public class TEMModel extends LDABasedModel  {
 				System.out.print("\t");
 				for (int k = 0; k < fgmm.ksize; k++)
 					ComUtil.print(fgmm.p_mu[k], " ", "\n\t");
-			}
-			System.out.println();
-			System.out.println("Iteration " + i);
+			}*/
+			//System.out.println();
+			//System.out.println("Iteration " + i);
 			/*if ((i >= beginSaveIters)
 					&& (((i - beginSaveIters) % saveStep) == 0)) {
 				// Saving the model
@@ -345,9 +345,9 @@ public class TEMModel extends LDABasedModel  {
 
 			p[i] = (CUK[u][z] + alpha) / (CUKsum[u] + alpha * K)
 					* (CKUE[z][u][e] + beta) / (CKUEsum[z][u] + beta * ENum);
-
+			int count = 0;
 			for (int m1 = 0; m1 < UniqueWords.size(); m1++) {
-				int count = 0;
+				
 				for (int m2 = 0; m2 < wCounts.get(m1); m2++) {
 					int word = UniqueWords.get(m1);
 					p[i] *= (CKV[z][word] + gamma + m2)
@@ -356,9 +356,9 @@ public class TEMModel extends LDABasedModel  {
 					p[i] = ModelComFunc.checkDoubleOverflow(p[i], i, overflow);
 				}
 			}
-
+			 count = 0;
 			for (int m1 = 0; m1 < UniqueTags.size(); m1++) {
-				int count = 0;
+				
 				for (int m2 = 0; m2 < tCounts.get(m1); m2++) {
 					int tag = UniqueTags.get(m1);
 					p[i] *= (CKT[z][tag] + eta + m2)
