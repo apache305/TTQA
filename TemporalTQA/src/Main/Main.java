@@ -75,27 +75,31 @@ public class Main {
 		
 		Set<String> filter=new HashSet<String>();
 		
-		int iternum=0;
-		
+		int iternum=100;
+		int topNum=100;
 		resultPath= "out/outGROST/";
 		System.out.println("Grostt Model");
 		GrosToT tot = new GrosToT(trainset,testset,iternum);
+		tot.K=topNum;
 		runModel(tot,"out/outGROST/",filter);
 		
 		resultPath="out/outLDA/";
 		System.out.println("LDA Model");
 		LDA lda= new LDA(trainset,testset,iternum);
+		lda.K=topNum;
 		runModel(lda,"out/outLDA/",filter);
 		
 		
 		resultPath= "out/outUQA/";
 		System.out.println("UQA Model");
 		UQAModel uqa = new UQAModel(trainset,testset,iternum);
+		uqa.K=topNum;
 		runModel(uqa,"out/outUQA/",filter);
 		
 		resultPath= "out/outTTEQAA/";
 		System.out.println("TTEQAA Model");
 		TTEQAAModel tteqaa = new TTEQAAModel(trainset,testset,iternum);
+		tteqaa.K=topNum;
 		runModel(tteqaa,"out/outTTEQAA/",filter);
 		
 

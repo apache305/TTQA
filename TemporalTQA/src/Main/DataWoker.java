@@ -42,6 +42,10 @@ public class DataWoker {
 	public ArrayList<String> indexToTermMap;
 	public Map<String, Integer> termCountMap;
 	
+	public Map<String,Integer> voteToIndexMap;
+	public ArrayList<String> indexToVoteMap;
+	public Map<String, Integer> voteCountMap;
+	
 	public int maxvote=0;//max vote score.
 	public int voteStep=3;//low, medium, high.
 	public double [] voteMap;//only for our model.
@@ -81,6 +85,12 @@ public class DataWoker {
 		this.indexToTimeMap = new ArrayList<String>();
 		this.timeCountMap   = new HashMap<String,Integer>();	
 		
+		
+		//time count
+		this.voteToIndexMap = new HashMap<String,Integer>();
+		this.indexToVoteMap = new ArrayList<String>();
+		this.voteCountMap   = new HashMap<String,Integer>();	
+
 		
 		this.voteMap = new double [this.voteStep];
 		
@@ -198,6 +208,17 @@ public class DataWoker {
 		}else{
 			p.acceptaid=null;
 		}
+		
+		
+		//if(!this.voteToIndexMap.containsKey(score)){
+			//this.voteToIndexMap.put(score, this.indexToVoteMap.size());
+			//this.voteCountMap.put(score,0);
+			//this.indexToVoteMap.add(score);
+		//}
+		//int oldV=this.voteCountMap.get(score);
+		//this.voteCountMap.put(score, oldV+1);
+		
+		
 		p.score=Integer.parseInt(score);
 		
 		ArrayList<Integer> taglist= new ArrayList<Integer>();
@@ -308,6 +329,15 @@ public class DataWoker {
 		a.date=date;
 		
 		a.score=Integer.parseInt(score);
+		
+		if(!this.voteToIndexMap.containsKey(score)){
+			this.voteToIndexMap.put(score, this.indexToVoteMap.size());
+			this.voteCountMap.put(score,0);
+			this.indexToVoteMap.add(score);
+		}
+		int oldV=this.voteCountMap.get(score);
+		this.voteCountMap.put(score, oldV+1);
+		
 		
 		
 		ArrayList<Integer> words=new ArrayList<Integer>();

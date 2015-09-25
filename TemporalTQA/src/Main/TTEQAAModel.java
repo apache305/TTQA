@@ -563,6 +563,7 @@ public class TTEQAAModel extends LDABasedModel{
 				}
 			}
 		}
+		System.out.println("item size:"+item);
 		System.out.println("average coherence score:"+total_score/item);
 		
 		
