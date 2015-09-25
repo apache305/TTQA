@@ -66,13 +66,14 @@ public class GrosToT extends LDABasedModel{
 	
 	
 	
-	public GrosToT(DataWoker trainUsers, DataWoker testUsers,int iternum){
+	public GrosToT(DataWoker trainUsers, DataWoker testUsers,int iternum,int topicnum){
 		super.trainSet=trainUsers;
 		super.testSet=testUsers;
 		this.setDefaultParameteres();
 		this.trainSet=trainUsers;
 		this.testSet=testUsers;
 		this.iterNum=iternum;
+		this.K=topicnum;
 	}
 	
 	/*public GrosToT(int a,int b,int c,int d, int topicNum,int iterNum){
@@ -85,7 +86,7 @@ public class GrosToT extends LDABasedModel{
 	}*/
 	
 	public void setDefaultParameteres(){
-		this.K=30;
+		//this.K=30;
 		this.G=50;
 		this.a=(float) 50.0/(float)this.K;
 		this.b=0.01f;

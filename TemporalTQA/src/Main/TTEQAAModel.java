@@ -91,13 +91,14 @@ public class TTEQAAModel extends LDABasedModel{
 	
 	
 	
-	public TTEQAAModel(DataWoker trainUsers, DataWoker testUsers,int iternum){
+	public TTEQAAModel(DataWoker trainUsers, DataWoker testUsers,int iternum,int topicnum){
 		super.trainSet=trainUsers;
 		super.testSet=testUsers;
 		this.setDefaultParameteres();
 		this.trainSet=trainUsers;
 		this.testSet=testUsers;
 		this.iterNum=iternum;
+		this.K=topicnum;
 		
 	}
 	
@@ -111,7 +112,7 @@ public class TTEQAAModel extends LDABasedModel{
 	}*/
 	
 	public void setDefaultParameteres(){
-		this.K=30;
+		//this.K=30;
 		this.a1=(float) 50.0/(float)this.K;
 		this.a2=this.a1;
 		this.b1=0.01f;

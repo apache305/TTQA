@@ -66,13 +66,14 @@ public class UQAModel extends LDABasedModel{
 	
 	
 	
-	public UQAModel(DataWoker trainUsers, DataWoker testUsers,int iternum){
+	public UQAModel(DataWoker trainUsers, DataWoker testUsers,int iternum, int  topicnum){
 		super.trainSet=trainUsers;
 		super.testSet=testUsers;
 		this.setDefaultParameteres();
 		this.trainSet=trainUsers;
 		this.testSet=testUsers;
 		this.iterNum=iternum;
+		this.K=topicnum;
 		
 	}
 	
@@ -86,7 +87,7 @@ public class UQAModel extends LDABasedModel{
 	}*/
 	
 	public void setDefaultParameteres(){
-		this.K=30;
+		//this.K=30;
 		this.a=(float) 50.0/(float)this.K;
 		this.b=0.01f;
 		this.c=0.01f;

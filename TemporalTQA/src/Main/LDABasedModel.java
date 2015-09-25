@@ -11,7 +11,7 @@ public class LDABasedModel {
 		
 	}
 	
-	public LDABasedModel(DataWoker Train,DataWoker Test,int iternum){
+	public LDABasedModel(DataWoker Train,DataWoker Test,int iternum,int topicnum){
 		
 	}
 	public void initModel(){

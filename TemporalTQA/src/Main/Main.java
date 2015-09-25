@@ -76,26 +76,27 @@ public class Main {
 		Set<String> filter=new HashSet<String>();
 		
 		int iternum=100;
+		int topicnum=50;
 		
 		resultPath= "out/outGROST/";
 		System.out.println("Grostt Model");
-		GrosToT tot = new GrosToT(trainset,testset,iternum);
+		GrosToT tot = new GrosToT(trainset,testset,iternum,topicnum);
 		runModel(tot,"out/outGROST/",filter);
 		
 		resultPath="out/outLDA/";
 		System.out.println("LDA Model");
-		LDA lda= new LDA(trainset,testset,iternum);
+		LDA lda= new LDA(trainset,testset,iternum,topicnum);
 		runModel(lda,"out/outLDA/",filter);
 		
 		
 		resultPath= "out/outUQA/";
 		System.out.println("UQA Model");
-		UQAModel uqa = new UQAModel(trainset,testset,iternum);
+		UQAModel uqa = new UQAModel(trainset,testset,iternum,topicnum);
 		runModel(uqa,"out/outUQA/",filter);
 		
 		resultPath= "out/outTTEQAA/";
 		System.out.println("TTEQAA Model");
-		TTEQAAModel tteqaa = new TTEQAAModel(trainset,testset,iternum);
+		TTEQAAModel tteqaa = new TTEQAAModel(trainset,testset,iternum,topicnum);
 		runModel(tteqaa,"out/outTTEQAA/",filter);
 		
 
