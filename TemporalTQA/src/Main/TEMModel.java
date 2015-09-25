@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import Util.ComUtil;
@@ -94,7 +95,7 @@ public class TEMModel extends LDABasedModel  {
 
 	}
 
-	public void initializeModel() {
+	public void initModel() {
 		
 		this.U= this.trainSet.users.size();//number of user.
 //		this.T= this.trainSet.timeCountMap.size();//number of time label
@@ -203,15 +204,14 @@ public class TEMModel extends LDABasedModel  {
 		fgmm.init2(GMMData, expertNum, clusterids);
 	}
 
-	public void inferenceModel(String minPostNum)
+	public void trainModel(String minPostNum)
 			throws IOException {
-		if (iterations < saveStep + beginSaveIters) {
-			System.err
-					.println("Error: the number of iterations should be larger than "
-							+ (saveStep + beginSaveIters));
-			System.exit(0);
-		}
+		
 		for (int i = 0; i < iterations; i++) {
+			if(i%10==0){
+				System.out.println(String.format("Round:%d", i));
+			}
+			//
 			if (i % 1 == 0) {
 				System.out.print("\t");
 				for (int k = 0; k < fgmm.ksize; k++)
@@ -228,15 +228,16 @@ public class TEMModel extends LDABasedModel  {
 			}
 			System.out.println();
 			System.out.println("Iteration " + i);
-			if ((i >= beginSaveIters)
+			/*if ((i >= beginSaveIters)
 					&& (((i - beginSaveIters) % saveStep) == 0)) {
 				// Saving the model
 				System.out.println("Saving model at iteration " + i + " ... ");
 				// Firstly update parameters
-				updateEstimatedParameters();
+				this.updateEstimatedParameters();
 				// Secondly print model variables
 				// saveIteratedModel(i, docSet, minPostNum);
-			}
+			}*/
+			
 
 			if (i % 50 == 0) {
 				if (!ModelComFunc.checkEqual(CUK, CUKsum, "CUK")
@@ -409,7 +410,7 @@ public class TEMModel extends LDABasedModel  {
 		}
 	}
 
-	private void updateEstimatedParameters() {
+	public void estimateProb() {
 		for (int u = 0; u < U; u++) {
 			for (int k = 0; k < K; k++) {
 				theta[u][k] = (CUK[u][k] + alpha) / (CUKsum[u] + alpha * K);
@@ -539,6 +540,198 @@ public class TEMModel extends LDABasedModel  {
 			else
 				return 0;
 		}
+	}
+	public ArrayList<ArrayList<String>> getTopWords(){
+		//from trainset.
+		ArrayList<ArrayList<String>> topicTopWords=new ArrayList<ArrayList<String>>();
+
+		for(int kid=0;kid<this.K;kid++){
+			topicTopWords.add(new ArrayList<String>());
+			ArrayList<Map.Entry<String, Float>> dp= new ArrayList<Map.Entry<String, Float>>();
+			for(int wid=0;wid<this.V;wid++){
+				String word=this.trainSet.indexToTermMap.get(wid);
+				//AbstractMap.SimpleEntry<String, Integer>("exmpleString", 42);
+				Map.Entry<String, Float> pairs =new  AbstractMap.SimpleEntry<String , Float> (word,this.varphi[kid][0][wid]);
+				dp.add(pairs);
+			}
+			Collections.sort(dp, new Comparator<Entry<String,Float>>(){
+				public int compare(Entry<String, Float> arg0,Entry<String, Float> arg1) {
+					// TODO Auto-generated method stub
+					return -1*arg0.getValue().compareTo(arg1.getValue());
+				}
+			});
+			for(int i=0;i<10;i++){
+				//only output top 10;
+				topicTopWords.get(kid).add(dp.get(i).getKey());
+				//writer.write(String.format("%s:%f\t", dp.get(i).getKey(),dp.get(i).getValue()));
+			}
+			//writer.write("\n");
+		}
+		return topicTopWords;
+		
+		
+	}
+	
+	public void computeCoherence( DataWoker dataset){
+		ArrayList<ArrayList<String>> topicTopWords= this.getTopWords();
+		double total_score=0.0;
+		double item=0;
+		for(int kid=0;kid<this.K;kid++){
+			for(int i=0;i<10;i++){
+				String w1=topicTopWords.get(kid).get(i);
+				if(!dataset.termCountMap.containsKey(w1)){
+					continue;
+				}
+				int wid1=dataset.termToIndexMap.get(w1);
+				int occ1=dataset.singleOccDocument[wid1];//number of document has word1.
+				//System.out.println(w1+";"+occ1);
+				for(int j=i+1;j<10;j++){
+					
+					String w2=topicTopWords.get(kid).get(j);
+					if(!dataset.termCountMap.containsKey(w2)){
+						continue;
+					}
+	
+					int wid2=dataset.termToIndexMap.get(w2);
+					int cooc12=dataset.coOccDocument[wid1][wid2]+dataset.coOccDocument[wid2][wid1];
+						
+					double score= Math.log( ((double)cooc12 + 1.0) / ( (double)(occ1)) );
+
+					total_score+=score;
+					item++;
+					
+					
+					//System.out.println(score+";"+total_score);
+				}
+			}
+		}
+		System.out.println("item size:"+item);
+		System.out.println("average coherence score:"+total_score/item);
+		
+		
+		
+	}
+	
+	
+	
+	public void computePer(Set<String> filterPostId){
+		//p(tag) or p(word) = p(k|u)p(k|v)
+		
+		//test dataset =
+		
+		double  total_result=0.0;
+		int post_number=0;
+		int tag_number=0;
+		int word_number=0;
+		double final_perplex=0.0;
+		int 	UinTrain = 0;
+		for (User u : this.testSet.users){
+			int uid=0;
+			if ( !this.trainSet.useridToIndex.containsKey(u.userId) ){
+				continue;
+			}
+			UinTrain++;
+			uid=this.trainSet.useridToIndex.get(u.userId);
+			//System.out.println(u.userId);
+			//System.out.println(u.answerPosts.size());
+			
+			for(AnswerPost eachPost: u.answerPosts){
+				
+				//ArrayList<Integer> faketags= eachPost.tags;
+				ArrayList<Integer> fakewords=eachPost.words;
+				String postid=eachPost.aid;
+				if(filterPostId.contains(postid)){
+					continue;
+				}
+				
+				
+				//compute for each post.
+				double curPostW=0.0;
+				
+				//ArrayList<Integer> realtags=new ArrayList<Integer>();
+				ArrayList<Integer> realwords=new ArrayList<Integer>();
+				
+
+				//for( int tid : faketags){
+					//String testOriTag = this.testSet.indexToTagMap.get(tid);
+					//if(this.trainSet.tagToIndexMap.containsKey(testOriTag)){
+						//realtags.add( this.trainSet.tagToIndexMap.get(testOriTag));
+					//}
+					
+				//}
+				
+				for( int wid : fakewords){
+					String testOriWord = this.testSet.indexToTermMap.get(wid);
+					if(this.trainSet.termToIndexMap.containsKey(testOriWord)){
+						realwords.add( this.trainSet.termToIndexMap.get(testOriWord));
+					}
+					
+				}
+				
+				//int tag_n= realtags.size();
+				//if(tag_n==0){
+					//continue;
+				//}
+				
+				int word_n=realwords.size();
+				if(word_n==0){
+					continue;
+				}
+				
+				//double tempW=0.0;
+				
+				
+				/*double forAllW=0.0;
+				for(int topic_id=0;topic_id<this.K;topic_id++){
+					
+					//double uk=this.thetaUK[uid][topic_id];
+					for(int gid=0;gid<50;gid++){
+						double uk= Math.random()*  Math.random();
+						for(int word:realwords){						
+								uk*=this.thetaKW[topic_id][word];
+						}
+							//p(w1)
+						forAllW+=uk;
+					}
+				}
+				double x=Math.log(forAllW);*/
+				
+				double forAllW=0.0;
+				
+				
+				for(int topic_id=0;topic_id<this.K;topic_id++){
+						
+					double uk = this.theta[uid][topic_id];
+					for(int wid:realwords){
+							uk*=this.varphi[topic_id][0][wid];
+								//prob_word+=ugk;
+					}
+					forAllW += uk;
+				}
+				
+				
+				
+				double x=Math.log(forAllW);
+				
+				//System.out.println(x);
+				if(Double.isInfinite(x)){
+					filterPostId.add(postid);		
+					continue;
+				}
+				total_result +=x;
+				word_number+=word_n;			
+				post_number++;
+				
+			}
+			
+			//break;
+
+		}
+		System.out.println("test post number:"+post_number);
+		
+		final_perplex =  Math.exp(-1.0  *  total_result  / (float)(word_number));
+		System.out.println(final_perplex);
+		
 	}
 	
 	public void outputResult(String outputPath) throws IOException{
