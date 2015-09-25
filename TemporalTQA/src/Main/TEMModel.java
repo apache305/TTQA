@@ -1,13 +1,17 @@
 package Main;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import Util.ComUtil;
-import Util.FileUtil;
 import Util.ModelComFunc;
 import Util.TEMModelSampling.modelparameters;
 
@@ -536,4 +540,128 @@ public class TEMModel extends LDABasedModel  {
 				return 0;
 		}
 	}
+	
+	public void outputResult(String outputPath) throws IOException{
+		
+		
+		//thetaUK
+		BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath+ "thetaUK.txt"));
+		for(int uid = 0;uid<this.U;uid++){
+			writer.write( this.trainSet.users.get(uid).userId +",");
+			for(int kid =0 ;kid<this.K;kid++){
+				writer.write(this.theta[uid][kid]+",");
+			}
+			writer.write("\n");
+		}
+		writer.close();
+		
+
+		
+		
+		
+		
+		
+		//thetaKV
+		writer = new BufferedWriter(new FileWriter(outputPath+ "thetaKV.txt"));
+		for(int kid=0;kid<this.K;kid++){
+			writer.write(String.format("Topic%d",kid));
+			for(int vid=0;vid<this.TagNum;vid++){
+				String tag=this.trainSet.indexToTagMap.get(vid);
+				writer.write(tag+":"+this.psi[kid][vid]+"\t");
+			}
+			writer.write("\n");
+		}
+		writer.close();
+		
+		//ordered version.
+		writer = new BufferedWriter(new FileWriter(outputPath+ "thetaKV.sorted.txt"));
+		for(int kid=0;kid<this.K;kid++){
+			writer.write(String.format("Topic%d",kid));
+			ArrayList<Map.Entry<String, Float>> dp= new ArrayList<Map.Entry<String, Float>>();
+			for(int vid=0;vid<this.TagNum;vid++){
+				String tag=this.trainSet.indexToTagMap.get(vid);
+				//AbstractMap.SimpleEntry<String, Integer>("exmpleString", 42);
+				Map.Entry<String, Float> pairs =new  AbstractMap.SimpleEntry<String , Float> (tag,this.psi[kid][vid]);
+				dp.add(pairs);
+			}
+			Collections.sort(dp, new Comparator<Entry<String,Float>>(){
+				public int compare(Entry<String, Float> arg0,Entry<String, Float> arg1) {
+					// TODO Auto-generated method stub
+					return -1*arg0.getValue().compareTo(arg1.getValue());
+				}
+			});
+			for(int i=0;i<10;i++){
+				//only output top 10;
+				writer.write(String.format("%s:%f\t", dp.get(i).getKey(),dp.get(i).getValue()));
+			}
+			writer.write("\n");
+		}
+		writer.close();
+		//thetaKW
+		writer = new BufferedWriter(new FileWriter(outputPath+ "thetaKW.txt"));
+		for(int kid=0;kid<this.K;kid++){
+			writer.write(String.format("Topic%d",kid));
+			for(int eid=0;eid<1;eid++){
+				for(int wid=0;wid<this.V;wid++){
+					String word=this.trainSet.indexToTermMap.get(wid);
+					writer.write(word+":"+this.varphi[kid][eid][wid]+"\t");
+				}
+				writer.write("\n");
+			}
+		}
+		writer.close();
+		
+		//ordered version.
+		writer = new BufferedWriter(new FileWriter(outputPath+ "thetaKW.sorted.txt"));
+		for(int kid=0;kid<this.K;kid++){
+			writer.write(String.format("Topic%d",kid));
+			ArrayList<Map.Entry<String, Float>> dp= new ArrayList<Map.Entry<String, Float>>();
+			for(int eid=0;eid<1;eid++){
+				for(int wid=0;wid<this.V;wid++){
+					String word=this.trainSet.indexToTermMap.get(wid);
+					//AbstractMap.SimpleEntry<String, Integer>("exmpleString", 42);
+					Map.Entry<String, Float> pairs =new  AbstractMap.SimpleEntry<String , Float> (word,this.varphi[kid][eid][wid]);
+					dp.add(pairs);
+				}
+			}
+			Collections.sort(dp, new Comparator<Entry<String,Float>>(){
+				public int compare(Entry<String, Float> arg0,Entry<String, Float> arg1) {
+					// TODO Auto-generated method stub
+					return -1*arg0.getValue().compareTo(arg1.getValue());
+				}
+			});
+			for(int i=0;i<10;i++){
+				//only output top 10;
+				writer.write(String.format("%s:%f\t", dp.get(i).getKey(),dp.get(i).getValue()));
+			}
+			writer.write("\n");
+		}
+		writer.close();
+		
+		
+		//thetaKUE
+		
+		writer = new BufferedWriter(new FileWriter(outputPath+ "thetaKUE.txt"));
+		for(int kid=0;kid<this.K;kid++){
+			writer.write(String.format("Topic%d,",kid));
+			
+			for(int uid=0;uid<this.U;uid++){
+				writer.write( this.trainSet.users.get(uid).userId +",");
+				for(int eid=0;eid<this.ENum;eid++){
+					
+					writer.write(this.phi[uid][kid][eid]+",");
+				}
+				writer.write("\n");
+			}
+		}
+		System.out.println("done");
+		
+		
+	
+		writer.close();
+		
+	}
+	
+	
+	
 }
