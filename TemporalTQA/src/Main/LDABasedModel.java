@@ -15,6 +15,7 @@ public  class LDABasedModel {
 		
 	}
 	public void initModel(){
+		//throw new Exception("un implement error");
 		
 	}
 	public void trainModel(){

@@ -66,7 +66,7 @@ public class TEMModel extends LDABasedModel  {
 	// private int CES[][]; // E*S
 	// private int CESsum[]; // E
 
-	private int iterations;// times of iterations
+	//private int iterations;// times of iterations
 	private int saveStep;// number of iterations between two saving
 	private int beginSaveIters;// begin save model at this iteration
 	
@@ -204,10 +204,9 @@ public class TEMModel extends LDABasedModel  {
 		fgmm.init2(GMMData, expertNum, clusterids);
 	}
 
-	public void trainModel(String minPostNum)
-			throws IOException {
+	public void trainModel(){
 		
-		for (int i = 0; i < iterations; i++) {
+		for (int i = 0; i < this.iterNum; i++) {
 			if(i%10==0){
 				System.out.println(String.format("Round:%d", i));
 			}
@@ -257,8 +256,8 @@ public class TEMModel extends LDABasedModel  {
 
 			// Use Gibbs Sampling to update Z[][][] and E[][][]
 			for (int u = 0; u < this.U; u++) {
-				if (u % 100 == 0)
-					System.out.println("\tNow u = " + u);
+				//if (u % 100 == 0)
+					//System.out.println("\tNow u = " + u);
 				for (int n = 0; n <  this.trainSet.users.get(u).answerPosts.size() ; n++) {
 					// System.out.println("\tNow u: " + u + "\tn: " + n);
 					AnswerPost a=this.trainSet.users.get(u).answerPosts.get(n);

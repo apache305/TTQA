@@ -76,7 +76,7 @@ public class Main {
 		
 		Set<String> filter=new HashSet<String>();
 		
-		int iternum=1;
+		int iternum=100;
 		int topNum=30;
 		
 		resultPath="out/TEM/";
