@@ -3,7 +3,7 @@ package Main;
 import java.io.IOException;
 import java.util.Set;
 
-public class LDABasedModel {
+public  class LDABasedModel {
 	public DataWoker trainSet;
 	public DataWoker testSet;
 	
@@ -32,4 +32,6 @@ public class LDABasedModel {
 	public void computeCoherence(DataWoker dataset){
 
 	}
+	
+	
 }

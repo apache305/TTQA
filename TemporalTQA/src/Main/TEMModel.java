@@ -842,7 +842,7 @@ public class TEMModel extends LDABasedModel  {
 				writer.write( this.trainSet.users.get(uid).userId +",");
 				for(int eid=0;eid<this.ENum;eid++){
 					
-					writer.write(this.phi[uid][kid][eid]+",");
+					writer.write(this.phi[kid][uid][eid]+",");
 				}
 				writer.write("\n");
 			}
