@@ -75,7 +75,7 @@ public class Main {
 		
 		Set<String> filter=new HashSet<String>();
 		
-		int iternum=100;
+		int iternum=0;
 		
 		resultPath= "out/outGROST/";
 		System.out.println("Grostt Model");
