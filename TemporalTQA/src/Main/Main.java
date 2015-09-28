@@ -30,7 +30,7 @@ public class Main {
 			//System.out.println(precision[0]+precision[1]+precision[2])	;
 		}
 		System.out.println("test question:"+qnum);
-		System.out.println("p5:"+(double)precision[0]/((double)qnum ));
+		System.out.println("p5:"+(double)precision[0]/((double)qnum));
 		System.out.println("p10:"+(double)precision[1]/((double)qnum ));
 		System.out.println("p15:"+(double)precision[2]/((double)qnum ));
 
@@ -115,6 +115,22 @@ public class Main {
 		//runModel(tem,"out/TEM/",filter);
 		//testQR(tem);
 		
+		
+		
+		resultPath= "out/outUQA/";
+		System.out.println("UQA Model");
+		UQAModel uqa = new UQAModel(trainset,testset,iternum);
+		uqa.K=topNum;
+		runModel(uqa,"out/outUQA/",filter);
+		testQR(uqa);
+		
+		resultPath="out/outLDA/";
+		System.out.println("LDA Model");
+		LDA lda= new LDA(trainset,testset,iternum);
+		lda.K=topNum;
+		runModel(lda,"out/outLDA/",filter);
+		testQR(lda);
+		
 		resultPath= "out/outTTEQAA/";
 		System.out.println("TTEQAA Model");
 		TTEQAAModel tteqaa = new TTEQAAModel(trainset,testset,iternum);
@@ -130,18 +146,10 @@ public class Main {
 		tot.K=topNum;
 		runModel(tot,"out/outGROST/",filter);
 		
-		resultPath="out/outLDA/";
-		System.out.println("LDA Model");
-		LDA lda= new LDA(trainset,testset,iternum);
-		lda.K=topNum;
-		runModel(lda,"out/outLDA/",filter);
 		
 		
-		resultPath= "out/outUQA/";
-		System.out.println("UQA Model");
-		UQAModel uqa = new UQAModel(trainset,testset,iternum);
-		uqa.K=topNum;
-		runModel(uqa,"out/outUQA/",filter);
+		
+		
 		
 		
 		

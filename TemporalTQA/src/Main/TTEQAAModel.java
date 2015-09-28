@@ -351,13 +351,13 @@ public class TTEQAAModel extends LDABasedModel{
 
 
 			//if only keep this, good result.
-			//backupProb[k] *= ( this.nkt[k][timeID] + this.b2 )/(this.sumkt[k] + this.T*this.b2 ) ;
+			backupProb[k] *= ( this.nkt[k][timeID] + this.b2 )/(this.sumkt[k] + this.T*this.b2 ) ;
 			
 			//backupProb[k] *= ( this.nku[k][uid] + this.a1 )/(this.sumku[k] + this.U*this.a1 ) ;
 		
 			//indeed, if add this, perplex will increase. 
 			//backupProb[k] *= ( this.nukt[uid][k][timeID] + this.b2 )/(this.sumukt[uid][k] + this.T*this.b2 ) ;
-			//backupProb[k] *= ( this.nuke[uid][k][expLevel] + this.eta )/(this.sumuke[uid][k] + this.E*this.eta ) ;
+			backupProb[k] *= ( this.nuke[uid][k][expLevel] + this.eta )/(this.sumuke[uid][k] + this.E*this.eta ) ;
 
 		}
 		
@@ -775,15 +775,16 @@ public class TTEQAAModel extends LDABasedModel{
 		
 		double [] thetaQK= this.computeQuestionTopicDistribution(p);
 		//get the big k
-		int maxTopicId=0;
-		double maxTopicProb=0.0f;
+		ArrayList<Map.Entry<Integer, Double>> idqk= new ArrayList<Map.Entry<Integer, Double>>();
 		for(int i=0;i<this.K;i++){
-			if(thetaQK[i]>maxTopicProb){
-				maxTopicProb=thetaQK[i];
-				maxTopicId=i;
-			}
+			idqk.add (new  AbstractMap.SimpleEntry<Integer , Double> (i,thetaQK[i]));
 		}
-		
+		Collections.sort(idqk, new Comparator<Entry<Integer,Double>>(){
+			public int compare(Entry<Integer, Double> arg0,Entry<Integer, Double> arg1) {
+				// TODO Auto-generated method stub
+				return -1*arg0.getValue().compareTo(arg1.getValue());
+			}
+		});
 		///ArrayList<String> RandomUsers = new ArrayList<String>();
 		ArrayList<UserSimiAct>  userSimiActs = new ArrayList<UserSimiAct>();
 	
@@ -795,10 +796,14 @@ public class TTEQAAModel extends LDABasedModel{
 
 			double jsdis= CommonUtil.jensenShannonDivergence(thetacUK, thetaQK);
 			double actscore=0.0f;
-			for(int j=0;j<K;j++){
-				actscore=actscore+(thetaQK[j]* this.thetaKU[j][uindex]);
+			for(int topI=0;topI<2;topI++){
+				int maxt= idqk.get(topI).getKey();
+				actscore=  actscore + ( thetaQK[maxt]*this.thetaKU[maxt][uindex]	  );
 			}
-			
+			/*for(int j=0;j<K;j++){
+				actscore=actscore+(thetaQK[j]* this.thetaKU[j][uindex]);
+			}*/
+			//System.out.println(actscore);
 			
 			UserSimiAct newUserSimiAct= new UserSimiAct(u.userId,1.0-jsdis,actscore);
 			//UserSimiAct newUserSimiAct= new UserSimiAct(u.userId,1.0-jsdis,this.thetaKU[maxTopicId][uindex]);

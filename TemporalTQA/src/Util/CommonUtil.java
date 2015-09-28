@@ -45,15 +45,15 @@ public class CommonUtil {
 	    		int res=0;
 	    		for(int i=0;i<topk;i++){
 	    			if(real.contains(topuser.get(i))  ){
+	    				
 	    				res++;
+	    				return 1;
 	    			}
 	    			
 	    		}
-	    		if (res>0){
-	    			return 1;
-	    		}else{
-	    			return 0;
-	    		}
+	    		return 0;
+	    		//return res;
+	    		
 	    		
 	    		
 	    	

@@ -8,10 +8,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
+
+import Util.CommonUtil;
 
 public class LDA extends LDABasedModel{
 	
@@ -527,6 +530,97 @@ public class LDA extends LDABasedModel{
 		
 		final_perplex =  Math.exp(-1.0  *  total_result  / (float)(word_number));
 		System.out.println(final_perplex);
+		
+		
+	}
+	public double [] computeQuestionTopicDistribution(QuestionPost p){
+		double [] thetaQK= new double [this.K];
+		int quid= this.trainSet.useridToIndex.get( p.user.userId);
+		double [] thetaqUK= this.thetaUK[  quid  ];
+		double sum=0.0f;
+		
+		double [] thetaqKW=new double [this.K];
+		double [] thetaqKV=new double [this.K];
+		for(int wid : p.words){
+			String wd= this.testSet.indexToTermMap.get(wid);
+			if (this.trainSet.termToIndexMap.containsKey(wd)){
+				int realWid= this.trainSet.termToIndexMap.get(wd);
+				for(int i=0;i<this.K;i++){
+					thetaqKW[i]+=  this.thetaKW[i][realWid];
+				}
+			}
+		}
+
+
+		sum=0.0f;
+		for(int i=0;i<this.K;i++){
+				thetaQK[i]= thetaqUK[i]*thetaqKW[i];//*thetaqKV[i];
+				sum+=thetaQK[i];
+
+		}
+		//normalize
+		
+		for(int i=0;i<this.K;i++){
+			thetaQK[i]=  thetaQK[i]/sum;
+		}
+		
+		
+		
+		return thetaQK;
+
+		
+	}
+	
+	public void recommendUserForQuestion(QuestionPost p, int [] precision){
+		
+		double [] thetaQK= this.computeQuestionTopicDistribution(p);
+		
+		///ArrayList<String> RandomUsers = new ArrayList<String>();
+		
+		ArrayList<Map.Entry<String, Double>> userSimiScore= new ArrayList<Map.Entry<String, Double>>();
+		for(User u:this.trainSet.users){
+			int uindex=this.trainSet.useridToIndex.get(u.userId);
+			double [] thetacUK=this.thetaUK[uindex];
+			//double sum=0.0f;
+			
+
+			double jsdis= CommonUtil.jensenShannonDivergence(thetacUK, thetaQK);
+
+			Map.Entry<String, Double> pairs =new  AbstractMap.SimpleEntry<String , Double> (u.userId,1.0-jsdis);
+			userSimiScore.add(pairs);
+			//System.out.println("jsdis:"+jsdis);
+		}
+		//sort it.
+
+		Collections.sort(userSimiScore, new Comparator<Entry<String,Double>>(){
+			public int compare(Entry<String, Double> arg0,Entry<String, Double> arg1) {
+				// TODO Auto-generated method stub
+				return -1*arg0.getValue().compareTo(arg1.getValue());
+			}
+		});
+		
+		//get top 50 users.
+		ArrayList<String> topUsers = new ArrayList<String >();
+		for(int i=0;i<50;i++){
+			topUsers.add(userSimiScore.get(i).getKey());
+			//System.out.println(userSimiScore.get(i).getValue());
+		}
+		
+		//random 50 users.
+		
+		
+		
+		
+		//check p@5 p@10 p@15 //
+		Set<String> ansUids = new HashSet<String>();
+		for(AnswerPost a: p.answers){
+			ansUids.add(a.user.userId);
+		}
+		
+		precision[0]+=CommonUtil.computePrecision(topUsers, ansUids, 5);
+		precision[1]+=CommonUtil.computePrecision(topUsers, ansUids, 10);
+		precision[2]+=CommonUtil.computePrecision(topUsers, ansUids, 15);
+		
 		
 		
 	}
