@@ -34,5 +34,8 @@ public  class LDABasedModel {
 
 	}
 	
+	public void recommendUserForQuestion(QuestionPost q,int [] precision){
+		System.out.println("un implement method");
+	}
 	
 }

@@ -3,9 +3,30 @@ package Main;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 public class Main {
+	
+	
+	public static void testQR(LDABasedModel xx){
+		int [] precision = new int[3];//5 10 15
+		int qnum=0;
+		
+		for(Entry<String, QuestionPost> post: xx.testSet.quesitonMap.entrySet()){
+			String qid=post.getKey();
+			QuestionPost q= post.getValue();
+			qnum+=1;
+			xx.recommendUserForQuestion(q,precision);
+		}
+		System.out.println("p5:"+(double)precision[0]/5.0*(double)qnum );
+		System.out.println("p10:"+(double)precision[0]/10.0*(double)qnum );
+		System.out.println("p15:"+(double)precision[0]/15.0*(double)qnum );
+		
+		
+		
+	}
 	
 	public static void runModel(LDABasedModel xx, String outputPathDir,Set<String> filter){
 		//this is new branch
@@ -76,7 +97,7 @@ public class Main {
 		
 		Set<String> filter=new HashSet<String>();
 		
-		int iternum=100;
+		int iternum=1;
 		int topNum=30;
 		
 		resultPath="out/TEM/";
@@ -91,6 +112,7 @@ public class Main {
 		TTEQAAModel tteqaa = new TTEQAAModel(trainset,testset,iternum);
 		tteqaa.K=topNum;
 		runModel(tteqaa,"out/outTTEQAA/",filter);
+		testQR(tteqaa);
 		
 		System.exit(1);
 		

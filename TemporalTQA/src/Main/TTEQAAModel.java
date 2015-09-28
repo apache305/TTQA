@@ -8,10 +8,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
+
+import Util.CommonUtil;
 
 public class TTEQAAModel extends LDABasedModel{
 	
@@ -253,7 +256,9 @@ public class TTEQAAModel extends LDABasedModel{
 				ArrayList<AnswerPost> anses = u.answerPosts;
 				for(int j=0;j<anses.size();j++){
 					AnswerPost eachPost= anses.get(j);
+					
 					int timeID=eachPost.dateid;
+					//System.out.println(timeID+":"+eachPost.date);
 					ArrayList<Integer> tags= eachPost.tags ;
 					ArrayList<Integer> words = eachPost.words;
 					int expLevel = eachPost.vote_level;
@@ -346,13 +351,13 @@ public class TTEQAAModel extends LDABasedModel{
 
 
 			//if only keep this, good result.
-			backupProb[k] *= ( this.nkt[k][timeID] + this.b2 )/(this.sumkt[k] + this.T*this.b2 ) ;
+			//backupProb[k] *= ( this.nkt[k][timeID] + this.b2 )/(this.sumkt[k] + this.T*this.b2 ) ;
 			
 			//backupProb[k] *= ( this.nku[k][uid] + this.a1 )/(this.sumku[k] + this.U*this.a1 ) ;
 		
 			//indeed, if add this, perplex will increase. 
 			//backupProb[k] *= ( this.nukt[uid][k][timeID] + this.b2 )/(this.sumukt[uid][k] + this.T*this.b2 ) ;
-			backupProb[k] *= ( this.nuke[uid][k][expLevel] + this.eta )/(this.sumuke[uid][k] + this.E*this.eta ) ;
+			//backupProb[k] *= ( this.nuke[uid][k][expLevel] + this.eta )/(this.sumuke[uid][k] + this.E*this.eta ) ;
 
 		}
 		
@@ -690,6 +695,99 @@ public class TTEQAAModel extends LDABasedModel{
 		System.out.println(final_perplex);
 		
 	}
+	
+	public double [] computeQuestionTopicDistribution(QuestionPost p){
+		double [] thetaQK= new double [this.K];
+		int quid= this.trainSet.useridToIndex.get( p.user.userId);
+		double [] thetaqUK= this.thetaUK[  quid  ];
+		double [] thetaqKW=new double [this.K];
+		double [] thetaqKT=new double [this.K];
+		for(int wid : p.words){
+			String wd= this.testSet.indexToTermMap.get(wid);
+			if (this.trainSet.termToIndexMap.containsKey(wd)){
+				int realWid= this.trainSet.termToIndexMap.get(wd);
+				for(int i=0;i<this.K;i++){
+					thetaqKW[i]+=  this.thetaKW[i][realWid];
+				}
+			}
+		}
+		for(int tid:p.tags){
+			String td= this.testSet.indexToTagMap.get(tid);
+			if (this.trainSet.tagToIndexMap.containsKey(td)){
+				int realTid= this.trainSet.tagToIndexMap.get(td);
+				for(int i=0;i<this.K;i++){
+					thetaqKT[i]+=  this.thetaKW[i][realTid];
+				}
+			}
+		}
+		double sum=0.0f;
+		for(int i=0;i<this.K;i++){
+			if(thetaqUK[i]!=0.0f && thetaqKW[i]!=0.0 && thetaqKT[i]!=0){
+				thetaQK[i]= thetaqUK[i]*thetaqKW[i]*thetaqKT[i];
+				sum+=thetaQK[i];
+			}
+			else{
+				System.out.println("something wroing");
+			}
+			
+		}
+		//normalize
+		
+		for(int i=0;i<this.K;i++){
+			thetaQK[i]=  thetaQK[i]/sum;
+		}
+		return thetaQK;
+
+		
+	}
+	
+
+	
+	public void recommendUserForQuestion(QuestionPost p, int [] precision){
+		
+		double [] thetaQK= this.computeQuestionTopicDistribution(p);
+		
+		ArrayList<Map.Entry<String, Double>> userSimiScore= new ArrayList<Map.Entry<String, Double>>();
+		for(User u:this.trainSet.users){
+			int uindex=this.trainSet.useridToIndex.get(u.userId);
+			double [] thetaqUK=this.thetaUK[uindex];
+			//this part is activiy part.
+			for(int i=0;i<this.K;i++){
+				thetaqUK[i]*=this.thetaKU[i][uindex];
+			}
+
+			double jsdis= CommonUtil.jensenShannonDivergence(thetaqUK, thetaQK);
+			Map.Entry<String, Double> pairs =new  AbstractMap.SimpleEntry<String , Double> (u.userId,1.0-jsdis);
+			userSimiScore.add(pairs);
+		}
+		//sort it.
+
+		Collections.sort(userSimiScore, new Comparator<Entry<String,Double>>(){
+			public int compare(Entry<String, Double> arg0,Entry<String, Double> arg1) {
+				// TODO Auto-generated method stub
+				return -1*arg0.getValue().compareTo(arg1.getValue());
+			}
+		});
+		
+		//get top 50 users.
+		ArrayList<String> topUsers = new ArrayList<String >();
+		for(int i=0;i<50;i++){
+			topUsers.add(userSimiScore.get(i).getKey());
+		}
+		
+		
+		//check p@5 p@10 p@20 p@30  //
+		Set<String> ansUids = new HashSet<String>();
+		for(AnswerPost a: p.answers){
+			ansUids.add(a.user.userId);
+		}
+		
+		precision[0]+=CommonUtil.computePrecision(topUsers, ansUids, 5);
+		precision[1]+=CommonUtil.computePrecision(topUsers, ansUids, 10);
+		precision[2]+=CommonUtil.computePrecision(topUsers, ansUids, 15);
+		
+	}
+	//public 
 	
 	public void outputResult(String outputPath) throws IOException{
 		
