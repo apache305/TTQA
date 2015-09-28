@@ -7,12 +7,14 @@ import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
 import Util.ComUtil;
+import Util.CommonUtil;
 import Util.ModelComFunc;
 
 
@@ -46,7 +48,7 @@ public class TEMModel extends LDABasedModel  {
 	public float xi;// expertise specific vote distribution
 
 	// model parameters
-	public float[][] theta;// U*K
+	public double[][] theta;// U*K
 	public float[][][] phi;// K*U*E
 	public float[][] psi;// K*T
 	public float[][][] varphi;// K*E*V
@@ -112,7 +114,7 @@ public class TEMModel extends LDABasedModel  {
 		//S = docSet.indexToVoteMap.size();// vote map
 
 		// model parameters
-		theta = new float[U][K];// U*K
+		theta = new double[U][K];// U*K
 		phi = new float[K][U][ENum];// K*U*E
 		psi = new float[K][TagNum];// K*T
 		varphi = new float[K][1][V];// K*E*V
@@ -445,6 +447,113 @@ public class TEMModel extends LDABasedModel  {
 		// tau[e][vote] = (CES[e][vote] + xi) / (CESsum[e] + xi * S);
 		// }
 		// }
+	}
+	
+	public double [] computeQuestionTopicDistribution(QuestionPost p){
+		double [] thetaQK= new double [this.K];
+		int quid= this.trainSet.useridToIndex.get( p.user.userId);
+		double [] thetaqUK= this.theta[  quid  ];
+		double sum=0.0f;
+		
+		double [] thetaqKW=new double [this.K];
+		double [] thetaqKV=new double [this.K];
+		for(int wid : p.words){
+			String wd= this.testSet.indexToTermMap.get(wid);
+			if (this.trainSet.termToIndexMap.containsKey(wd)){
+				int realWid= this.trainSet.termToIndexMap.get(wd);
+				for(int i=0;i<this.K;i++){
+					thetaqKW[i]+=  this.varphi[i][0][realWid];
+				}
+			}
+		}
+		
+		for(int tid:p.tags){
+			String td= this.testSet.indexToTagMap.get(tid);
+			if (this.trainSet.tagToIndexMap.containsKey(td)){
+				int realTid= this.trainSet.tagToIndexMap.get(td);
+				for(int i=0;i<this.K;i++){
+					thetaqKV[i]+=  this.psi[i][realTid];
+				}
+			}
+		}
+
+		sum=0.0f;
+		for(int i=0;i<this.K;i++){
+			if(thetaqKV[i]!=0.0){
+				thetaQK[i]= thetaqUK[i]*thetaqKW[i]*thetaqKV[i];
+				sum+=thetaQK[i];
+			}else{
+				thetaQK[i]= thetaqUK[i]*thetaqKW[i];//*thetaqKV[i];
+				sum+=thetaQK[i];
+			}
+
+			
+		}
+		//normalize
+		
+		for(int i=0;i<this.K;i++){
+			thetaQK[i]=  thetaQK[i]/sum;
+		}
+		
+		
+		
+		return thetaQK;
+
+		
+	}
+	
+	public void recommendUserForQuestion(QuestionPost p, int [] precision){
+		
+		double [] thetaQK= this.computeQuestionTopicDistribution(p);
+		
+		///ArrayList<String> RandomUsers = new ArrayList<String>();
+		
+		ArrayList<Map.Entry<String, Double>> userSimiScore= new ArrayList<Map.Entry<String, Double>>();
+		for(User u:this.trainSet.users){
+			int uindex=this.trainSet.useridToIndex.get(u.userId);
+			double [] thetacUK=this.theta[uindex];
+			//double sum=0.0f;
+			
+
+			double jsdis= CommonUtil.jensenShannonDivergence(thetacUK, thetaQK);
+
+			Map.Entry<String, Double> pairs =new  AbstractMap.SimpleEntry<String , Double> (u.userId,1.0-jsdis);
+			userSimiScore.add(pairs);
+			//System.out.println("jsdis:"+jsdis);
+		}
+		//sort it.
+
+		Collections.sort(userSimiScore, new Comparator<Entry<String,Double>>(){
+			public int compare(Entry<String, Double> arg0,Entry<String, Double> arg1) {
+				// TODO Auto-generated method stub
+				return -1*arg0.getValue().compareTo(arg1.getValue());
+			}
+		});
+		
+		//get top 50 users.
+		ArrayList<String> topUsers = new ArrayList<String >();
+		for(int i=0;i<50;i++){
+			topUsers.add(userSimiScore.get(i).getKey());
+			//System.out.println(userSimiScore.get(i).getValue());
+		}
+		
+		//random 50 users.
+		
+		
+		
+		
+		//check p@5 p@10 p@15 //
+		Set<String> ansUids = new HashSet<String>();
+		for(AnswerPost a: p.answers){
+			ansUids.add(a.user.userId);
+		}
+		
+		precision[0]+=CommonUtil.computePrecision(topUsers, ansUids, 5);
+		precision[1]+=CommonUtil.computePrecision(topUsers, ansUids, 10);
+		precision[2]+=CommonUtil.computePrecision(topUsers, ansUids, 15);
+		
+		
+		
 	}
 
 	/*public void saveIteratedModel(int iteration, Documents docSet,

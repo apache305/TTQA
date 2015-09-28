@@ -700,8 +700,10 @@ public class TTEQAAModel extends LDABasedModel{
 		double [] thetaQK= new double [this.K];
 		int quid= this.trainSet.useridToIndex.get( p.user.userId);
 		double [] thetaqUK= this.thetaUK[  quid  ];
+		double sum=0.0f;
+		
 		double [] thetaqKW=new double [this.K];
-		double [] thetaqKT=new double [this.K];
+		double [] thetaqKV=new double [this.K];
 		for(int wid : p.words){
 			String wd= this.testSet.indexToTermMap.get(wid);
 			if (this.trainSet.termToIndexMap.containsKey(wd)){
@@ -711,24 +713,37 @@ public class TTEQAAModel extends LDABasedModel{
 				}
 			}
 		}
+		
 		for(int tid:p.tags){
 			String td= this.testSet.indexToTagMap.get(tid);
 			if (this.trainSet.tagToIndexMap.containsKey(td)){
 				int realTid= this.trainSet.tagToIndexMap.get(td);
 				for(int i=0;i<this.K;i++){
-					thetaqKT[i]+=  this.thetaKW[i][realTid];
+					thetaqKV[i]+=  this.thetaKV[i][realTid];
 				}
 			}
 		}
-		double sum=0.0f;
+
+		sum=0.0f;
 		for(int i=0;i<this.K;i++){
-			if(thetaqUK[i]!=0.0f && thetaqKW[i]!=0.0 && thetaqKT[i]!=0){
-				thetaQK[i]= thetaqUK[i]*thetaqKW[i]*thetaqKT[i];
+			if(thetaqKV[i]!=0.0){
+				thetaQK[i]= thetaqUK[i]*thetaqKW[i]*thetaqKV[i];
+				sum+=thetaQK[i];
+			}else{
+				thetaQK[i]= thetaqUK[i]*thetaqKW[i];//*thetaqKV[i];
 				sum+=thetaQK[i];
 			}
-			else{
-				System.out.println("something wroing");
-			}
+			/*if(thetaQK[i]==0.0){
+				System.out.println("error");
+			}*/
+			//else{
+				/*for(int tid:p.tags){
+					String td= this.testSet.indexToTagMap.get(tid);
+					System.out.print(td+",");
+				}*/
+				
+				//System.out.println("something wroing");
+			//}
 			
 		}
 		//normalize
@@ -736,29 +751,144 @@ public class TTEQAAModel extends LDABasedModel{
 		for(int i=0;i<this.K;i++){
 			thetaQK[i]=  thetaQK[i]/sum;
 		}
+		
+		
+		
 		return thetaQK;
 
 		
 	}
 	
-
+	class UserSimiAct{
+		public Double simiscore;
+		public Double actscore;
+		public String userid;
+		UserSimiAct(String userid, Double simiscore, Double actscore){
+			this.userid=userid;
+			this.simiscore=simiscore;
+			this.actscore=actscore;
+			
+		}
+	}
 	
 	public void recommendUserForQuestion(QuestionPost p, int [] precision){
 		
 		double [] thetaQK= this.computeQuestionTopicDistribution(p);
+		//get the big k
+		int maxTopicId=0;
+		double maxTopicProb=0.0f;
+		for(int i=0;i<this.K;i++){
+			if(thetaQK[i]>maxTopicProb){
+				maxTopicProb=thetaQK[i];
+				maxTopicId=i;
+			}
+		}
+		
+		///ArrayList<String> RandomUsers = new ArrayList<String>();
+		ArrayList<UserSimiAct>  userSimiActs = new ArrayList<UserSimiAct>();
+	
+		for(User u:this.trainSet.users){
+			int uindex=this.trainSet.useridToIndex.get(u.userId);
+			double [] thetacUK=this.thetaUK[uindex];
+
+			
+
+			double jsdis= CommonUtil.jensenShannonDivergence(thetacUK, thetaQK);
+			double actscore=0.0f;
+			for(int j=0;j<K;j++){
+				actscore=actscore+(thetaQK[j]* this.thetaKU[j][uindex]);
+			}
+			
+			
+			UserSimiAct newUserSimiAct= new UserSimiAct(u.userId,1.0-jsdis,actscore);
+			//UserSimiAct newUserSimiAct= new UserSimiAct(u.userId,1.0-jsdis,this.thetaKU[maxTopicId][uindex]);
+			userSimiActs.add(newUserSimiAct);
+
+			
+			//System.out.println("jsdis:"+jsdis);
+		}
+		//sort it.
+
+		Collections.sort(userSimiActs, new Comparator<UserSimiAct>(){
+			public int compare(UserSimiAct arg0,UserSimiAct arg1) {
+				// TODO Auto-generated method stub
+				return -1* arg0.simiscore.compareTo(arg1.simiscore);
+			}
+		});
+		
+		//get top 50 users.
+		ArrayList<UserSimiAct>  top50UserSimiActs=new ArrayList<UserSimiAct>();
+
+		for(int i=0;i<50;i++){
+			top50UserSimiActs.add(userSimiActs.get(i));
+		}
+		Collections.sort(top50UserSimiActs, new Comparator<UserSimiAct>(){
+			public int compare(UserSimiAct arg0,UserSimiAct arg1) {
+				// TODO Auto-generated method stub
+				return -1* arg0.actscore.compareTo(arg1.actscore);
+			}
+		});
+		
+		//get top 50 users.
+		ArrayList<String> topUsers =new ArrayList<String>();
+		for(int i=0;i<50;i++){
+			topUsers.add( top50UserSimiActs.get(i).userid  );
+		}
+
+		//check p@5 p@10 p@15 //
+		Set<String> ansUids = new HashSet<String>();
+		for(AnswerPost a: p.answers){
+			ansUids.add(a.user.userId);
+		}
+		
+		precision[0]+=CommonUtil.computePrecision(topUsers, ansUids, 5);
+		precision[1]+=CommonUtil.computePrecision(topUsers, ansUids, 10);
+		precision[2]+=CommonUtil.computePrecision(topUsers, ansUids, 15);
+		
+		
+		
+	}
+	
+
+	
+	public void recommendUserForQuestionOld(QuestionPost p, int [] precision){
+		
+		double [] thetaQK= this.computeQuestionTopicDistribution(p);
+		
+		///ArrayList<String> RandomUsers = new ArrayList<String>();
 		
 		ArrayList<Map.Entry<String, Double>> userSimiScore= new ArrayList<Map.Entry<String, Double>>();
 		for(User u:this.trainSet.users){
 			int uindex=this.trainSet.useridToIndex.get(u.userId);
-			double [] thetaqUK=this.thetaUK[uindex];
+			double [] thetacUK=this.thetaUK[uindex];
+			//double sum=0.0f;
+			
+			//if (r.nextBoolean()){
+			//	RandomUsers.add(u.userId);
+			//}
+			
+			/*double jsdis1= CommonUtil.jensenShannonDivergence(thetacUK, thetaQK);
+			
+			double sum=0.0f;
 			//this part is activiy part.
 			for(int i=0;i<this.K;i++){
-				thetaqUK[i]*=this.thetaKU[i][uindex];
+				thetacUK[i]*=this.thetaKU[i][uindex];
+				sum+=thetacUK[i];
 			}
+			
+			//normalize again...should
+			for(int i=0;i<this.K;i++){
+				thetacUK[i]=thetacUK[i]/sum;
+			}*/
+			
+			
+			
 
-			double jsdis= CommonUtil.jensenShannonDivergence(thetaqUK, thetaQK);
+			double jsdis= CommonUtil.jensenShannonDivergence(thetacUK, thetaQK);
+
 			Map.Entry<String, Double> pairs =new  AbstractMap.SimpleEntry<String , Double> (u.userId,1.0-jsdis);
 			userSimiScore.add(pairs);
+			//System.out.println("jsdis:"+jsdis);
 		}
 		//sort it.
 
@@ -773,10 +903,15 @@ public class TTEQAAModel extends LDABasedModel{
 		ArrayList<String> topUsers = new ArrayList<String >();
 		for(int i=0;i<50;i++){
 			topUsers.add(userSimiScore.get(i).getKey());
+			//System.out.println(userSimiScore.get(i).getValue());
 		}
 		
+		//random 50 users.
 		
-		//check p@5 p@10 p@20 p@30  //
+		
+		
+		
+		//check p@5 p@10 p@15 //
 		Set<String> ansUids = new HashSet<String>();
 		for(AnswerPost a: p.answers){
 			ansUids.add(a.user.userId);
@@ -785,6 +920,8 @@ public class TTEQAAModel extends LDABasedModel{
 		precision[0]+=CommonUtil.computePrecision(topUsers, ansUids, 5);
 		precision[1]+=CommonUtil.computePrecision(topUsers, ansUids, 10);
 		precision[2]+=CommonUtil.computePrecision(topUsers, ansUids, 15);
+		
+		
 		
 	}
 	//public 

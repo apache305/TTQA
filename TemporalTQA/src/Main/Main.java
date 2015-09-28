@@ -12,20 +12,28 @@ public class Main {
 	
 	public static void testQR(LDABasedModel xx){
 		int [] precision = new int[3];//5 10 15
+		precision[0]=0;
+		precision[0]=0;
+		precision[0]=0;
 		int qnum=0;
 		
 		for(Entry<String, QuestionPost> post: xx.testSet.quesitonMap.entrySet()){
 			String qid=post.getKey();
 			QuestionPost q= post.getValue();
+			if(! xx.trainSet.useridToIndex.containsKey(q.user.userId)  ){
+				continue;
+			}
+			
 			qnum+=1;
 			xx.recommendUserForQuestion(q,precision);
+			//break;
+			//System.out.println(precision[0]+precision[1]+precision[2])	;
 		}
-		System.out.println("p5:"+(double)precision[0]/5.0*(double)qnum );
-		System.out.println("p10:"+(double)precision[0]/10.0*(double)qnum );
-		System.out.println("p15:"+(double)precision[0]/15.0*(double)qnum );
-		
-		
-		
+		System.out.println("test question:"+qnum);
+		System.out.println("p5:"+(double)precision[0]/((double)qnum ));
+		System.out.println("p10:"+(double)precision[1]/((double)qnum ));
+		System.out.println("p15:"+(double)precision[2]/((double)qnum ));
+
 	}
 	
 	public static void runModel(LDABasedModel xx, String outputPathDir,Set<String> filter){
@@ -97,7 +105,7 @@ public class Main {
 		
 		Set<String> filter=new HashSet<String>();
 		
-		int iternum=1;
+		int iternum=100;
 		int topNum=30;
 		
 		resultPath="out/TEM/";
@@ -105,7 +113,7 @@ public class Main {
 		TEMModel tem=new TEMModel(trainset,testset,iternum);
 		tem.K=topNum;
 		//runModel(tem,"out/TEM/",filter);
-		
+		//testQR(tem);
 		
 		resultPath= "out/outTTEQAA/";
 		System.out.println("TTEQAA Model");
