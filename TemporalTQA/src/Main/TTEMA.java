@@ -7,12 +7,15 @@ import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import Main.TTEQAAModel.UserSimiAct;
 import Util.ComUtil;
+import Util.CommonUtil;
 import Util.ModelComFunc;
 
 
@@ -46,7 +49,8 @@ public class TTEMA extends LDABasedModel  {
 	public float xi;// expertise specific vote distribution
 
 	// model parameters
-	public float[][] theta;// U*K
+	public double[][] theta;// U*K
+	public double [][] thetaku;//k*u
 	public float[][][] phi;// K*U*E
 	public float[][] psi;// K*T
 	public float[][][] varphi;// K*E*V
@@ -57,6 +61,9 @@ public class TTEMA extends LDABasedModel  {
 	// Temporary count variables while sampling
 	private int CUK[][]; // U*K
 	private int CUKsum[]; // U
+	
+	private int CKU[][];//k*u
+	private int CKUsum[];//u
 	private int CKUE[][][]; // K*U*E
 	private int CKUEsum[][]; // K*U
 	private int CKT[][]; // K*T  //tag
@@ -112,7 +119,8 @@ public class TTEMA extends LDABasedModel  {
 		//S = docSet.indexToVoteMap.size();// vote map
 
 		// model parameters
-		theta = new float[U][K];// U*K
+		theta = new double[U][K];// U*K
+		thetaku=new double[K][U];
 		phi = new float[K][U][ENum];// K*U*E
 		psi = new float[K][TagNum];// K*T
 		varphi = new float[K][1][V];// K*E*V
@@ -121,6 +129,9 @@ public class TTEMA extends LDABasedModel  {
 		// temporary count variables while sampling
 		CUK = new int[U][K]; // U*K
 		CUKsum = new int[U]; // U
+		CKU = new int [K][U];
+		CKUsum= new int [K];
+		
 		CKUE = new int[K][U][ENum]; // K*U*E
 		CKUEsum = new int[K][U]; // K*U
 		CKT = new int[K][TagNum]; // K*T
@@ -150,6 +161,9 @@ public class TTEMA extends LDABasedModel  {
 
 					CUK[u][initTopic]++;
 					CUKsum[u]++;
+					CKU[initTopic][u]++;
+					CKUsum[initTopic]++;
+					
 					CKUE[initTopic][u][initExpert]++; // K*U*E
 					CKUEsum[initTopic][u]++; // K*U
 					
@@ -299,6 +313,9 @@ public class TTEMA extends LDABasedModel  {
 		int oldExpert = E[u][n];
 		CUK[u][oldTopic]--;// U*K
 		CUKsum[u]--;// U
+		
+		CKU[oldTopic][u]--;
+		CKUsum[oldTopic]--;
 		CKUE[oldTopic][u][oldExpert]--; // K*U*E
 		CKUEsum[oldTopic][u]--; // K*U
 
@@ -392,6 +409,10 @@ public class TTEMA extends LDABasedModel  {
 		E[u][n] = newExpert;
 		CUK[u][newTopic]++;// U*K
 		CUKsum[u]++;// U
+		CKU[newTopic][u]++;
+		CKUsum[newTopic]++;
+		
+		
 		CKUE[newTopic][u][newExpert]++; // K*U*E
 		CKUEsum[newTopic][u]++; // K*U
 		
@@ -413,6 +434,11 @@ public class TTEMA extends LDABasedModel  {
 		for (int u = 0; u < U; u++) {
 			for (int k = 0; k < K; k++) {
 				theta[u][k] = (CUK[u][k] + alpha) / (CUKsum[u] + alpha * K);
+			}
+		}
+		for (int k = 0; k < K; k++) {
+			for (int u = 0; u < U; u++) {
+				thetaku[u][k] = (CKU[k][u] + alpha) / (CUKsum[k] + alpha * U);
 			}
 		}
 
@@ -570,6 +596,242 @@ public class TTEMA extends LDABasedModel  {
 		
 		
 	}
+	
+	public double [] computeQuestionTopicDistribution(QuestionPost p){
+		double [] thetaQK= new double [this.K];
+		int quid= this.trainSet.useridToIndex.get( p.user.userId);
+		double[] thetaqUK= this.theta[  quid  ];
+		double sum=0.0f;
+		
+		double [] thetaqKW=new double [this.K];
+		double [] thetaqKV=new double [this.K];
+		for(int wid : p.words){
+			String wd= this.testSet.indexToTermMap.get(wid);
+			if (this.trainSet.termToIndexMap.containsKey(wd)){
+				int realWid= this.trainSet.termToIndexMap.get(wd);
+				for(int i=0;i<this.K;i++){
+					thetaqKW[i]+=  this.varphi[i][0][realWid];
+				}
+			}
+		}
+		
+		for(int tid:p.tags){
+			String td= this.testSet.indexToTagMap.get(tid);
+			if (this.trainSet.tagToIndexMap.containsKey(td)){
+				int realTid= this.trainSet.tagToIndexMap.get(td);
+				for(int i=0;i<this.K;i++){
+					thetaqKV[i]+=  this.psi[i][realTid];
+				}
+			}
+		}
+
+		sum=0.0f;
+		for(int i=0;i<this.K;i++){
+			if(thetaqKV[i]!=0.0){
+				thetaQK[i]= thetaqUK[i]*thetaqKW[i]*thetaqKV[i];
+				sum+=thetaQK[i];
+			}else{
+				thetaQK[i]= thetaqUK[i]*thetaqKW[i];//*thetaqKV[i];
+				sum+=thetaQK[i];
+			}
+			/*if(thetaQK[i]==0.0){
+				System.out.println("error");
+			}*/
+			//else{
+				/*for(int tid:p.tags){
+					String td= this.testSet.indexToTagMap.get(tid);
+					System.out.print(td+",");
+				}*/
+				
+				//System.out.println("something wroing");
+			//}
+			
+		}
+		//normalize
+		
+		for(int i=0;i<this.K;i++){
+			thetaQK[i]=  thetaQK[i]/sum;
+		}
+		
+		
+		
+		return thetaQK;
+
+		
+	}
+	
+	class UserSimiAct{
+		public Double simiscore;
+		public Double actscore;
+		public String userid;
+		UserSimiAct(String userid, Double simiscore, Double actscore){
+			this.userid=userid;
+			this.simiscore=simiscore;
+			this.actscore=actscore;
+			
+		}
+	}
+	
+	public void recommendUserForQuestion(QuestionPost p, int [] precision){
+		
+		double [] thetaQK= this.computeQuestionTopicDistribution(p);
+		//get the big k
+		ArrayList<Map.Entry<Integer, Double>> idqk= new ArrayList<Map.Entry<Integer, Double>>();
+		for(int i=0;i<this.K;i++){
+			idqk.add (new  AbstractMap.SimpleEntry<Integer , Double> (i,thetaQK[i]));
+		}
+		Collections.sort(idqk, new Comparator<Entry<Integer,Double>>(){
+			public int compare(Entry<Integer, Double> arg0,Entry<Integer, Double> arg1) {
+				// TODO Auto-generated method stub
+				return -1*arg0.getValue().compareTo(arg1.getValue());
+			}
+		});
+		///ArrayList<String> RandomUsers = new ArrayList<String>();
+		ArrayList<UserSimiAct>  userSimiActs = new ArrayList<UserSimiAct>();
+	
+		for(User u:this.trainSet.users){
+			int uindex=this.trainSet.useridToIndex.get(u.userId);
+			double [] thetacUK=this.theta[uindex];
+
+			
+
+			double jsdis= CommonUtil.jensenShannonDivergence(thetacUK, thetaQK);
+			double actscore=0.0f;
+			for(int topI=0;topI<2;topI++){
+				int maxt= idqk.get(topI).getKey();
+				actscore=  actscore + ( thetaQK[maxt]*this.thetaku[maxt][uindex]	  );
+			}
+			/*for(int j=0;j<K;j++){
+				actscore=actscore+(thetaQK[j]* this.thetaKU[j][uindex]);
+			}*/
+			//System.out.println(actscore);
+			
+			UserSimiAct newUserSimiAct= new UserSimiAct(u.userId,1.0-jsdis,actscore);
+			//UserSimiAct newUserSimiAct= new UserSimiAct(u.userId,1.0-jsdis,this.thetaKU[maxTopicId][uindex]);
+			userSimiActs.add(newUserSimiAct);
+
+			
+			//System.out.println("jsdis:"+jsdis);
+		}
+		//sort it.
+
+		Collections.sort(userSimiActs, new Comparator<UserSimiAct>(){
+			public int compare(UserSimiAct arg0,UserSimiAct arg1) {
+				// TODO Auto-generated method stub
+				return -1* arg0.simiscore.compareTo(arg1.simiscore);
+			}
+		});
+		
+		//get top 50 users.
+		ArrayList<UserSimiAct>  top50UserSimiActs=new ArrayList<UserSimiAct>();
+
+		for(int i=0;i<50;i++){
+			top50UserSimiActs.add(userSimiActs.get(i));
+		}
+		Collections.sort(top50UserSimiActs, new Comparator<UserSimiAct>(){
+			public int compare(UserSimiAct arg0,UserSimiAct arg1) {
+				// TODO Auto-generated method stub
+				return -1* arg0.actscore.compareTo(arg1.actscore);
+			}
+		});
+		
+		//get top 50 users.
+		ArrayList<String> topUsers =new ArrayList<String>();
+		for(int i=0;i<50;i++){
+			topUsers.add( top50UserSimiActs.get(i).userid  );
+		}
+
+		//check p@5 p@10 p@15 //
+		Set<String> ansUids = new HashSet<String>();
+		for(AnswerPost a: p.answers){
+			ansUids.add(a.user.userId);
+		}
+		
+		precision[0]+=CommonUtil.computePrecision(topUsers, ansUids, 5);
+		precision[1]+=CommonUtil.computePrecision(topUsers, ansUids, 10);
+		precision[2]+=CommonUtil.computePrecision(topUsers, ansUids, 15);
+		
+		
+		
+	}
+	
+
+	
+	public void recommendUserForQuestionOld(QuestionPost p, int [] precision){
+		
+		double [] thetaQK= this.computeQuestionTopicDistribution(p);
+		
+		///ArrayList<String> RandomUsers = new ArrayList<String>();
+		
+		ArrayList<Map.Entry<String, Double>> userSimiScore= new ArrayList<Map.Entry<String, Double>>();
+		for(User u:this.trainSet.users){
+			int uindex=this.trainSet.useridToIndex.get(u.userId);
+			double [] thetacUK=this.theta[uindex];
+			//double sum=0.0f;
+			
+			//if (r.nextBoolean()){
+			//	RandomUsers.add(u.userId);
+			//}
+			
+			/*double jsdis1= CommonUtil.jensenShannonDivergence(thetacUK, thetaQK);
+			
+			double sum=0.0f;
+			//this part is activiy part.
+			for(int i=0;i<this.K;i++){
+				thetacUK[i]*=this.thetaKU[i][uindex];
+				sum+=thetacUK[i];
+			}
+			
+			//normalize again...should
+			for(int i=0;i<this.K;i++){
+				thetacUK[i]=thetacUK[i]/sum;
+			}*/
+			
+			
+			
+
+			double jsdis= CommonUtil.jensenShannonDivergence(thetacUK, thetaQK);
+
+			Map.Entry<String, Double> pairs =new  AbstractMap.SimpleEntry<String , Double> (u.userId,1.0-jsdis);
+			userSimiScore.add(pairs);
+			//System.out.println("jsdis:"+jsdis);
+		}
+		//sort it.
+
+		Collections.sort(userSimiScore, new Comparator<Entry<String,Double>>(){
+			public int compare(Entry<String, Double> arg0,Entry<String, Double> arg1) {
+				// TODO Auto-generated method stub
+				return -1*arg0.getValue().compareTo(arg1.getValue());
+			}
+		});
+		
+		//get top 50 users.
+		ArrayList<String> topUsers = new ArrayList<String >();
+		for(int i=0;i<50;i++){
+			topUsers.add(userSimiScore.get(i).getKey());
+			//System.out.println(userSimiScore.get(i).getValue());
+		}
+		
+		//random 50 users.
+		
+		
+		
+		
+		//check p@5 p@10 p@15 //
+		Set<String> ansUids = new HashSet<String>();
+		for(AnswerPost a: p.answers){
+			ansUids.add(a.user.userId);
+		}
+		
+		precision[0]+=CommonUtil.computePrecision(topUsers, ansUids, 5);
+		precision[1]+=CommonUtil.computePrecision(topUsers, ansUids, 10);
+		precision[2]+=CommonUtil.computePrecision(topUsers, ansUids, 15);
+		
+		
+		
+	}
+	
+	
 	
 	public void computeCoherence( DataWoker dataset){
 		ArrayList<ArrayList<String>> topicTopWords= this.getTopWords();

@@ -114,37 +114,45 @@ public class Main {
 		tem.K=topNum;
 		//runModel(tem,"out/TEM/",filter);
 		//testQR(tem);
-		
+		resultPath="out/TTEMA/";
+		System.out.println("TTEMA model");
+		TTEMA ttema=new TTEMA(trainset,testset,iternum);
+		ttema.K=topNum;
+		runModel(ttema,"out/TTEMA/",filter);
+		testQR(ttema);
 		
 		
 		resultPath= "out/outUQA/";
 		System.out.println("UQA Model");
 		UQAModel uqa = new UQAModel(trainset,testset,iternum);
 		uqa.K=topNum;
-		runModel(uqa,"out/outUQA/",filter);
-		testQR(uqa);
+		//runModel(uqa,"out/outUQA/",filter);
+		//testQR(uqa);
 		
 		resultPath="out/outLDA/";
 		System.out.println("LDA Model");
 		LDA lda= new LDA(trainset,testset,iternum);
 		lda.K=topNum;
-		runModel(lda,"out/outLDA/",filter);
-		testQR(lda);
+		//runModel(lda,"out/outLDA/",filter);
+		//testQR(lda);
 		
 		resultPath= "out/outTTEQAA/";
 		System.out.println("TTEQAA Model");
 		TTEQAAModel tteqaa = new TTEQAAModel(trainset,testset,iternum);
 		tteqaa.K=topNum;
-		runModel(tteqaa,"out/outTTEQAA/",filter);
-		testQR(tteqaa);
+		//runModel(tteqaa,"out/outTTEQAA/",filter);
+		//testQR(tteqaa);
 		
-		System.exit(1);
-		
+
 		resultPath= "out/outGROST/";
 		System.out.println("Grostt Model");
 		GrosToT tot = new GrosToT(trainset,testset,iternum);
 		tot.K=topNum;
-		runModel(tot,"out/outGROST/",filter);
+		//runModel(tot,"out/outGROST/",filter);
+		//testQR(tot);
+		
+		System.exit(1);
+		
 		
 		
 		

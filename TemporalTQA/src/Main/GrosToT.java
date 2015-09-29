@@ -535,10 +535,33 @@ public class GrosToT extends LDABasedModel{
 		final_perplex =  Math.exp(-1.0  *  total_result  / (float)(word_number));
 		System.out.println(final_perplex);
 	}
-	public double [] computeQuestionTopicDistribution(QuestionPost p, double []thetaqUK){
+	public double [] computeQuestionTopicDistribution(QuestionPost p){
 		double [] thetaQK= new double [this.K];
 		
+		int quid= this.trainSet.useridToIndex.get( p.user.userId);
+		double [] thetaqUK= new double [this.K];
+		
 		double sum=0.0f;
+		for(int i=0;i<this.K;i++){
+			thetaqUK[i]=0;
+			for(int j=0;j<this.G;j++){
+				thetaqUK[i] +=   this.thetaUG[quid][j]* this.thetaGK[j][i];
+			}
+			sum+=thetaqUK[i];
+			
+		}
+		for(int i=0;i<this.K;i++){
+			thetaqUK[i]=thetaqUK[i]/sum;
+			//System.out.print(thetaqUK[i]);
+			//System.out.print(',');
+		}
+		//System.out.println("\n");
+		
+		
+		
+		
+		
+		sum=0.0f;
 		
 		double [] thetaqKW=new double [this.K];
 		//double [] thetaqKV=new double [this.K];
@@ -574,35 +597,35 @@ public class GrosToT extends LDABasedModel{
 	}
 	
 	public void recommendUserForQuestion(QuestionPost p, int [] precision){
-		int quid= this.trainSet.useridToIndex.get( p.user.userId);
-		double [] thetaqUK= new double [this.K];
 		
-		double sum=0.0f;
-		for(int i=0;i<this.K;i++){
-			for(int j=0;j<this.G;j++){
-				thetaqUK[i] +=   this.thetaUG[quid][j]* this.thetaGK[j][i];
-			}
-			sum+=thetaqUK[i];
-			
-		}
-		
-		//normal
-		for (int i=0;i<this.K;i++){
-			thetaqUK[i]=thetaqUK[i]/sum;
-		}
-		
-		double [] thetaQK= this.computeQuestionTopicDistribution(p,thetaqUK);
+		double [] thetaQK= this.computeQuestionTopicDistribution(p);
 		
 		///ArrayList<String> RandomUsers = new ArrayList<String>();
 		
 		ArrayList<Map.Entry<String, Double>> userSimiScore= new ArrayList<Map.Entry<String, Double>>();
 		for(User u:this.trainSet.users){
 			int uindex=this.trainSet.useridToIndex.get(u.userId);
-			//double [] thetacUK=this.thetaUK[uindex];
+			double [] thetacUK= new double [this.K];
+			
+			double sum=0.0f;
+			for(int i=0;i<this.K;i++){
+				for(int j=0;j<this.G;j++){
+					thetacUK[i] +=   this.thetaUG[uindex][j]* this.thetaGK[j][i];
+				}
+				sum+=thetacUK[i];
+				
+			}
+			
+			//normal
+			for (int i=0;i<this.K;i++){
+				thetacUK[i]=thetacUK[i]/sum;
+			}
+			
+			
 			//double sum=0.0f;
 			
 
-			double jsdis= CommonUtil.jensenShannonDivergence(thetaqUK, thetaQK);
+			double jsdis= CommonUtil.jensenShannonDivergence(thetacUK, thetaQK);
 
 			Map.Entry<String, Double> pairs =new  AbstractMap.SimpleEntry<String , Double> (u.userId,1.0-jsdis);
 			userSimiScore.add(pairs);
