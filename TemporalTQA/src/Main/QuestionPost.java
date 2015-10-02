@@ -2,7 +2,7 @@ package Main;
 
 import java.util.ArrayList;
 
-public class QuestionPost extends Post{
+public class QuestionPost {
 	
 
 
@@ -22,9 +22,9 @@ public class QuestionPost extends Post{
 	public AnswerPost acceptAnswer;
 
 	
-	public QuestionPost() {
+	/*public QuestionPost() {
 		// TODO Auto-generated constructor stub
 		this.typeid=1;
-	}
+	}*/
 
 }

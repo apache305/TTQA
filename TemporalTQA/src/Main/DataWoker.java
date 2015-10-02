@@ -186,6 +186,8 @@ public class DataWoker {
 		User u = this.users.get(this.useridToIndex.get(uid)  );
 		Post p = new Post();
 		p.user=u;
+		p.id=id;
+		
 		
 
 		String month=date.substring(0, this.timeLevel);
@@ -247,93 +249,7 @@ public class DataWoker {
 
 
 	
-	public int newQuesitonPost(ArrayList<String> itemlist){
-		//typeid,ids,quid,date,acceptaid,score,taglen," ".join(taglist)," ".join(BodyP)
-		String qid=itemlist.get(1);
-		String quid=itemlist.get(2);
-		String date=itemlist.get(3);
-		String acceptaid=itemlist.get(4);
-		String score=itemlist.get(5);
-		String taglen=itemlist.get(6);
-		int tlen=Integer.parseInt(taglen);
-		QuestionPost p= new QuestionPost();
-		
-		p.id=qid;
-		
-		if(!this.useridToIndex.containsKey(quid)){
-			User u = new User(quid);
-			this.useridToIndex.put(quid, this.users.size());
-			this.users.add(u);
-			
-		}
-		User u = this.users.get(this.useridToIndex.get(quid)  );
-		
-
-		
-		p.user=u;
-		String month=date.substring(0, this.timeLevel);
-		
-		if(!this.timeToIndexMap.containsKey(month)){
-			this.timeToIndexMap.put(month,this.indexToTimeMap.size());
-			this.indexToTimeMap.add(month);
-			this.timeCountMap.put(month, 0);
-		}
-		//int oldTimeCount = this.timeCountMap.get(month);
-		//this.timeCountMap.put(month, oldTimeCount+1);
-		p.dateid=this.timeToIndexMap.get(month);
-		p.date=date;
-		if(!acceptaid.equals("null"))	{
-			p.acceptaid=acceptaid;
-		}else{
-			p.acceptaid=null;
-		}
-		
-		
-		//if(!this.voteToIndexMap.containsKey(score)){
-			//this.voteToIndexMap.put(score, this.indexToVoteMap.size());
-			//this.voteCountMap.put(score,0);
-			//this.indexToVoteMap.add(score);
-		//}
-		//int oldV=this.voteCountMap.get(score);
-		//this.voteCountMap.put(score, oldV+1);
-		
-		
-		p.score=Integer.parseInt(score);
-		
-		ArrayList<Integer> taglist= new ArrayList<Integer>();
-		ArrayList<Integer> words=new ArrayList<Integer>();
-		for(int i=7;i<7+tlen;i++){
-			String tag= itemlist.get(i);
-			if(!this.tagToIndexMap.containsKey(tag)){
-				this.tagToIndexMap.put(tag,this.indexToTagMap.size())	;
-				this.indexToTagMap.add(tag);
-				this.tagCountMap.put(tag, 0);
-			}
-			//int oldCount= this.tagCountMap.get(tag);
-			//this.tagCountMap.put(tag, oldCount+1);
-			taglist.add(this.tagToIndexMap.get(tag));
-		}
-		p.tags=taglist;
-		for(int i=7+tlen;i<itemlist.size();i++){
-			String word= itemlist.get(i);
-			if(!this.termToIndexMap.containsKey(word)){
-				this.termToIndexMap.put(word,this.indexToTermMap.size())	;
-				this.indexToTermMap.add(word);
-				this.termCountMap.put(word, 0);
-			}
-			//int oldCount= this.termCountMap.get(word);
-			//this.termCountMap.put(word, oldCount+1);
-			words.add(this.termToIndexMap.get(word));
-		}
-		p.words=words;
-		
-		//put the new question into the map;
-		//u.questionPosts.add(p);
-		this.quesitonMap.put(qid, p);
-		
-		return 1;
-
-	}
+	
 	public void computeCoOccur(){
 		//this.cooc= new int[this.termCountMap.size()][this.termCountMap.size()];
 		

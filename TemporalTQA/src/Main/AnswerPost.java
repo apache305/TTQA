@@ -2,7 +2,7 @@ package Main;
 
 import java.util.ArrayList;
 
-public class AnswerPost  extends Post{
+public class AnswerPost  {
 	
 	public int typeid;
 	public String id;
@@ -15,10 +15,10 @@ public class AnswerPost  extends Post{
 	public ArrayList<Integer> words;
 	public ArrayList<Integer> tags;
 	public QuestionPost question;
-	public AnswerPost(){
+	/*public AnswerPost(){
 		this.typeid=2;
 		
-	}
+	}*/
 
 	
 }

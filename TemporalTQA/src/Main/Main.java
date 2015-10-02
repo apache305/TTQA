@@ -59,8 +59,8 @@ public class Main {
 		
 		
 		xx.computePer(filter);
-		xx.computeCoherence(xx.trainSet);
-		xx.computeCoherence(xx.testSet);
+		//xx.computeCoherence(xx.trainSet);
+		//xx.computeCoherence(xx.testSet);
 		
 		
 	}
@@ -84,14 +84,14 @@ public class Main {
 		
 		//String trainsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/alla100.2.train.txt";
 		//String testsource ="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/alla100.2.test.txt";
-		String trainsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/aq.train.80.txt";
-		//String testsource ="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/a80.test.txt";
+		String trainsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/aq300.train.80.txt";
+		String testsource ="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/aq300.test.80.txt";
 		DataWoker trainset= new DataWoker(trainsource);
-		DataWoker testset= new DataWoker();//=new DataWoker(testsource);
+		DataWoker testset=new DataWoker(testsource);
 		trainset.ProcessOriData();
-		//testset.ProcessOriData();
+		testset.ProcessOriData();
 		
-		trainset.computeCoOccur();
+		//trainset.computeCoOccur();
 		//testset.computeCoOccur();
 		
 		/*for(int i=0;i<trainset.useridToIndex.size();i++){
@@ -146,7 +146,7 @@ public class Main {
 		TTEQAAModel tteqaa = new TTEQAAModel(trainset,testset,iternum);
 		tteqaa.K=topNum;
 		runModel(tteqaa,"out/outTTEQAA/",filter);
-		tteqaa.oneThingINeedToMakeSure();
+		//tteqaa.oneThingINeedToMakeSure();
 		//testQR(tteqaa);
 		
 
@@ -154,7 +154,7 @@ public class Main {
 		System.out.println("Grostt Model");
 		GrosToT tot = new GrosToT(trainset,testset,iternum);
 		tot.K=topNum;
-		//runModel(tot,"out/outGROST/",filter);
+		runModel(tot,"out/outGROST/",filter);
 		//testQR(tot);
 		
 		System.exit(1);

@@ -590,6 +590,7 @@ public class TTEQAAModel extends LDABasedModel{
 		for (User u : this.testSet.users){
 			int uid=0;
 			if ( !this.trainSet.useridToIndex.containsKey(u.userId) ){
+				System.out.println("no user?");
 				continue;
 			}
 			UinTrain++;
@@ -677,12 +678,14 @@ public class TTEQAAModel extends LDABasedModel{
 				
 				//System.out.println(x);
 				if(Double.isInfinite(x)){
-					filterPostId.add(postid);		
+					filterPostId.add(postid);
+					//System.out.println(postid);
 					continue;
 				}
 				total_result +=x;
 				word_number+=word_n;			
 				post_number++;
+				
 				
 			}
 			
