@@ -116,11 +116,11 @@ public class LDA extends LDABasedModel{
 		Random r = new Random();
 		for(int i=0;i<this.U;i++ ){
 			User u=this.trainSet.users.get(i);
-			ArrayList<AnswerPost> anses = u.answerPosts;
+			ArrayList<Post> anses = u.allPosts;
 			this.topicLabel[i]= new int[anses.size()	][];
 			for(int j=0;j<anses.size();j++){
 				
-				AnswerPost eachPost= anses.get(j);
+				Post eachPost= anses.get(j);
 				
 				int allWords= eachPost.words.size();
 				this.topicLabel[i][j]=new int[allWords];
@@ -160,9 +160,9 @@ public class LDA extends LDABasedModel{
 			
 			for(int i=0;i<this.U;i++ ){
 				User u=this.trainSet.users.get(i);
-				ArrayList<AnswerPost> anses = u.answerPosts;
+				ArrayList<Post> anses = u.allPosts;
 				for(int j=0;j<anses.size();j++){
-					AnswerPost eachPost= anses.get(j);
+					Post eachPost= anses.get(j);
 					ArrayList<Integer> words = eachPost.words;
 					for(int k=0;k<eachPost.words.size();k++){
 						int word=eachPost.words.get(k);
@@ -357,14 +357,14 @@ public class LDA extends LDABasedModel{
 			UinTrain++;
 			uid=this.trainSet.useridToIndex.get(u.userId);
 			
-			for(AnswerPost eachPost: u.answerPosts){
+			for(Post eachPost: u.allPosts){
 				
 				//ArrayList<Integer> faketags= eachPost.tags;
 				ArrayList<Integer> fakewords=eachPost.words;
 				
 				//compute for each post.
 				double curPostW=0.0;
-				String postid=eachPost.aid;
+				String postid=eachPost.id;
 				if(filterPostId.contains(postid)){
 					continue;
 				}
@@ -440,7 +440,7 @@ public class LDA extends LDABasedModel{
 			//System.out.println(u.userId);
 			//System.out.println(u.answerPosts.size());
 			
-			for(AnswerPost eachPost: u.answerPosts){
+			for(Post eachPost: u.allPosts){
 				
 				//ArrayList<Integer> faketags= eachPost.tags;
 				ArrayList<Integer> fakewords=eachPost.words;

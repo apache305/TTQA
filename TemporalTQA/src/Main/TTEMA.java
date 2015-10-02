@@ -147,11 +147,11 @@ public class TTEMA extends LDABasedModel  {
 		for (int u = 0; u < this.U; u++) {
 			//Z[u] = new int [   docSet.docs.get(u).docWords.length];
 
-			Z[u]  = new int [ this.trainSet.users.get(u).answerPosts.size()];// one topic for one post
-			E[u]  = new int [this.trainSet.users.get(u).answerPosts.size()];//one experitse for one post
+			Z[u]  = new int [ this.trainSet.users.get(u).allPosts.size()];// one topic for one post
+			E[u]  = new int [this.trainSet.users.get(u).allPosts.size()];//one experitse for one post
 			//E[u] = new int[docSet.docs.get(u).docWords.length];
-			for (int n = 0; n < this.trainSet.users.get(u).answerPosts.size(); n++) {//for each post
-				AnswerPost eachPost=this.trainSet.users.get(u).answerPosts.get(n);
+			for (int n = 0; n < this.trainSet.users.get(u).allPosts.size(); n++) {//for each post
+				Post eachPost=this.trainSet.users.get(u).allPosts.get(n);
 				if (eachPost!= null) {// the n-th post
 					// randomly assign initial topic and expertise index
 					int initTopic = (int) (Math.random() * K);
@@ -193,8 +193,8 @@ public class TTEMA extends LDABasedModel  {
 
 		for (int u = 0; u < this.U; u++) {
 			//for each post.
-			for (int n = 0; n < this.trainSet.users.get(u).answerPosts.size(); n++) {
-				AnswerPost eachPost=this.trainSet.users.get(u).answerPosts.get(n);
+			for (int n = 0; n < this.trainSet.users.get(u).allPosts.size(); n++) {
+				Post eachPost=this.trainSet.users.get(u).allPosts.get(n);
 				if (eachPost!= null)
 					fgmm.idmap.put(u + "_" + n, fgmm.idmap.size());
 			}
@@ -203,8 +203,8 @@ public class TTEMA extends LDABasedModel  {
 		int[] clusterids = new int[fgmm.idmap.size()];
 		int count = 0;
 		for (int u = 0; u < this.U; u++) {
-			for (int n = 0; n < this.trainSet.users.get(u).answerPosts.size(); n++) {
-				AnswerPost eachPost=this.trainSet.users.get(u).answerPosts.get(n);
+			for (int n = 0; n < this.trainSet.users.get(u).allPosts.size(); n++) {
+				Post eachPost=this.trainSet.users.get(u).allPosts.get(n);
 				if (eachPost!= null){
 					//float vote = Float.parseFloat(docSet.indexToVoteMap.get(docSet.docs.get(u).votes[n])) + 0f;
 					// System.out.println(vote);
@@ -272,9 +272,9 @@ public class TTEMA extends LDABasedModel  {
 			for (int u = 0; u < this.U; u++) {
 				//if (u % 100 == 0)
 					//System.out.println("\tNow u = " + u);
-				for (int n = 0; n <  this.trainSet.users.get(u).answerPosts.size() ; n++) {
+				for (int n = 0; n <  this.trainSet.users.get(u).allPosts.size() ; n++) {
 					// System.out.println("\tNow u: " + u + "\tn: " + n);
-					AnswerPost a=this.trainSet.users.get(u).answerPosts.get(n);
+					Post a=this.trainSet.users.get(u).allPosts.get(n);
 					if (a != null)
 						sampleTopicZandExpertE(a, u, n);
 					// for (int l = 0; l <
@@ -299,7 +299,7 @@ public class TTEMA extends LDABasedModel  {
 			ComUtil.print(fgmm.p_mu[k], " ", "\n\t");
 	}
 
-	private void sampleTopicZandExpertE(AnswerPost a, int u, int n) {
+	private void sampleTopicZandExpertE(Post a, int u, int n) {
 		// get unique terms and tags
 		ArrayList<Integer> UniqueWords = new ArrayList<Integer>();
 		ArrayList<Integer> wCounts = new ArrayList<Integer>();
@@ -896,11 +896,11 @@ public class TTEMA extends LDABasedModel  {
 			//System.out.println(u.userId);
 			//System.out.println(u.answerPosts.size());
 			
-			for(AnswerPost eachPost: u.answerPosts){
+			for(Post eachPost: u.allPosts){
 				
 				//ArrayList<Integer> faketags= eachPost.tags;
 				ArrayList<Integer> fakewords=eachPost.words;
-				String postid=eachPost.aid;
+				String postid=eachPost.id;
 				if(filterPostId.contains(postid)){
 					continue;
 				}

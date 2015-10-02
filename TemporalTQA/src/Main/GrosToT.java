@@ -127,7 +127,7 @@ public class GrosToT extends LDABasedModel{
 		Random r = new Random();
 		for(int i=0;i<this.U;i++ ){
 			User u=this.trainSet.users.get(i);
-			ArrayList<AnswerPost> anses = u.answerPosts;
+			ArrayList<Post> anses = u.allPosts;
 			this.topicLabel[i]= new int[anses.size()	];
 			this.groupLabel[i]= new int [anses.size()];
 			
@@ -139,7 +139,7 @@ public class GrosToT extends LDABasedModel{
 					
 						
 				
-				AnswerPost eachPost= anses.get(j);
+				Post eachPost= anses.get(j);
 				//update those counts.
 				this.nug[i][initialGroupLabel]++;
 				this.sumug[i]++;
@@ -178,9 +178,9 @@ public class GrosToT extends LDABasedModel{
 			
 			for(int i=0;i<this.U;i++ ){
 				User u=this.trainSet.users.get(i);
-				ArrayList<AnswerPost> anses = u.answerPosts;
+				ArrayList<Post> anses = u.allPosts;
 				for(int j=0;j<anses.size();j++){
-					AnswerPost eachPost= anses.get(j);
+					Post eachPost= anses.get(j);
 					int timeID=eachPost.dateid;
 					//int [] tagIDs=eachPost.Qtags;
 					ArrayList<Integer> words = eachPost.words;
@@ -466,14 +466,14 @@ public class GrosToT extends LDABasedModel{
 			//System.out.println(u.userId);
 			//System.out.println(u.answerPosts.size());
 			
-			for(AnswerPost eachPost: u.answerPosts){
+			for(Post eachPost: u.allPosts){
 				
 				//ArrayList<Integer> faketags= eachPost.tags;
 				ArrayList<Integer> fakewords=eachPost.words;
 				
 				//compute for each post.
 				double curPostW=0.0;
-				String postid=eachPost.aid;
+				String postid=eachPost.id;
 				if(filterPostId.contains(postid)){
 					continue;
 				}

@@ -2,31 +2,23 @@ package Main;
 
 import java.util.ArrayList;
 
-public class AnswerPost{
+public class AnswerPost  extends Post{
 	
+	public int typeid;
+	public String id;
+	public int uid;
 	public int dateid;
+	public String date;
 	public int score;
 	public int vote_level;
-	public int qid;
-	
-	public String aid;
 	public User user;
-	public String date;
-	public QuestionPost question;
 	public ArrayList<Integer> words;
 	public ArrayList<Integer> tags;
+	public QuestionPost question;
 	public AnswerPost(){
+		this.typeid=2;
 		
 	}
-	public AnswerPost(int time, int[] tags, int qid,int score,int vote_level) {
-		// TODO Auto-generated constructor stub
-		//this.Atime=time;
-		//this.Qtags=tags;
-		this.qid=qid;
-		this.score=score;
-		this.vote_level= vote_level;
-		
-	}
-	
 
+	
 }

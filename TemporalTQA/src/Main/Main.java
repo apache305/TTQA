@@ -75,31 +75,29 @@ public class Main {
 		
 		String trainFile = args[0];
 		String resultPath= args[1];*/
-		String trainFile = "data/ntrain.txt";
-		String testFile="data/ntest.txt";
+
 		String resultPath=null;
 		//String curWorkingDir=System.getProperty("user.dir");
 		//System.out.println(curWorkingDir+trainFile);
-		Users users= new Users(trainFile);
-		Users testUsers = new Users(testFile);
+
 		//only for debug
 		
 		//String trainsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/alla100.2.train.txt";
 		//String testsource ="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/alla100.2.test.txt";
-		String trainsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/a80.train.txt";
-		String testsource ="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/a80.test.txt";
+		String trainsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/aq.train.80.txt";
+		//String testsource ="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/a80.test.txt";
 		DataWoker trainset= new DataWoker(trainsource);
-		DataWoker testset=new DataWoker(testsource);
+		DataWoker testset= new DataWoker();//=new DataWoker(testsource);
 		trainset.ProcessOriData();
 		//testset.ProcessOriData();
 		
 		trainset.computeCoOccur();
 		//testset.computeCoOccur();
 		
-		for(int i=0;i<trainset.useridToIndex.size();i++){
-			System.out.println( trainset.users.get(i).answerPosts.size() )	;
+		/*for(int i=0;i<trainset.useridToIndex.size();i++){
+			System.out.println( trainset.users.get(i).allPosts.size() )	;
 		}
-		System.exit(1);
+		System.exit(1);*/
 
 		
 		

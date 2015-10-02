@@ -53,6 +53,10 @@ public class DataWoker {
 	public int singleOccDocument[];
 	public int coOccDocument[][];
 	
+	public DataWoker(){
+		
+	}
+	
 	
 	
 
@@ -164,6 +168,81 @@ public class DataWoker {
 		System.out.println(this.answerMap.size());//643729
 	}
 	
+	
+	public int newPost(ArrayList<String> itemlist){
+		String typeid=itemlist.get(0);
+		String id=itemlist.get(1);
+		String uid=itemlist.get(2);
+		String date=itemlist.get(3);
+		String score=itemlist.get(4);
+		
+		
+		
+		if(!this.useridToIndex.containsKey(uid)){
+			User u = new User(uid);
+			this.useridToIndex.put(uid, this.users.size());
+			this.users.add(u);
+		}
+		User u = this.users.get(this.useridToIndex.get(uid)  );
+		Post p = new Post();
+		p.user=u;
+		
+
+		String month=date.substring(0, this.timeLevel);
+		
+		if(!this.timeToIndexMap.containsKey(month)){
+			this.timeToIndexMap.put(month,this.indexToTimeMap.size());
+			this.indexToTimeMap.add(month);
+			this.timeCountMap.put(month, 0);
+		}
+		int oldTimeCount = this.timeCountMap.get(month);
+		this.timeCountMap.put(month, oldTimeCount+1);
+		p.dateid=this.timeToIndexMap.get(month);
+		p.date=date;
+
+		p.score=Integer.parseInt(score);
+		
+		String taglen=itemlist.get(5);
+		int tlen=Integer.parseInt(taglen);
+		
+		ArrayList<Integer> taglist= new ArrayList<Integer>();
+		ArrayList<Integer> words=new ArrayList<Integer>();
+		for(int i=6;i<6+tlen;i++){
+			String tag= itemlist.get(i);
+			if(!this.tagToIndexMap.containsKey(tag)){
+				this.tagToIndexMap.put(tag,this.indexToTagMap.size())	;
+				this.indexToTagMap.add(tag);
+				this.tagCountMap.put(tag, 0);
+			}
+			int oldCount= this.tagCountMap.get(tag);
+			this.tagCountMap.put(tag, oldCount+1);
+			taglist.add(this.tagToIndexMap.get(tag));
+		}
+		p.tags=taglist;
+		for(int i=6+tlen;i<itemlist.size();i++){
+			String word= itemlist.get(i);
+			if(!this.termToIndexMap.containsKey(word)){
+				this.termToIndexMap.put(word,this.indexToTermMap.size())	;
+				this.indexToTermMap.add(word);
+				this.termCountMap.put(word, 0);
+			}
+			int oldCount= this.termCountMap.get(word);
+			this.termCountMap.put(word, oldCount+1);
+			words.add(this.termToIndexMap.get(word));
+		}
+		p.words=words;
+		
+		u.allPosts.add(p);
+
+		
+		
+		return 1;
+
+		
+		
+		
+	}
+	
 
 
 
@@ -179,7 +258,7 @@ public class DataWoker {
 		int tlen=Integer.parseInt(taglen);
 		QuestionPost p= new QuestionPost();
 		
-		p.qid=qid;
+		p.id=qid;
 		
 		if(!this.useridToIndex.containsKey(quid)){
 			User u = new User(quid);
@@ -249,7 +328,7 @@ public class DataWoker {
 		p.words=words;
 		
 		//put the new question into the map;
-		u.questionPosts.add(p);
+		//u.questionPosts.add(p);
 		this.quesitonMap.put(qid, p);
 		
 		return 1;
@@ -262,7 +341,7 @@ public class DataWoker {
 		this.coOccDocument= new int [this.termCountMap.size()][this.termCountMap.size()];
 		
 		for (User u : this.users){
-			for(AnswerPost eachPost : u.answerPosts){
+			for(Post eachPost : u.allPosts){
 				ArrayList<Integer> words=eachPost.words;
 				Set<Integer> filter=new HashSet<Integer>();
 				for(int i=0;i<words.size();i++){
@@ -284,107 +363,15 @@ public class DataWoker {
 			}
 		}
 	}
-	public int newAnswerPost(ArrayList<String> itemlist){
-		//typeid,ids,auid,date,pid,score," ".join(BodyP)))
-		
-		String aid=itemlist.get(1);
-		String auid=itemlist.get(2);
-		String date=itemlist.get(3);
-		String qid= itemlist.get(4);
-		String score=itemlist.get(5);
-		
-		if(!this.quesitonMap.containsKey(qid)){
-			return 0;
-		}    //che shenm dan
-
-		AnswerPost a=new AnswerPost();
-		//QuestionPost p= new QuestionPost();
-		this.answerMap.put(aid, a);
-		
-		a.aid=aid;
-		a.tags= this.quesitonMap.get(qid).tags;
-		
-		
-		if(!this.useridToIndex.containsKey(auid)){
-			User u = new User(auid);
-			this.useridToIndex.put(auid, this.users.size());
-			this.users.add(u);
-			
-		}
-		User u = this.users.get(this.useridToIndex.get(auid)  );
-
-		a.user=u;
-		String month=date.substring(0, this.timeLevel);
-		
-		
-		
-		if(!this.timeToIndexMap.containsKey(month)){
-			this.timeToIndexMap.put(month,this.indexToTimeMap.size());
-			this.indexToTimeMap.add(month);
-			this.timeCountMap.put(month, 0);
-		}
-		int oldTimeCount = this.timeCountMap.get(month);
-		this.timeCountMap.put(month, oldTimeCount+1);
-		a.dateid=this.timeToIndexMap.get(month);
-		a.date=date;
-		
-		a.score=Integer.parseInt(score);
-		
-		if(!this.voteToIndexMap.containsKey(score)){
-			this.voteToIndexMap.put(score, this.indexToVoteMap.size());
-			this.voteCountMap.put(score,0);
-			this.indexToVoteMap.add(score);
-		}
-		int oldV=this.voteCountMap.get(score);
-		this.voteCountMap.put(score, oldV+1);
-		
-		
-		
-		ArrayList<Integer> words=new ArrayList<Integer>();
-		
-		//need to count tag
-		for(int eachtag : a.tags){
-			String tag= this.indexToTagMap.get(eachtag);
-			int oldC=this.tagCountMap.get(tag);
-			this.tagCountMap.put(tag, oldC+1);
-		}
-		
-		this.maxvote=Math.max(maxvote, a.score);
-		
-		for(int i=6;i<itemlist.size();i++){
-			String word= itemlist.get(i);
-			if(!this.termToIndexMap.containsKey(word)){
-				this.termToIndexMap.put(word,this.indexToTermMap.size())	;
-				this.indexToTermMap.add(word);
-				this.termCountMap.put(word, 0);
-			}
-			int oldCount=this.termCountMap.get(word);
-			this.termCountMap.put(word, oldCount+1);
-			words.add(this.termToIndexMap.get(word));
-		}
-		a.words=words;
-		
-		
-		
-		u.answerPosts.add(a);
-
-		QuestionPost q= this.quesitonMap.get(qid);
-		q.answers.add(a);
-		a.question=q;
-		if(qid.equals(q.acceptaid)){
-			q.acceptAnswer=a;
-		}
-		return 1;
-
-	}
 	
 	private void processEachLine(ArrayList<String> itemlist){
+		
 		if(itemlist.get(0).equals("1")){
 			//question
-			this.newQuesitonPost(itemlist);
+			//this.newQuesitonPost(itemlist);
 		}else if(itemlist.get(0).equals("2")){
 			//answer
-			this.newAnswerPost(itemlist);
+			//this.newAnswerPost(itemlist);
 		}
 
 	}
@@ -400,7 +387,7 @@ public class DataWoker {
 				parts=eachLine.split(" ");
 				itemlist=new ArrayList<String>(Arrays.asList(parts));
 				//process each itemlist
-				this.processEachLine(itemlist);
+				this.newPost(itemlist);
 			}
 		}catch(Exception e){
 			e.printStackTrace();

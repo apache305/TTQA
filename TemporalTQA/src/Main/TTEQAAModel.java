@@ -181,13 +181,13 @@ public class TTEQAAModel extends LDABasedModel{
 		Random r = new Random();
 		for(int i=0;i<this.U;i++ ){
 			User u=this.trainSet.users.get(i);
-			ArrayList<AnswerPost> anses = u.answerPosts;
+			ArrayList<Post> anses = u.allPosts;
 			this.topicLabel[i]= new int[anses.size()	];
 			for(int j=0;j<anses.size();j++){
 				int initialTopicLabel = r.nextInt(this.K);//0 to K-1
 				this.topicLabel[i][j]=initialTopicLabel;
 				
-				AnswerPost eachPost= anses.get(j);
+				Post eachPost= anses.get(j);
 				//update those counts.
 				this.nuk[i][initialTopicLabel]++;
 				this.sumuk[i]++;
@@ -253,9 +253,9 @@ public class TTEQAAModel extends LDABasedModel{
 			
 			for(int i=0;i<this.U;i++ ){
 				User u=this.trainSet.users.get(i);
-				ArrayList<AnswerPost> anses = u.answerPosts;
+				ArrayList<Post> anses = u.allPosts;
 				for(int j=0;j<anses.size();j++){
-					AnswerPost eachPost= anses.get(j);
+					Post eachPost= anses.get(j);
 					
 					int timeID=eachPost.dateid;
 					//System.out.println(timeID+":"+eachPost.date);
@@ -597,11 +597,11 @@ public class TTEQAAModel extends LDABasedModel{
 			//System.out.println(u.userId);
 			//System.out.println(u.answerPosts.size());
 			
-			for(AnswerPost eachPost: u.answerPosts){
+			for(Post eachPost: u.allPosts){
 				
 				//ArrayList<Integer> faketags= eachPost.tags;
 				ArrayList<Integer> fakewords=eachPost.words;
-				String postid=eachPost.aid;
+				String postid=eachPost.id;
 				if(filterPostId.contains(postid)){
 					continue;
 				}
