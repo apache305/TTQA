@@ -295,7 +295,7 @@ public class DataWoker {
 		
 		if(!this.quesitonMap.containsKey(qid)){
 			return 0;
-		}//che shenm dan
+		}    //che shenm dan
 
 		AnswerPost a=new AnswerPost();
 		//QuestionPost p= new QuestionPost();

@@ -930,6 +930,65 @@ public class TTEQAAModel extends LDABasedModel{
 		
 	}
 	//public 
+	class WhySoComplicate{
+		int uid;
+		Double distance;
+		WhySoComplicate(int uid, double distance){
+			this.uid=uid;
+			this.distance=distance;
+			
+		}
+	}
+	
+	public void oneThingINeedToMakeSure(){
+		double [] ku = this.thetaKU[0];//topic 0
+
+			ArrayList<Map.Entry<Integer, Double>> dp= new ArrayList<Map.Entry<Integer, Double>>();
+			for(int uid=0;uid<this.U;uid++){
+				//String userid=this.trainSet.users.get(uid).userId;
+				
+				//AbstractMap.SimpleEntry<String, Integer>("exmpleString", 42);
+				Map.Entry<Integer, Double> pairs =new  AbstractMap.SimpleEntry<Integer , Double> (uid,ku[uid]);
+				dp.add(pairs);
+			}
+			Collections.sort(dp, new Comparator<Entry<Integer,Double>>(){
+				public int compare(Entry<Integer, Double> arg0,Entry<Integer, Double> arg1) {
+					// TODO Auto-generated method stub
+					return -1*arg0.getValue().compareTo(arg1.getValue());
+				}
+			});
+			for(int i=0;i<10;i++){
+				//only output top 10;
+				int uid= dp.get(i).getKey();
+				double pob=dp.get(i).getValue();
+				for(int j=0;j<this.K;j++){
+					System.out.print(this.nuk[uid][j]);
+					System.out.print(",");
+					
+				}
+				System.out.print(pob);
+				System.out.print("\n");
+
+			}
+			int l=dp.size();
+			for(int i=0;i<10;i++){
+				//only output top 10;
+				int uid= dp.get(l-i-1).getKey();
+				double pob=dp.get(l-i-1).getValue();
+				for(int j=0;j<this.K;j++){
+					System.out.print(this.nuk[uid][j]);
+					System.out.print(",");
+					
+				}
+				System.out.print(pob);
+				System.out.print("\n");
+
+			}
+
+		
+
+		
+	}
 	
 	public void outputResult(String outputPath) throws IOException{
 		

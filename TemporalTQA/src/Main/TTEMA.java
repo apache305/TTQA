@@ -438,7 +438,7 @@ public class TTEMA extends LDABasedModel  {
 		}
 		for (int k = 0; k < K; k++) {
 			for (int u = 0; u < U; u++) {
-				thetaku[u][k] = (CKU[k][u] + alpha) / (CUKsum[k] + alpha * U);
+				thetaku[k][u] = (CKU[k][u] + alpha) / (CKUsum[k] + alpha * U);
 			}
 		}
 
