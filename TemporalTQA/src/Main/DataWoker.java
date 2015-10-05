@@ -285,8 +285,8 @@ public class DataWoker {
 			String score=itemlist.get(5);
 			
 			if(!this.quesitonMap.containsKey(qid)){
-				System.out.println(qid);
-				System.out.println("a answer should have a question");
+				//System.out.println(qid);
+				//System.out.println("a answer should have a question");
 				return 0;
 			}//che shenm dan
 
@@ -387,10 +387,10 @@ public class DataWoker {
 		System.out.println(this.quesitonMap.size());//67741
 		System.out.println(this.answerMap.size());//643729
 		
-		for(QuestionPost p : this.quesitonMap.values()){
+		/*for(QuestionPost p : this.quesitonMap.values()){
 			System.out.println(p.answers.size());
 			
-		}
+		}*/
 	}
 	
 	

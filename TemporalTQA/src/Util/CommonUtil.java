@@ -47,6 +47,19 @@ public class CommonUtil {
 	    			if(real.contains(topuser.get(i))  ){
 	    				
 	    				res++;
+	    			}
+	    			
+	    		}
+	    		return res;
+	    		
+	    }
+
+	    public static int computeMSC(ArrayList<String> topuser, Set<String > real, int topk){
+	    		int res=0;
+	    		for(int i=0;i<topk;i++){
+	    			if(real.contains(topuser.get(i))  ){
+	    				
+	    				res++;
 	    				return 1;
 	    			}
 	    			
@@ -54,10 +67,8 @@ public class CommonUtil {
 	    		return 0;
 	    		//return res;
 	    		
-	    		
-	    		
-	    	
-
 	    }
+
+
 
 }

@@ -9,32 +9,58 @@ import java.util.Set;
 
 public class Main {
 	
+
 	
-	public static void testQR(LDABasedModel xx){
-		int [] precision = new int[3];//5 10 15
-		precision[0]=0;
-		precision[0]=0;
-		precision[0]=0;
-		int qnum=0;
+	public static void testQR(LDABasedModel xx, DataWoker testQAset){
+		int [] msc = new int[4];//5 10 20 30
+		msc[0]=0;
+		msc[1]=0;
+		msc[2]=0;
+		msc[3]=0;
+		double [] precision = new double [4];
+		precision[0]=0.0f;
+		precision[1]=0.0f;
+		precision[2]=0.0f;
+		precision[3]=0.0f;
+		double[] recall = new double [4];
+		recall[0]=0.0f;
+		recall[1]=0.0f;
+		recall[2]=0.0f;
+		recall[3]=0.0f;
 		
-		for(Entry<String, QuestionPost> post: xx.testSet.quesitonMap.entrySet()){
+		
+		
+		int qnum=0;
+		//5102015
+		
+		for(Entry<String, QuestionPost> post:testQAset.quesitonMap.entrySet()){
 			String qid=post.getKey();
 			QuestionPost q= post.getValue();
-			if(! xx.trainSet.useridToIndex.containsKey(q.user.userId)  ){
-				continue;
-			}
-			
+			//number of answer.
+			int numOfAnswer= q.answers.size();
 			qnum+=1;
-			xx.recommendUserForQuestion(q,precision);
+			xx.recommendUserForQuestion(q,numOfAnswer,precision,recall,msc);
 			//break;
 			//System.out.println(precision[0]+precision[1]+precision[2])	;
 		}
 		System.out.println("test question:"+qnum);
-		System.out.println("p5:"+(double)precision[0]/((double)qnum));
-		System.out.println("p10:"+(double)precision[1]/((double)qnum ));
-		System.out.println("p15:"+(double)precision[2]/((double)qnum ));
+		
+		System.out.println( "p@5:"+  precision[0]/(double)qnum );
+		System.out.println( "p@10:"+  precision[1]/(double)qnum );
+		System.out.println( "p@20:"+  precision[2]/(double)qnum );
+		System.out.println( "p@30:"+  precision[3]/(double)qnum );
+		System.out.println( "r@5:"+  recall[0]/(double)qnum );
+		System.out.println( "r@10:"+  recall[1]/(double)qnum );
+		System.out.println( "r@20:"+  recall[2]/(double)qnum );
+		System.out.println( "r@30:"+  recall[3]/(double)qnum );
+		System.out.println( "m@5:"+  (double)msc[0]/(double)qnum );
+		System.out.println( "m@10:"+  (double)msc[1]/(double)qnum );
+		System.out.println( "m@20:"+  (double)msc[2]/(double)qnum );
+		System.out.println( "m@30:"+  (double)msc[3]/(double)qnum );
+		
 
 	}
+	
 	
 	public static void runModel(LDABasedModel xx, String outputPathDir,Set<String> filter){
 		//this is new branch
@@ -59,8 +85,8 @@ public class Main {
 		
 		
 		xx.computePer(filter);
-		//xx.computeCoherence(xx.trainSet);
-		//xx.computeCoherence(xx.testSet);
+		xx.computeCoherence(xx.trainSet);
+		xx.computeCoherence(xx.testSet);
 		
 		
 	}
@@ -97,10 +123,10 @@ public class Main {
 		testset.printStat();
 		testQA.printStat();
 		
-		System.exit(1);
+		//System.exit(1);
 		
-		//trainset.computeCoOccur();
-		//testset.computeCoOccur();
+		trainset.computeCoOccur();
+		testset.computeCoOccur();
 		
 		/*for(int i=0;i<trainset.useridToIndex.size();i++){
 			System.out.println( trainset.users.get(i).allPosts.size() )	;
@@ -118,14 +144,14 @@ public class Main {
 		
 		Set<String> filter=new HashSet<String>();
 		
-		int iternum=100;
+		int iternum=10;
 		int topNum=30;
 		
 		resultPath="out/TEM/";
 		System.out.println("TEM model");
 		TEMModel tem=new TEMModel(trainset,testset,iternum);
 		tem.K=topNum;
-		runModel(tem,"out/TEM/",filter);
+		//runModel(tem,"out/TEM/",filter);
 		//testQR(tem);
 		resultPath="out/TTEMA/";
 		System.out.println("TTEMA model");
@@ -139,14 +165,14 @@ public class Main {
 		System.out.println("UQA Model");
 		UQAModel uqa = new UQAModel(trainset,testset,iternum);
 		uqa.K=topNum;
-		runModel(uqa,"out/outUQA/",filter);
+		//runModel(uqa,"out/outUQA/",filter);
 		//testQR(uqa);
 		
 		resultPath="out/outLDA/";
 		System.out.println("LDA Model");
 		LDA lda= new LDA(trainset,testset,iternum);
 		lda.K=topNum;
-		runModel(lda,"out/outLDA/",filter);
+		//runModel(lda,"out/outLDA/",filter);
 		//testQR(lda);
 		
 		resultPath= "out/outTTEQAA/";
@@ -155,14 +181,14 @@ public class Main {
 		tteqaa.K=topNum;
 		runModel(tteqaa,"out/outTTEQAA/",filter);
 		//tteqaa.oneThingINeedToMakeSure();
-		//testQR(tteqaa);
+		testQR(tteqaa, testQA);
 		
 
 		resultPath= "out/outGROST/";
 		System.out.println("Grostt Model");
 		GrosToT tot = new GrosToT(trainset,testset,iternum);
 		tot.K=topNum;
-		runModel(tot,"out/outGROST/",filter);
+		//runModel(tot,"out/outGROST/",filter);
 		//testQR(tot);
 		
 		System.exit(1);
