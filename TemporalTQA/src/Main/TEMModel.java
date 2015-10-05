@@ -480,10 +480,10 @@ public class TEMModel extends LDABasedModel  {
 		sum=0.0f;
 		for(int i=0;i<this.K;i++){
 			if(thetaqKV[i]!=0.0){
-				thetaQK[i]= thetaqUK[i]*thetaqKW[i]*thetaqKV[i];
+				thetaQK[i]=thetaqUK[i]* thetaqKW[i]*thetaqKV[i];
 				sum+=thetaQK[i];
 			}else{
-				thetaQK[i]= thetaqUK[i]*thetaqKW[i];//*thetaqKV[i];
+				thetaQK[i]=thetaqUK[i]* thetaqKW[i];//*thetaqKV[i];
 				sum+=thetaQK[i];
 			}
 
@@ -502,9 +502,9 @@ public class TEMModel extends LDABasedModel  {
 		
 	}
 	
-	public void recommendUserForQuestion(QuestionPost p, int [] precision){
-		
-		double [] thetaQK= this.computeQuestionTopicDistribution(p);
+	public void recommendUserForQuestion(QuestionPost q,int numOfAnswer, double[] precision, double[] recall, int [] msc){
+			
+		double [] thetaQK= this.computeQuestionTopicDistribution(q);
 		
 		///ArrayList<String> RandomUsers = new ArrayList<String>();
 		
@@ -544,13 +544,23 @@ public class TEMModel extends LDABasedModel  {
 		
 		//check p@5 p@10 p@15 //
 		Set<String> ansUids = new HashSet<String>();
-		for(AnswerPost a: p.answers){
+		for(AnswerPost a: q.answers){
 			ansUids.add(a.user.userId);
 		}
 		
-		precision[0]+=CommonUtil.computePrecision(topUsers, ansUids, 5);
-		precision[1]+=CommonUtil.computePrecision(topUsers, ansUids, 10);
-		precision[2]+=CommonUtil.computePrecision(topUsers, ansUids, 15);
+		msc[0]+=CommonUtil.computeMSC(topUsers, ansUids, 5);
+		msc[1]+=CommonUtil.computeMSC(topUsers, ansUids, 10);
+		msc[2]+=CommonUtil.computeMSC(topUsers, ansUids, 20);
+		msc[3]+=CommonUtil.computeMSC(topUsers, ansUids, 30);
+		
+		precision[0] +=  ( (double) CommonUtil.computePrecision(topUsers, ansUids, 5) / 5.0f   );
+		precision[1] +=  ( (double) CommonUtil.computePrecision(topUsers, ansUids, 10) / 10.0f   );
+		precision[2] +=  ( (double) CommonUtil.computePrecision(topUsers, ansUids, 20) / 20.0f   );
+		precision[3] +=  ( (double) CommonUtil.computePrecision(topUsers, ansUids, 30) / 30.0f   );
+		recall[0] +=  ( (double) CommonUtil.computePrecision(topUsers, ansUids, 5) / (double)numOfAnswer   );
+		recall[1] +=  ( (double) CommonUtil.computePrecision(topUsers, ansUids, 10) /(double)numOfAnswer   );
+		recall[2] +=  ( (double) CommonUtil.computePrecision(topUsers, ansUids, 20) / (double)numOfAnswer   );
+		recall[3] +=  ( (double) CommonUtil.computePrecision(topUsers, ansUids, 30) / (double)numOfAnswer   );
 		
 		
 		

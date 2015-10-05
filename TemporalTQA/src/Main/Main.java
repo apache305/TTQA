@@ -85,8 +85,8 @@ public class Main {
 		
 		
 		xx.computePer(filter);
-		xx.computeCoherence(xx.trainSet);
-		xx.computeCoherence(xx.testSet);
+		//xx.computeCoherence(xx.trainSet);
+		//xx.computeCoherence(xx.testSet);
 		
 		
 	}
@@ -110,9 +110,9 @@ public class Main {
 		
 		//String trainsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/alla100.2.train.txt";
 		//String testsource ="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/alla100.2.test.txt";
-		String trainsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/aq300.train.80.txt";
-		String testsource ="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/aq300.test.80.txt";
-		String testQAsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/qa300.80.5.test.txt";
+		String trainsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/plex.train.80.txt";
+		String testsource ="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/plex.test.80.txt";
+		String testQAsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/plex.80.5.test.txt";
 		DataWoker trainset= new DataWoker(trainsource);
 		DataWoker testset=new DataWoker(testsource);
 		DataWoker testQA=new DataWoker(testQAsource);
@@ -125,8 +125,8 @@ public class Main {
 		
 		//System.exit(1);
 		
-		trainset.computeCoOccur();
-		testset.computeCoOccur();
+		//trainset.computeCoOccur();
+		//testset.computeCoOccur();
 		
 		/*for(int i=0;i<trainset.useridToIndex.size();i++){
 			System.out.println( trainset.users.get(i).allPosts.size() )	;
@@ -144,7 +144,7 @@ public class Main {
 		
 		Set<String> filter=new HashSet<String>();
 		
-		int iternum=10;
+		int iternum=100;
 		int topNum=30;
 		
 		resultPath="out/TEM/";
@@ -152,7 +152,7 @@ public class Main {
 		TEMModel tem=new TEMModel(trainset,testset,iternum);
 		tem.K=topNum;
 		//runModel(tem,"out/TEM/",filter);
-		//testQR(tem);
+		//testQR(tem, testQA);
 		resultPath="out/TTEMA/";
 		System.out.println("TTEMA model");
 		TTEMA ttema=new TTEMA(trainset,testset,iternum);
