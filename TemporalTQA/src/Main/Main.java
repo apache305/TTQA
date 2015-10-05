@@ -86,10 +86,17 @@ public class Main {
 		//String testsource ="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/alla100.2.test.txt";
 		String trainsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/aq300.train.80.txt";
 		String testsource ="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/aq300.test.80.txt";
+		String testQAsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/qa300.80.5.test.txt";
 		DataWoker trainset= new DataWoker(trainsource);
 		DataWoker testset=new DataWoker(testsource);
+		DataWoker testQA=new DataWoker(testQAsource);
 		trainset.ProcessOriData();
 		testset.ProcessOriData();
+		testQA.ProcessQuestions();
+		trainset.printStat();
+		testset.printStat();
+		testQA.printStat();
+		System.exit(1);
 		
 		//trainset.computeCoOccur();
 		//testset.computeCoOccur();
@@ -117,7 +124,7 @@ public class Main {
 		System.out.println("TEM model");
 		TEMModel tem=new TEMModel(trainset,testset,iternum);
 		tem.K=topNum;
-		//runModel(tem,"out/TEM/",filter);
+		runModel(tem,"out/TEM/",filter);
 		//testQR(tem);
 		resultPath="out/TTEMA/";
 		System.out.println("TTEMA model");
@@ -131,14 +138,14 @@ public class Main {
 		System.out.println("UQA Model");
 		UQAModel uqa = new UQAModel(trainset,testset,iternum);
 		uqa.K=topNum;
-		//runModel(uqa,"out/outUQA/",filter);
+		runModel(uqa,"out/outUQA/",filter);
 		//testQR(uqa);
 		
 		resultPath="out/outLDA/";
 		System.out.println("LDA Model");
 		LDA lda= new LDA(trainset,testset,iternum);
 		lda.K=topNum;
-		//runModel(lda,"out/outLDA/",filter);
+		runModel(lda,"out/outLDA/",filter);
 		//testQR(lda);
 		
 		resultPath= "out/outTTEQAA/";

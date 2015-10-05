@@ -22,9 +22,9 @@ public class QuestionPost {
 	public AnswerPost acceptAnswer;
 
 	
-	/*public QuestionPost() {
+	public QuestionPost() {
 		// TODO Auto-generated constructor stub
-		this.typeid=1;
-	}*/
+		this.answers=new ArrayList<AnswerPost>();
+	}
 
 }
