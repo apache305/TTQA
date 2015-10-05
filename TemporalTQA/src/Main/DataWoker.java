@@ -386,6 +386,11 @@ public class DataWoker {
 		System.out.println(this.users.size());//8109
 		System.out.println(this.quesitonMap.size());//67741
 		System.out.println(this.answerMap.size());//643729
+		
+		for(QuestionPost p : this.quesitonMap.values()){
+			System.out.println(p.answers.size());
+			
+		}
 	}
 	
 	

@@ -96,6 +96,7 @@ public class Main {
 		trainset.printStat();
 		testset.printStat();
 		testQA.printStat();
+		
 		System.exit(1);
 		
 		//trainset.computeCoOccur();
