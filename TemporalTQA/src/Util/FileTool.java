@@ -116,12 +116,13 @@ public class FileTool {
 		writer.close();
 	}
 
-	public static void write2DArray(float[][] phiT, String phiTFileName) throws IOException {
+	public static void write2DArray(double[][] theta, String savefilename) throws IOException {
 		// TODO Auto-generated method stub
-		BufferedWriter writer = new BufferedWriter(new FileWriter(phiTFileName));
-		for(int i = 0; i < phiT.length; i++){
-			for(int j = 0; j < phiT[i].length; j++){
-				writer.append(phiT[i][j] + "\t");
+		
+		BufferedWriter writer = new BufferedWriter(new FileWriter(savefilename));
+		for(int i = 0; i < theta.length; i++){
+			for(int j = 0; j < theta[i].length; j++){
+				writer.append(theta[i][j] + "\t");
 			}
 			writer.append("\n");
 		}

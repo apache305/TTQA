@@ -31,14 +31,20 @@ public class Main {
 		
 		
 		int qnum=0;
+		//int unum=0;
 		//5102015
-		
+		//System.out.println("test question size")
 		for(Entry<String, QuestionPost> post:testQAset.quesitonMap.entrySet()){
+			
 			String qid=post.getKey();
 			QuestionPost q= post.getValue();
 			//number of answer.
+			//if(!xx.trainSet.useridToIndex.containsKey(q.user.userId)){
+				//continue;
+			//}
 			int numOfAnswer= q.answers.size();
 			qnum+=1;
+			//num+=1;
 			xx.recommendUserForQuestion(q,numOfAnswer,precision,recall,msc);
 			//break;
 			//System.out.println(precision[0]+precision[1]+precision[2])	;
@@ -101,6 +107,7 @@ public class Main {
 		
 		String trainFile = args[0];
 		String resultPath= args[1];*/
+		int  batchTopicNum = Integer.parseInt(args[0]);
 
 		String resultPath=null;
 		//String curWorkingDir=System.getProperty("user.dir");
@@ -110,9 +117,9 @@ public class Main {
 		
 		//String trainsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/alla100.2.train.txt";
 		//String testsource ="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/alla100.2.test.txt";
-		String trainsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/plex.train.80.txt";
-		String testsource ="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/plex.test.80.txt";
-		String testQAsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/plex.80.5.test.txt";
+		String trainsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/plex2m.train.80.txt";
+		String testsource ="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/plex2m.test.80.txt";
+		String testQAsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/plex2m.80.5.test.txt";
 		DataWoker trainset= new DataWoker(trainsource);
 		DataWoker testset=new DataWoker(testsource);
 		DataWoker testQA=new DataWoker(testQAsource);
@@ -125,8 +132,8 @@ public class Main {
 		
 		//System.exit(1);
 		
-		//trainset.computeCoOccur();
-		//testset.computeCoOccur();
+		trainset.computeCoOccur();
+		testset.computeCoOccur();
 		
 		/*for(int i=0;i<trainset.useridToIndex.size();i++){
 			System.out.println( trainset.users.get(i).allPosts.size() )	;
@@ -142,16 +149,22 @@ public class Main {
 		
 		//i think a better way to do is a simple version, then enrich it.
 		
+		
 		Set<String> filter=new HashSet<String>();
 		
 		int iternum=100;
-		int topNum=30;
+		int topNum=batchTopicNum;
+		
+		System.out.println("current topic num:"+topNum);
 		
 		resultPath="out/TEM/";
 		System.out.println("TEM model");
 		TEMModel tem=new TEMModel(trainset,testset,iternum);
 		tem.K=topNum;
+		double t1 = System.currentTimeMillis();
 		//runModel(tem,"out/TEM/",filter);
+		double t2 = System.currentTimeMillis();
+		System.out.println("time="+(t2-t1)  );
 		//testQR(tem, testQA);
 		resultPath="out/TTEMA/";
 		System.out.println("TTEMA model");
@@ -165,33 +178,59 @@ public class Main {
 		System.out.println("UQA Model");
 		UQAModel uqa = new UQAModel(trainset,testset,iternum);
 		uqa.K=topNum;
+		t1 = System.currentTimeMillis();
 		//runModel(uqa,"out/outUQA/",filter);
+		 t2 = System.currentTimeMillis();
+			System.out.println("time="+(t2-t1)  );
 		//testQR(uqa);
 		
 		resultPath="out/outLDA/";
 		System.out.println("LDA Model");
 		LDA lda= new LDA(trainset,testset,iternum);
 		lda.K=topNum;
+		t1 = System.currentTimeMillis();
 		//runModel(lda,"out/outLDA/",filter);
+		 t2 = System.currentTimeMillis();
+			System.out.println("time="+(t2-t1)  );
 		//testQR(lda);
 		
 		resultPath= "out/outTTEQAA/";
 		System.out.println("TTEQAA Model");
 		TTEQAAModel tteqaa = new TTEQAAModel(trainset,testset,iternum);
 		tteqaa.K=topNum;
+		t1 = System.currentTimeMillis();
 		runModel(tteqaa,"out/outTTEQAA/",filter);
+		t2 = System.currentTimeMillis();
+		System.out.println("time="+(t2-t1)  );
 		//tteqaa.oneThingINeedToMakeSure();
 		testQR(tteqaa, testQA);
+		
+		resultPath= "out/outRandom/";
+		System.out.println("TTEQAA Model");
+		RandomAlgo ram = new RandomAlgo(trainset,testset,iternum);
+		System.out.println("time="+(t2-t1)  );
+		//tteqaa.oneThingINeedToMakeSure();
+		//testQR(ram, testQA);
 		
 
 		resultPath= "out/outGROST/";
 		System.out.println("Grostt Model");
 		GrosToT tot = new GrosToT(trainset,testset,iternum);
 		tot.K=topNum;
+		t1 = System.currentTimeMillis();
 		//runModel(tot,"out/outGROST/",filter);
+		t2 = System.currentTimeMillis();
+		System.out.println("time="+(t2-t1)  );
 		//testQR(tot);
-		
+		System.out.println("tem,tot,lda,uqa,tteqa"+topNum);
+		tem.computePer(filter);
+		tot.computePer(filter);
+		lda.computePer(filter);
+		uqa.computePer(filter);
+		tteqaa.computePer(filter);
 		System.exit(1);
+		
+		//System.exit(1);
 		
 		
 		
@@ -203,11 +242,7 @@ public class Main {
 		
 
 		
-		tot.computePer(filter);
-		lda.computePer(filter);
-		uqa.computePer(filter);
-		tteqaa.computePer(filter);
-		System.exit(1);
+		
 		
 		
 		

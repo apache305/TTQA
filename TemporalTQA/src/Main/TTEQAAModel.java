@@ -242,6 +242,8 @@ public class TTEQAAModel extends LDABasedModel{
 		
 	}
 	
+	
+	
 	public void trainModel(){
 		for(int it=0;it<this.iterNum;it++){
 			//for each iteration
@@ -754,6 +756,57 @@ public class TTEQAAModel extends LDABasedModel{
 		
 	}
 	
+	public double [] computeQuestionTopicDistributionWithoutUser(QuestionPost p){
+		double [] thetaQK= new double [this.K];
+		
+		double sum=0.0f;
+		
+		double [] thetaqKW=new double [this.K];
+		double [] thetaqKV=new double [this.K];
+		for(int wid : p.words){
+			String wd= this.testSet.indexToTermMap.get(wid);
+			if (this.trainSet.termToIndexMap.containsKey(wd)){
+				int realWid= this.trainSet.termToIndexMap.get(wd);
+				for(int i=0;i<this.K;i++){
+					thetaqKW[i]+=  this.thetaKW[i][realWid];
+				}
+			}
+		}
+		
+		for(int tid:p.tags){
+			String td= this.testSet.indexToTagMap.get(tid);
+			if (this.trainSet.tagToIndexMap.containsKey(td)){
+				int realTid= this.trainSet.tagToIndexMap.get(td);
+				for(int i=0;i<this.K;i++){
+					thetaqKV[i]+=  this.thetaKV[i][realTid];
+				}
+			}
+		}
+
+		sum=0.0f;
+		for(int i=0;i<this.K;i++){
+			if(thetaqKV[i]!=0.0){
+				thetaQK[i]= thetaqKW[i]*thetaqKV[i];
+				sum+=thetaQK[i];
+			}else{
+				thetaQK[i]= thetaqKW[i];//*thetaqKV[i];
+				sum+=thetaQK[i];
+			}
+			
+		}
+		//normalize
+		
+		for(int i=0;i<this.K;i++){
+			thetaQK[i]=  thetaQK[i]/sum;
+		}
+		
+		
+		
+		return thetaQK;
+
+		
+	}
+	
 	class UserSimiAct{
 		public Double simiscore;
 		public Double actscore;
@@ -873,6 +926,7 @@ public class TTEQAAModel extends LDABasedModel{
 		recall[3] +=  ( (double) CommonUtil.computePrecision(topUsers, ansUids, 30) / (double)numOfAnswer   );
 		
 	}
+	
 	
 
 	
@@ -1018,6 +1072,13 @@ public class TTEQAAModel extends LDABasedModel{
 
 		
 	}
+	
+	
+	public void saveModel(String outputPath) throws IOException{
+		
+	}
+	
+	
 	
 	public void outputResult(String outputPath) throws IOException{
 		
