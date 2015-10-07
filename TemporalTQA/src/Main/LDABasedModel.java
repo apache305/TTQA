@@ -37,5 +37,10 @@ public  class LDABasedModel {
 	public void recommendUserForQuestion(QuestionPost q,int numOfAnswer, double[] precision, double[] recall, int [] msc){
 		System.out.println("un implement method");
 	}
+
+	public void computeTimeLikelihood() {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }

@@ -819,7 +819,7 @@ public class TTEQAAModel extends LDABasedModel{
 		}
 	}
 	
-	public void recommendUserForQuestionFK(QuestionPost q,int numOfAnswer, double[] precision, double[] recall, int [] msc){
+	public void recommendUserForQuestion(QuestionPost q,int numOfAnswer, double[] precision, double[] recall, int [] msc){
 		
 		
 		/*Set<String> randomUids= this.trainSet.useridToIndex.keySet();
@@ -930,7 +930,7 @@ public class TTEQAAModel extends LDABasedModel{
 	
 
 	
-	public void recommendUserForQuestion(QuestionPost q,int numOfAnswer, double[] precision, double[] recall, int [] msc){
+	public void recommendUserForQuestionNOACT(QuestionPost q,int numOfAnswer, double[] precision, double[] recall, int [] msc){
 			
 		double [] thetaQK= this.computeQuestionTopicDistribution(q);
 		
@@ -1075,6 +1075,12 @@ public class TTEQAAModel extends LDABasedModel{
 	
 	
 	public void saveModel(String outputPath) throws IOException{
+		
+	}
+	
+	
+	public void computeTimeLikelihood(){
+		 
 		
 	}
 	

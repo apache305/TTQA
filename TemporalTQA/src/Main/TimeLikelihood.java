@@ -10,9 +10,15 @@ import java.util.Map.Entry;
 	
 
 public class TimeLikelihood {
+	 //only compare with grostot.
 	
 	
 	public static void testTIME(LDABasedModel xx){
+		
+		
+		
+		
+		xx.computeTimeLikelihood();
 		
 		
 		

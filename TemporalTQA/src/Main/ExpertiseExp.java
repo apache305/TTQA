@@ -6,12 +6,12 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Map.Entry;
 
-public class QuestionRouting {
+
 	
-	
-	
-	
-	public static void testQR(LDABasedModel xx){
+
+public class ExpertiseExp {
+
+	public static void testNDCG(LDABasedModel xx){
 		int [] msc = new int[4];//5 10 20 30
 		msc[0]=0;
 		msc[1]=0;
@@ -139,7 +139,6 @@ public class QuestionRouting {
 		System.out.println("dataset:"+trainsource);
 		System.out.println("dataset:"+testQAsource);
 		DataWoker trainset= new DataWoker(trainsource);
-		DataWoker testset=new DataWoker();
 		DataWoker testQA=new DataWoker(testQAsource);
 		trainset.ProcessOriData();
 		testQA.ProcessQuestions();
@@ -150,7 +149,7 @@ public class QuestionRouting {
 
 		
 		//System.exit(1);
-		System.out.println("this is question routing runing");
+		System.out.println("this is expertise exp runing");
 		
 		//System.out.println(users.tagCountMap.keySet().size());
 		//System.out.println(users.tagCountMap.size());
@@ -170,17 +169,17 @@ public class QuestionRouting {
 		TEMModel tem=new TEMModel(trainset,testQA,iternum);
 		tem.K=topNum;
 		double t1 = System.currentTimeMillis();
-		//runModel(tem,"out/TEM/",filter);
+		runModel(tem,"out/TEM/",filter);
 		double t2 = System.currentTimeMillis();
 		System.out.println("time="+(t2-t1)  );
-		//testQR(tem);
+		testNDCG(tem);
 		
 		resultPath="out/TTEMA/";
 		System.out.println("TTEMA model");
 		TTEMA ttema=new TTEMA(trainset,testQA,iternum);
 		ttema.K=topNum;
-		runModel(ttema,"out/TTEMA/",filter);
-		testQR(ttema);
+		//runModel(ttema,"out/TTEMA/",filter);
+		//testQR(ttema);
 		
 		
 		resultPath= "out/outUQA/";
@@ -188,20 +187,20 @@ public class QuestionRouting {
 		UQAModel uqa = new UQAModel(trainset,testQA,iternum);
 		uqa.K=topNum;
 		t1 = System.currentTimeMillis();
-		//runModel(uqa,"out/outUQA/",filter);
+		runModel(uqa,"out/outUQA/",filter);
 		 t2 = System.currentTimeMillis();
 			System.out.println("time="+(t2-t1)  );
-		//testQR(uqa);
+			testNDCG(uqa);
 		
 		resultPath="out/outLDA/";
 		System.out.println("LDA Model");
 		LDA lda= new LDA(trainset,testQA,iternum);
 		lda.K=topNum;
 		t1 = System.currentTimeMillis();
-		//runModel(lda,"out/outLDA/",filter);
+		runModel(lda,"out/outLDA/",filter);
 		 t2 = System.currentTimeMillis();
 			System.out.println("time="+(t2-t1)  );
-		//testQR(lda);
+			testNDCG(lda);
 		
 		resultPath= "out/outTTEQAA/";
 		System.out.println("TTEQAA Model");
@@ -212,13 +211,13 @@ public class QuestionRouting {
 		t2 = System.currentTimeMillis();
 		System.out.println("time="+(t2-t1)  );
 		//tteqaa.oneThingINeedToMakeSure();
-		testQR(tteqaa);
+		testNDCG(tteqaa);
 		
 		resultPath= "out/outRandom/";
 		System.out.println("random Model");
 		RandomAlgo ram = new RandomAlgo(trainset,testQA,iternum);
 		System.out.println("time="+(t2-t1)  );
-		//testQR(ram);
+		testNDCG(ram);
 		
 
 		resultPath= "out/outGROST/";
@@ -226,31 +225,12 @@ public class QuestionRouting {
 		GrosToT tot = new GrosToT(trainset,testQA,iternum);
 		tot.K=topNum;
 		t1 = System.currentTimeMillis();
-		//runModel(tot,"out/outGROST/",filter);
+		runModel(tot,"out/outGROST/",filter);
 		t2 = System.currentTimeMillis();
 		System.out.println("time="+(t2-t1)  );
-		//testQR(tot);
+		testNDCG(tot);
 		
 		//System.exit(1);
-		
-		
-		
-		
-		
-		
-		
-		
-		
-
-		
-		
-		
-		
-		
-		
-		
-		
-		
 		
 
 	}
