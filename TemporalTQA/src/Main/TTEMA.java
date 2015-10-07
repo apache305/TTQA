@@ -675,20 +675,8 @@ public class TTEMA extends LDABasedModel  {
 	public void recommendUserForQuestion(QuestionPost q,int numOfAnswer, double[] precision, double[] recall, int [] msc){
 		
 		double [] thetaQK= this.computeQuestionTopicDistribution(q);
-		//get the big k
-		ArrayList<Map.Entry<Integer, Double>> idqk= new ArrayList<Map.Entry<Integer, Double>>();
-		for(int i=0;i<this.K;i++){
-			idqk.add (new  AbstractMap.SimpleEntry<Integer , Double> (i,thetaQK[i]));
-		}
-		Collections.sort(idqk, new Comparator<Entry<Integer,Double>>(){
-			public int compare(Entry<Integer, Double> arg0,Entry<Integer, Double> arg1) {
-				// TODO Auto-generated method stub
-				return -1*arg0.getValue().compareTo(arg1.getValue());
-			}
-		});
-		///ArrayList<String> RandomUsers = new ArrayList<String>();
-		ArrayList<UserSimiAct>  userSimiActs = new ArrayList<UserSimiAct>();
-	
+		
+		ArrayList<Map.Entry<String, Double>> userScore= new ArrayList<Map.Entry<String, Double>>();
 		for(User u:this.trainSet.users){
 			int uindex=this.trainSet.useridToIndex.get(u.userId);
 			double [] thetacUK=this.theta[uindex];
@@ -697,55 +685,41 @@ public class TTEMA extends LDABasedModel  {
 
 			double jsdis= CommonUtil.jensenShannonDivergence(thetacUK, thetaQK);
 			double actscore=0.0f;
-			for(int topI=0;topI<2;topI++){
-				int maxt= idqk.get(topI).getKey();
-				actscore=  actscore + ( thetaQK[maxt]*this.thetaku[maxt][uindex]	  );
+			for(int j=0;j<this.K;j++){
+				actscore=actscore+(thetaQK[j]* this.thetaku[j][uindex]);
 			}
-			/*for(int j=0;j<K;j++){
-				actscore=actscore+(thetaQK[j]* this.thetaKU[j][uindex]);
-			}*/
+			
+			double uscore= (1-jsdis)*actscore;
 			//System.out.println(actscore);
 			
-			UserSimiAct newUserSimiAct= new UserSimiAct(u.userId,1.0-jsdis,actscore);
-			//UserSimiAct newUserSimiAct= new UserSimiAct(u.userId,1.0-jsdis,this.thetaKU[maxTopicId][uindex]);
-			userSimiActs.add(newUserSimiAct);
-
-			
+			Map.Entry<String, Double> pairs =new  AbstractMap.SimpleEntry<String , Double> (u.userId,uscore);
+			userScore.add(pairs);
 			//System.out.println("jsdis:"+jsdis);
 		}
 		//sort it.
 
-		Collections.sort(userSimiActs, new Comparator<UserSimiAct>(){
-			public int compare(UserSimiAct arg0,UserSimiAct arg1) {
+		Collections.sort(userScore, new Comparator<Entry<String,Double>>(){
+			public int compare(Entry<String, Double> arg0,Entry<String, Double> arg1) {
 				// TODO Auto-generated method stub
-				return -1* arg0.simiscore.compareTo(arg1.simiscore);
+				return -1*arg0.getValue().compareTo(arg1.getValue());
 			}
 		});
 		
+		
 		//get top 50 users.
-		ArrayList<UserSimiAct>  top50UserSimiActs=new ArrayList<UserSimiAct>();
+		ArrayList<String> topUsers = new ArrayList<String >();
+		for(int i=0;i<50;i++){
+			topUsers.add(userScore.get(i).getKey());
+			//System.out.println(userSimiScore.get(i).getValue());
+		}
 
-		for(int i=0;i<50;i++){
-			top50UserSimiActs.add(userSimiActs.get(i));
-		}
-		Collections.sort(top50UserSimiActs, new Comparator<UserSimiAct>(){
-			public int compare(UserSimiAct arg0,UserSimiAct arg1) {
-				// TODO Auto-generated method stub
-				return -1* arg0.actscore.compareTo(arg1.actscore);
-			}
-		});
-		
-		//get top 50 users.
-		ArrayList<String> topUsers =new ArrayList<String>();
-		for(int i=0;i<50;i++){
-			topUsers.add( top50UserSimiActs.get(i).userid  );
-		}
 
 		//check p@5 p@10 p@15 //
 		Set<String> ansUids = new HashSet<String>();
 		for(AnswerPost a: q.answers){
 			ansUids.add(a.user.userId);
 		}
+	
 		
 		msc[0]+=CommonUtil.computeMSC(topUsers, ansUids, 5);
 		msc[1]+=CommonUtil.computeMSC(topUsers, ansUids, 10);

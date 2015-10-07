@@ -42,5 +42,9 @@ public  class LDABasedModel {
 		// TODO Auto-generated method stub
 		
 	}
+	public void NDCG(){
+		System.out.println("un implement method");
+		
+	}
 	
 }

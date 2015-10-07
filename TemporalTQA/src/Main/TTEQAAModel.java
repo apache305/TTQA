@@ -819,7 +819,90 @@ public class TTEQAAModel extends LDABasedModel{
 		}
 	}
 	
-	public void recommendUserForQuestion(QuestionPost q,int numOfAnswer, double[] precision, double[] recall, int [] msc){
+public void recommendUserForQuestion(QuestionPost q,int numOfAnswer, double[] precision, double[] recall, int [] msc){
+		
+		
+		/*Set<String> randomUids= this.trainSet.useridToIndex.keySet();
+		ArrayList<String> randomList=new ArrayList<String>();
+		for(String ruid : randomUids){
+			randomList.add(ruid);
+		}*/
+		
+		double [] thetaQK= this.computeQuestionTopicDistribution(q);
+		
+		//score = (1-js) * expert(u,q) * act (u,q)
+		
+		ArrayList<Map.Entry<String, Double>> userScore= new ArrayList<Map.Entry<String, Double>>();
+		for(User u:this.trainSet.users){
+			int uindex=this.trainSet.useridToIndex.get(u.userId);
+			double [] thetacUK=this.thetaUK[uindex];
+
+			
+
+			double jsdis= CommonUtil.jensenShannonDivergence(thetacUK, thetaQK);
+			double actscore=0.0f;
+			for(int j=0;j<this.K;j++){
+				actscore=actscore+(thetaQK[j]* this.thetaKU[j][uindex]);
+			}
+			
+			double uscore= (1-jsdis)*actscore;
+			//System.out.println(actscore);
+			
+			Map.Entry<String, Double> pairs =new  AbstractMap.SimpleEntry<String , Double> (u.userId,uscore);
+			userScore.add(pairs);
+			//System.out.println("jsdis:"+jsdis);
+		}
+		//sort it.
+
+		Collections.sort(userScore, new Comparator<Entry<String,Double>>(){
+			public int compare(Entry<String, Double> arg0,Entry<String, Double> arg1) {
+				// TODO Auto-generated method stub
+				return -1*arg0.getValue().compareTo(arg1.getValue());
+			}
+		});
+		
+		
+		//get top 50 users.
+		ArrayList<String> topUsers = new ArrayList<String >();
+		for(int i=0;i<50;i++){
+			topUsers.add(userScore.get(i).getKey());
+			//System.out.println(userSimiScore.get(i).getValue());
+		}
+
+
+		//check p@5 p@10 p@15 //
+		Set<String> ansUids = new HashSet<String>();
+		for(AnswerPost a: q.answers){
+			ansUids.add(a.user.userId);
+		}
+		/*ArrayList<String> randomRec=new ArrayList<String>();
+		
+		Collections.shuffle(randomList);
+		for(int i=0;i<50;i++){
+			randomRec.add(randomList.get(i));
+		}
+		
+		
+		topUsers=randomRec;*/
+		
+		
+		msc[0]+=CommonUtil.computeMSC(topUsers, ansUids, 5);
+		msc[1]+=CommonUtil.computeMSC(topUsers, ansUids, 10);
+		msc[2]+=CommonUtil.computeMSC(topUsers, ansUids, 20);
+		msc[3]+=CommonUtil.computeMSC(topUsers, ansUids, 30);
+		
+		precision[0] +=  ( (double) CommonUtil.computePrecision(topUsers, ansUids, 5) / 5.0f   );
+		precision[1] +=  ( (double) CommonUtil.computePrecision(topUsers, ansUids, 10) / 10.0f   );
+		precision[2] +=  ( (double) CommonUtil.computePrecision(topUsers, ansUids, 20) / 20.0f   );
+		precision[3] +=  ( (double) CommonUtil.computePrecision(topUsers, ansUids, 30) / 30.0f   );
+		recall[0] +=  ( (double) CommonUtil.computePrecision(topUsers, ansUids, 5) / (double)numOfAnswer   );
+		recall[1] +=  ( (double) CommonUtil.computePrecision(topUsers, ansUids, 10) /(double)numOfAnswer   );
+		recall[2] +=  ( (double) CommonUtil.computePrecision(topUsers, ansUids, 20) / (double)numOfAnswer   );
+		recall[3] +=  ( (double) CommonUtil.computePrecision(topUsers, ansUids, 30) / (double)numOfAnswer   );
+		
+	}
+	
+	public void recommendUserForQuestionOLDACT(QuestionPost q,int numOfAnswer, double[] precision, double[] recall, int [] msc){
 		
 		
 		/*Set<String> randomUids= this.trainSet.useridToIndex.keySet();
@@ -926,6 +1009,8 @@ public class TTEQAAModel extends LDABasedModel{
 		recall[3] +=  ( (double) CommonUtil.computePrecision(topUsers, ansUids, 30) / (double)numOfAnswer   );
 		
 	}
+	
+	
 	
 	
 
@@ -1273,4 +1358,86 @@ public class TTEQAAModel extends LDABasedModel{
 		writer.close();
 		
 	}
+public void NDCG(QuestionPost q,int numOfAnswer, double[] precision, double[] recall, int [] msc){
+		
+		
+	double [] thetaQK= this.computeQuestionTopicDistribution(q);
+	
+	//score = (1-js) * expert(u,q) * act (u,q)
+	
+	ArrayList<Map.Entry<String, Double>> userScore= new ArrayList<Map.Entry<String, Double>>();
+	for(User u:this.trainSet.users){
+		int uindex=this.trainSet.useridToIndex.get(u.userId);
+		double [] thetacUK=this.thetaUK[uindex];
+
+
+		double jsdis= CommonUtil.jensenShannonDivergence(thetacUK, thetaQK);
+		double actscore=0.0f;
+		for(int j=0;j<this.K;j++){
+			actscore=actscore+(thetaQK[j]* this.thetaKU[j][uindex]);
+		}
+		
+		
+		//avg level for user.
+		double []klevel= new double[this.K];
+		for(int j=0;j<this.K;j++){
+			for(int el=0;el<this.E;el++){
+				klevel[j]=this.thetaUKE[uindex][j][el] * el;
+				//    1 0.1   10 0.9       u,j  5.3
+			}
+		}//
+		//[3,5,1,......9]
+		
+		
+		
+		double expscore=0.0f;
+		for(int j=0;j<this.K;j++){
+			expscore += (thetaQK[j]* klevel[j]	 );
+
+		}
+		
+		double uscore= (1-jsdis)*actscore*expscore;
+		//System.out.println(actscore);
+		
+		Map.Entry<String, Double> pairs =new  AbstractMap.SimpleEntry<String , Double> (u.userId,uscore);
+		userScore.add(pairs);
+		//System.out.println("jsdis:"+jsdis);
+		
+		//U,1, 1     2      3 
+		//     0.1   0.5    0.4
+		//U,1, 1     2      3
+		//     0.5  0.1    0.1
+		
+		//
+	}
+	//sort it.
+
+	Collections.sort(userScore, new Comparator<Entry<String,Double>>(){
+		public int compare(Entry<String, Double> arg0,Entry<String, Double> arg1) {
+			// TODO Auto-generated method stub
+			return -1*arg0.getValue().compareTo(arg1.getValue());
+		}
+	});
+	
+	
+	//get top 50 users.  #don't need this.
+	ArrayList<String> topUsers = new ArrayList<String >();
+	for(int i=0;i<50;i++){
+		topUsers.add(userScore.get(i).getKey());
+		//System.out.println(userSimiScore.get(i).getValue());
+	}
+
+
+	//check p@5 p@10 p@15 //
+	Set<String> ansUids = new HashSet<String>();
+	for(AnswerPost a: q.answers){
+		ansUids.add(a.user.userId);
+	}
+		
+		
+		
+}
+	
+	
+	
 }

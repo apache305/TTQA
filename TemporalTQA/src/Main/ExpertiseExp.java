@@ -12,22 +12,6 @@ import java.util.Map.Entry;
 public class ExpertiseExp {
 
 	public static void testNDCG(LDABasedModel xx){
-		int [] msc = new int[4];//5 10 20 30
-		msc[0]=0;
-		msc[1]=0;
-		msc[2]=0;
-		msc[3]=0;
-		double [] precision = new double [4];
-		precision[0]=0.0f;
-		precision[1]=0.0f;
-		precision[2]=0.0f;
-		precision[3]=0.0f;
-		double[] recall = new double [4];
-		recall[0]=0.0f;
-		recall[1]=0.0f;
-		recall[2]=0.0f;
-		recall[3]=0.0f;
-		
 		
 		
 		int qnum=0;
@@ -63,24 +47,14 @@ public class ExpertiseExp {
 			
 			qnum+=1;
 			//num+=1;
-			xx.recommendUserForQuestion(q,numOfAnswer,precision,recall,msc);
+			
+			
 			//break;
 			//System.out.println(precision[0]+precision[1]+precision[2])	;
 		}
 		System.out.println("test question:"+qnum);
 		
-		System.out.println( "p@5:"+  precision[0]/(double)qnum );
-		System.out.println( "p@10:"+  precision[1]/(double)qnum );
-		System.out.println( "p@20:"+  precision[2]/(double)qnum );
-		System.out.println( "p@30:"+  precision[3]/(double)qnum );
-		System.out.println( "r@5:"+  recall[0]/(double)qnum );
-		System.out.println( "r@10:"+  recall[1]/(double)qnum );
-		System.out.println( "r@20:"+  recall[2]/(double)qnum );
-		System.out.println( "r@30:"+  recall[3]/(double)qnum );
-		System.out.println( "m@5:"+  (double)msc[0]/(double)qnum );
-		System.out.println( "m@10:"+  (double)msc[1]/(double)qnum );
-		System.out.println( "m@20:"+  (double)msc[2]/(double)qnum );
-		System.out.println( "m@30:"+  (double)msc[3]/(double)qnum );
+		
 		
 
 	}

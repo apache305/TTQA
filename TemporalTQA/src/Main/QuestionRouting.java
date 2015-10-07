@@ -150,7 +150,7 @@ public class QuestionRouting {
 
 		
 		//System.exit(1);
-		System.out.println("this is question routing runing");
+		System.out.println("this is question routing with act runing");
 		
 		//System.out.println(users.tagCountMap.keySet().size());
 		//System.out.println(users.tagCountMap.size());
