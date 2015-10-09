@@ -1442,9 +1442,9 @@ public void NDCG(QuestionPost q, double [] totalNDCG){
 	ArrayList<String> recUser = new ArrayList<String >();
 	for(int i=0;i<userScore.size();i++){
 		String userScoreUID= userScore.get(i).getKey();
-		if (ansUids.contains(userScoreUID)){
+		//if (ansUids.contains(userScoreUID)){
 			recUser.add(userScoreUID);
-		}
+		//}
 	}
 	//ground truth rank list.
 	ArrayList<String> relUser= new ArrayList<String>();

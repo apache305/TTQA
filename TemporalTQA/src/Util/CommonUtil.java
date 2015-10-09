@@ -81,7 +81,7 @@ public class CommonUtil {
 	    	}
 	    	//change votes map
 	    	for(String uid: recU){
-	    		if(realUvotes.containsKey(uid)){
+	    		if(!realUvotes.containsKey(uid)){
 	    			realUvotes.put(uid, 0);
 	    		}
 	    	}
@@ -182,10 +182,11 @@ public class CommonUtil {
 	    		ArrayList<String> recU= new ArrayList<String>();
 	    		ArrayList<String> idealU= new ArrayList<String>();
 	    		Map<String,Integer> reaUVots=new HashMap<String,Integer>();
-	    		recU.add("U1");
+	    		recU.add("U14");
 	    		recU.add("U700");
+	    		recU.add("U543");
+	    		recU.add("U5sdf");
 	    		recU.add("U5");
-	    		recU.add("U1");
 	    		idealU.add("U1");
 	    		idealU.add("U5");
 	    		idealU.add("U7");
