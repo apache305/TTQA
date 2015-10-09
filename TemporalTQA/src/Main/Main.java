@@ -119,16 +119,12 @@ public class Main {
 		//String testsource ="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/alla100.2.test.txt";
 		String trainsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/plex2m.train.80.txt";
 		String testsource ="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/plex2m.test.80.txt";
-		String testQAsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/plex2m.80.5.test.txt";
 		DataWoker trainset= new DataWoker(trainsource);
 		DataWoker testset=new DataWoker(testsource);
-		DataWoker testQA=new DataWoker(testQAsource);
 		trainset.ProcessOriData();
 		testset.ProcessOriData();
-		testQA.ProcessQuestions();
 		trainset.printStat();
 		testset.printStat();
-		testQA.printStat();
 		
 		//System.exit(1);
 		
@@ -153,7 +149,7 @@ public class Main {
 		Set<String> filter=new HashSet<String>();
 		
 		int iternum=100;
-		int topNum=batchTopicNum;
+		int topNum=100;
 		
 		System.out.println("current topic num:"+topNum);
 		
@@ -199,11 +195,11 @@ public class Main {
 		TTEQAAModel tteqaa = new TTEQAAModel(trainset,testset,iternum);
 		tteqaa.K=topNum;
 		t1 = System.currentTimeMillis();
-		runModel(tteqaa,"out/outTTEQAA/",filter);
+		//runModel(tteqaa,"out/outTTEQAA/",filter);
 		t2 = System.currentTimeMillis();
 		System.out.println("time="+(t2-t1)  );
 		//tteqaa.oneThingINeedToMakeSure();
-		testQR(tteqaa, testQA);
+		//testQR(tteqaa, testQA);
 		
 		resultPath= "out/outRandom/";
 		System.out.println("TTEQAA Model");
@@ -218,10 +214,11 @@ public class Main {
 		GrosToT tot = new GrosToT(trainset,testset,iternum);
 		tot.K=topNum;
 		t1 = System.currentTimeMillis();
-		//runModel(tot,"out/outGROST/",filter);
+		runModel(tot,"out/outGROST/",filter);
 		t2 = System.currentTimeMillis();
 		System.out.println("time="+(t2-t1)  );
 		//testQR(tot);
+		System.exit(1);
 		System.out.println("tem,tot,lda,uqa,tteqa"+topNum);
 		tem.computePer(filter);
 		tot.computePer(filter);

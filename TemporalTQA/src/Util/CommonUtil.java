@@ -1,6 +1,8 @@
 package Util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 public class CommonUtil {
@@ -67,6 +69,41 @@ public class CommonUtil {
 	    		return 0;
 	    		//return res;
 	    		
+	    }
+	    
+	    public static float computeNDCG(ArrayList<String> recU, ArrayList<String> idealU, int topk){
+	    	//score for each position is from 10 to 1.
+	    		//assign score
+	    	Map<String,Integer> ideaScore= new HashMap<String,Integer>();
+	    	int score=10;
+	    	for(int i=0;i<idealU.size();i++){
+	    		ideaScore.put(idealU.get(i), score);
+	    		if(score>2){
+	    			score/=2;
+	    		}
+	    		System.out.println("score"+score);
+	    		
+	    	}
+	    	
+	    	
+	    	
+	    		return 0.0f;
+	    }
+	    public static void main(String args[]){
+	    		ArrayList<String> recU= new ArrayList<String>();
+	    		ArrayList<String> idealU= new ArrayList<String>();
+	    		recU.add("U5");
+	    		recU.add("U7");
+	    		recU.add("U10");
+	    		recU.add("U1");
+	    		idealU.add("U1");
+	    		idealU.add("U5");
+	    		idealU.add("U7");
+	    		idealU.add("U9");
+	    		idealU.add("U10");
+	    		
+	    		
+	    		computeNDCG(recU,idealU,5);
 	    }
 
 

@@ -150,7 +150,7 @@ public class QuestionRouting {
 
 		
 		//System.exit(1);
-		System.out.println("this is question routing with act runing");
+		System.out.println("this is question routing only for grostot runing");
 		
 		//System.out.println(users.tagCountMap.keySet().size());
 		//System.out.println(users.tagCountMap.size());
@@ -179,8 +179,8 @@ public class QuestionRouting {
 		System.out.println("TTEMA model");
 		TTEMA ttema=new TTEMA(trainset,testQA,iternum);
 		ttema.K=topNum;
-		runModel(ttema,"out/TTEMA/",filter);
-		testQR(ttema);
+		//runModel(ttema,"out/TTEMA/",filter);
+		//testQR(ttema);
 		
 		
 		resultPath= "out/outUQA/";
@@ -208,11 +208,11 @@ public class QuestionRouting {
 		TTEQAAModel tteqaa = new TTEQAAModel(trainset,testQA,iternum);
 		tteqaa.K=topNum;
 		t1 = System.currentTimeMillis();
-		runModel(tteqaa,"out/outTTEQAA/",filter);
+		//runModel(tteqaa,"out/outTTEQAA/",filter);
 		t2 = System.currentTimeMillis();
 		System.out.println("time="+(t2-t1)  );
 		//tteqaa.oneThingINeedToMakeSure();
-		testQR(tteqaa);
+		//testQR(tteqaa);
 		
 		resultPath= "out/outRandom/";
 		System.out.println("random Model");
@@ -226,10 +226,10 @@ public class QuestionRouting {
 		GrosToT tot = new GrosToT(trainset,testQA,iternum);
 		tot.K=topNum;
 		t1 = System.currentTimeMillis();
-		//runModel(tot,"out/outGROST/",filter);
+		runModel(tot,"out/outGROST/",filter);
 		t2 = System.currentTimeMillis();
 		System.out.println("time="+(t2-t1)  );
-		//testQR(tot);
+		testQR(tot);
 		
 		//System.exit(1);
 		

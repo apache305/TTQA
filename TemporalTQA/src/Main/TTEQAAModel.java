@@ -1419,20 +1419,49 @@ public void NDCG(QuestionPost q,int numOfAnswer, double[] precision, double[] re
 		}
 	});
 	
-	
-	//get top 50 users.  #don't need this.
-	ArrayList<String> topUsers = new ArrayList<String >();
-	for(int i=0;i<50;i++){
-		topUsers.add(userScore.get(i).getKey());
-		//System.out.println(userSimiScore.get(i).getValue());
-	}
-
-
 	//check p@5 p@10 p@15 //
 	Set<String> ansUids = new HashSet<String>();
+	ArrayList<Map.Entry<String,Integer>> idealU= new ArrayList<Map.Entry<String,Integer>>();
 	for(AnswerPost a: q.answers){
 		ansUids.add(a.user.userId);
+		Map.Entry<String, Integer> pairs =new  AbstractMap.SimpleEntry<String , Integer> (a.user.userId,a.score);
+		idealU.add(pairs);
 	}
+	
+	Collections.sort(idealU, new Comparator<Map.Entry<String, Integer>>(){
+		public int compare(Map.Entry<String, Integer> arg0,Map.Entry<String, Integer> arg1){
+			return -1*arg0.getValue().compareTo(arg1.getValue());
+		}
+		
+	});
+	
+
+	//get top 50 users.  #don't need this.
+	ArrayList<String> recUser = new ArrayList<String >();
+	for(int i=0;i<userScore.size();i++){
+		String userScoreUID= userScore.get(i).getKey();
+		if (ansUids.contains(userScoreUID)){
+			recUser.add(userScoreUID);
+		}
+	}
+	
+	//then we have two sorted list.
+	//recUser and idealU.
+	
+	
+
+	
+	
+	
+
+
+	
+	
+	
+	
+	
+	
+	
 		
 		
 		

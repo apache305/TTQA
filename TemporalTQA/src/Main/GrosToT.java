@@ -215,8 +215,8 @@ public class GrosToT extends LDABasedModel{
 		double [] backupProb =  new double [this.G];
 		for(int g=0;g<this.G;g++){
 			backupProb[g]  =  ( this.nug[uid][g] + this.c )/(this.sumug[uid] + this.G*this.c ) ;
-			backupProb[g]  =  ( this.ngk[g][oldTopicID] + this.a )/(this.sumgk[g] + this.K*this.a);
-			backupProb[g]  =  ( this.nkgt[oldTopicID][g][timeID]+this.d)/(this.sumkgt[oldTopicID][g] +this.T*this.d);
+			backupProb[g]  *=  ( this.ngk[g][oldTopicID] + this.a )/(this.sumgk[g] + this.K*this.a);
+			backupProb[g]  *=  ( this.nkgt[oldTopicID][g][timeID]+this.d)/(this.sumkgt[oldTopicID][g] +this.T*this.d);
 		}
 		
 		//normalize backupProb
