@@ -73,22 +73,29 @@ public class CommonUtil {
 	    		
 	    }
 	    
-	    public static double computeNDCG(ArrayList<String> recU, ArrayList<String> realU, int topk){
+	    public static double computeNDCG(ArrayList<String> recU, ArrayList<String> realU, Map<String,Integer> realUvotes, int topk){
 	    	//score for each position is from 10 to 1.
 	    		//assign score
 	    	if (recU.size()==0){
 	    		return 0.0f;
 	    	}
-	    	Map<String,Integer> ideaScore= new HashMap<String,Integer>();
+	    	//change votes map
+	    	for(String uid: recU){
+	    		if(realUvotes.containsKey(uid)){
+	    			realUvotes.put(uid, 0);
+	    		}
+	    	}
+	    	
+	    /*	Map<String,Integer> ideaScore= new HashMap<String,Integer>();
 	    	int score=10;
 	    	for(int i=0;i<realU.size();i++){
 	    		ideaScore.put(realU.get(i), score);
 	    		if(score>2){
 	    			score-=2;
 	    		}
-	    		System.out.println("score"+score);
+	    		//System.out.println("score"+score);
 	    		
-	    	}
+	    	}*/
 	    	
 	    	double dcg=0.0f;
 	    
@@ -98,7 +105,11 @@ public class CommonUtil {
 	    		if(i>=recU.size()){
 	    			break;
 	    		}
-	    		int curScore=ideaScore.get(recU.get(i));
+	    		int curScore=realUvotes.get(recU.get(i));
+	    		if(curScore<0){
+	    			curScore=0;
+	    		}
+
 	    		if(i==0){
 	    			dcg+= curScore;
 	    		}else{
@@ -116,7 +127,7 @@ public class CommonUtil {
 	    		}
 				@Override
 				public int compare(String o1, String o2) {
-					// TODO Auto-generated method stub
+					// TODO Auto-generated method stub		    		
 	    			return -1* this.ids.get(o1).compareTo(this.ids.get(o2));
 				}
 	    		
@@ -127,7 +138,7 @@ public class CommonUtil {
 	    //	for(String u:recU){
 	    		//System.out.println(u);
 	    //	}
-	    	Collections.sort(recU, new myComp(ideaScore));
+	    	Collections.sort(recU, new myComp(realUvotes));
 	    //	System.out.println("testsort");
 	    //	for(String u:recU){
 	    		//System.out.println(u);
@@ -138,7 +149,11 @@ public class CommonUtil {
 	    		if(i>=recU.size()){
 	    			break;
 	    		}
-	    		int curScore=ideaScore.get(recU.get(i));
+	    		int curScore=realUvotes.get(recU.get(i));
+
+	    		if(curScore<0){
+	    			curScore=0;//remove -1 score.
+	    		}
 	    		if(i==0){
 	    			idcg+= curScore;
 	    		}else{
@@ -149,7 +164,12 @@ public class CommonUtil {
 	    		
 	    	}
 	    	//System.out.println(idcg);
-	    	double ndcg=dcg/idcg;
+	    	double ndcg=0.0f;
+	    	if(idcg==0.0){
+	    		return 0.0f;
+	    	}else{
+	    		ndcg=dcg/idcg;
+	    	}
 	    //	System.out.println(ndcg);
 	    return ndcg;
 	    	
@@ -161,8 +181,9 @@ public class CommonUtil {
 	    public static void main(String args[]){
 	    		ArrayList<String> recU= new ArrayList<String>();
 	    		ArrayList<String> idealU= new ArrayList<String>();
-	    		recU.add("U10");
-	    		recU.add("U7");
+	    		Map<String,Integer> reaUVots=new HashMap<String,Integer>();
+	    		recU.add("U1");
+	    		recU.add("U700");
 	    		recU.add("U5");
 	    		recU.add("U1");
 	    		idealU.add("U1");
@@ -170,9 +191,15 @@ public class CommonUtil {
 	    		idealU.add("U7");
 	    		idealU.add("U9");
 	    		idealU.add("U10");
+	    		reaUVots.put("U1",10);
+	    		reaUVots.put("U5",7);
+	    		reaUVots.put("U7",3);
+	    		reaUVots.put("U9",1);
+	    		reaUVots.put("U10",-100);
 	    		
 	    		
-	    		System.out.println(computeNDCG(recU,idealU,100000000));
+	    		
+	    		System.out.println(computeNDCG(recU,idealU,reaUVots,100000000));
 	    }
 
 

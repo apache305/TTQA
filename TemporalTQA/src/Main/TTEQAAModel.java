@@ -1422,10 +1422,12 @@ public void NDCG(QuestionPost q, double [] totalNDCG){
 	//check p@5 p@10 p@15 //
 	Set<String> ansUids = new HashSet<String>();
 	ArrayList<Map.Entry<String,Integer>> realU= new ArrayList<Map.Entry<String,Integer>>();
+	Map<String,Integer> realUVotes= new HashMap<String,Integer>();
 	for(AnswerPost a: q.answers){
 		ansUids.add(a.user.userId);
 		Map.Entry<String, Integer> pairs =new  AbstractMap.SimpleEntry<String , Integer> (a.user.userId,a.score);
 		realU.add(pairs);
+		realUVotes.put(a.user.userId, a.score);
 	}
 	
 	Collections.sort(realU, new Comparator<Map.Entry<String, Integer>>(){
@@ -1450,9 +1452,9 @@ public void NDCG(QuestionPost q, double [] totalNDCG){
 		relUser.add( realU.get(i).getKey());
 	}
 	
-	totalNDCG[0]+=CommonUtil.computeNDCG(recUser, relUser, 1);
-	totalNDCG[1]+=CommonUtil.computeNDCG(recUser, relUser, 5);
-	totalNDCG[2]+=CommonUtil.computeNDCG(recUser, relUser, recUser.size());
+	totalNDCG[0]+=CommonUtil.computeNDCG(recUser, relUser,realUVotes, 1);
+	totalNDCG[1]+=CommonUtil.computeNDCG(recUser, relUser,realUVotes, 5);
+	totalNDCG[2]+=CommonUtil.computeNDCG(recUser, relUser,realUVotes, recUser.size());
 	//System.out.println("totalNDCG[0]"+totalNDCG[0]);
 	//System.out.println("totalNDCG[0]"+totalNDCG[1]);
 	//System.out.println("totalNDCG[0]"+totalNDCG[2]);
@@ -1462,21 +1464,6 @@ public void NDCG(QuestionPost q, double [] totalNDCG){
 	//then we have two sorted list.
 	//recUser and idealU.
 	
-	
-
-	
-	
-	
-
-
-	
-	
-	
-	
-	
-	
-	
-		
 		
 		
 }
