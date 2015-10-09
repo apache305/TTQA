@@ -10,9 +10,9 @@ import java.util.Map.Entry;
 	
 
 public class ExpertiseExp {
-
+	
 	public static void testNDCG(LDABasedModel xx){
-		
+			
 		
 		int qnum=0;
 		double [] totalNDCG= new double [3];
@@ -27,39 +27,40 @@ public class ExpertiseExp {
 			String qid=post.getKey();
 			QuestionPost q= post.getValue();
 			int numOfAnswer= q.answers.size();
-			/*if (numOfAnswer<=2){
-				continue;
-			}
-			int flag=0;
-			for(AnswerPost ans :q.answers){
-				if (xx.trainSet.useridToIndex.containsKey(ans.user.userId)){
-					flag=1;
-					break;
-				}
-			}
-			if (0==flag){
-				//no train user answer this question.
-				continue;
-			}*/
-			
-			//this.trainSet.useridToIndex.get( p.user.userId); 
-			/*if( !xx.trainSet.useridToIndex.containsKey(q.user.userId)   ){
-				//System.out.println("??");
-				continue;
-			}*/
-
+	
 			xx.NDCG(q,totalNDCG);
 			qnum+=1;
-			//num+=1;
-			
-			
-			//break;
-			//System.out.println(precision[0]+precision[1]+precision[2])	;
 		}
 		System.out.println("test question:"+qnum);
 		System.out.println("ndcg@1"+ totalNDCG[0]/(double)qnum   );
 		System.out.println("ndcg@5"+ totalNDCG[1]/(double)qnum   );
 		System.out.println("ndcg@N"+ totalNDCG[2]/(double)qnum   );
+			
+	}
+
+	public static void testMaxVoteHit(LDABasedModel xx){
+		
+		
+		int qnum=0;
+		int [] maxVoteHit= new int [30];
+
+		for(Entry<String, QuestionPost> post:xx.testSet.quesitonMap.entrySet()){
+			
+			String qid=post.getKey();
+			QuestionPost q= post.getValue();
+			int numOfAnswer= q.answers.size();
+			
+			xx.maxVoteHit(q,maxVoteHit);
+			qnum+=1;
+
+		}
+		System.out.println("test question:"+qnum);
+		for(int i=0;i<30;i++){
+			System.out.print( maxVoteHit[i]/(double)qnum +","   );
+		}
+		System.out.println("\n");
+		
+		
 		
 		
 		
@@ -117,11 +118,12 @@ public class ExpertiseExp {
 
 		//String trainsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/QRtrain2m1.train.txt";
 		//String testQAsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/plex2m1.80.5.test.txt";
-		String trainsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/qa3m3.train.50.txt";
+		String trainExpSource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/qa3m3.train.50.txt";
+		//String trainExpSource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/EXPtrain3m3.train.txt";
 		String testQAsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/qa3m3.qr.a2.txt";
-		System.out.println("dataset:"+trainsource);
+		System.out.println("dataset:"+trainExpSource);
 		System.out.println("dataset:"+testQAsource);
-		DataWoker trainset= new DataWoker(trainsource);
+		DataWoker trainset= new DataWoker(trainExpSource);
 		DataWoker testQA=new DataWoker(testQAsource);
 		trainset.ProcessOriData();
 		testQA.ProcessQuestions();
@@ -152,10 +154,10 @@ public class ExpertiseExp {
 		TEMModel tem=new TEMModel(trainset,testQA,iternum);
 		tem.K=topNum;
 		double t1 = System.currentTimeMillis();
-		//runModel(tem,"out/TEM/",filter);
+		runModel(tem,"out/TEM/",filter);
 		double t2 = System.currentTimeMillis();
 		System.out.println("time="+(t2-t1)  );
-		//testNDCG(tem);
+		testNDCG(tem);
 		
 		resultPath="out/TTEMA/";
 		System.out.println("TTEMA model");
@@ -194,7 +196,7 @@ public class ExpertiseExp {
 		t2 = System.currentTimeMillis();
 		System.out.println("time="+(t2-t1)  );
 		//tteqaa.oneThingINeedToMakeSure();
-		testNDCG(tteqaa);
+		testMaxVoteHit(tteqaa);
 		
 		resultPath= "out/outRandom/";
 		System.out.println("random Model");

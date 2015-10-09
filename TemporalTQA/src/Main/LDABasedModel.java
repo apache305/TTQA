@@ -46,5 +46,11 @@ public  class LDABasedModel {
 		System.out.println("un implement method");
 		
 	}
+
+	public void maxVoteHit(QuestionPost q, int[] maxVoteHit) {
+		// TODO Auto-generated method stub
+		System.out.println("un implement method");
+		
+	}
 	
 }
