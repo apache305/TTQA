@@ -1358,7 +1358,7 @@ public void recommendUserForQuestion(QuestionPost q,int numOfAnswer, double[] pr
 		writer.close();
 		
 	}
-public void NDCG(QuestionPost q,int numOfAnswer, double[] precision, double[] recall, int [] msc){
+public void NDCG(QuestionPost q, double [] totalNDCG){
 		
 		
 	double [] thetaQK= this.computeQuestionTopicDistribution(q);
@@ -1421,14 +1421,14 @@ public void NDCG(QuestionPost q,int numOfAnswer, double[] precision, double[] re
 	
 	//check p@5 p@10 p@15 //
 	Set<String> ansUids = new HashSet<String>();
-	ArrayList<Map.Entry<String,Integer>> idealU= new ArrayList<Map.Entry<String,Integer>>();
+	ArrayList<Map.Entry<String,Integer>> realU= new ArrayList<Map.Entry<String,Integer>>();
 	for(AnswerPost a: q.answers){
 		ansUids.add(a.user.userId);
 		Map.Entry<String, Integer> pairs =new  AbstractMap.SimpleEntry<String , Integer> (a.user.userId,a.score);
-		idealU.add(pairs);
+		realU.add(pairs);
 	}
 	
-	Collections.sort(idealU, new Comparator<Map.Entry<String, Integer>>(){
+	Collections.sort(realU, new Comparator<Map.Entry<String, Integer>>(){
 		public int compare(Map.Entry<String, Integer> arg0,Map.Entry<String, Integer> arg1){
 			return -1*arg0.getValue().compareTo(arg1.getValue());
 		}
@@ -1436,7 +1436,7 @@ public void NDCG(QuestionPost q,int numOfAnswer, double[] precision, double[] re
 	});
 	
 
-	//get top 50 users.  #don't need this.
+	//recuser list.
 	ArrayList<String> recUser = new ArrayList<String >();
 	for(int i=0;i<userScore.size();i++){
 		String userScoreUID= userScore.get(i).getKey();
@@ -1444,6 +1444,20 @@ public void NDCG(QuestionPost q,int numOfAnswer, double[] precision, double[] re
 			recUser.add(userScoreUID);
 		}
 	}
+	//ground truth rank list.
+	ArrayList<String> relUser= new ArrayList<String>();
+	for(int i=0;i<realU.size();i++){
+		relUser.add( realU.get(i).getKey());
+	}
+	
+	totalNDCG[0]+=CommonUtil.computeNDCG(recUser, relUser, 1);
+	totalNDCG[1]+=CommonUtil.computeNDCG(recUser, relUser, 5);
+	totalNDCG[2]+=CommonUtil.computeNDCG(recUser, relUser, recUser.size());
+	//System.out.println("totalNDCG[0]"+totalNDCG[0]);
+	//System.out.println("totalNDCG[0]"+totalNDCG[1]);
+	//System.out.println("totalNDCG[0]"+totalNDCG[2]);
+	
+	
 	
 	//then we have two sorted list.
 	//recUser and idealU.

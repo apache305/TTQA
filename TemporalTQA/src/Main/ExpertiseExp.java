@@ -15,6 +15,10 @@ public class ExpertiseExp {
 		
 		
 		int qnum=0;
+		double [] totalNDCG= new double [3];
+		totalNDCG[0]=0.0f;//ndcg@1
+		totalNDCG[1]=0.0f;//ndcg@5
+		totalNDCG[2]=0.0f;//ndcg
 		//int unum=0;
 		//5102015
 		//System.out.println("test question size")
@@ -44,7 +48,7 @@ public class ExpertiseExp {
 				continue;
 			}*/
 
-			
+			xx.NDCG(q,totalNDCG);
 			qnum+=1;
 			//num+=1;
 			
@@ -53,6 +57,11 @@ public class ExpertiseExp {
 			//System.out.println(precision[0]+precision[1]+precision[2])	;
 		}
 		System.out.println("test question:"+qnum);
+		System.out.println("ndcg@1"+ totalNDCG[0]/(double)qnum   );
+		System.out.println("ndcg@5"+ totalNDCG[1]/(double)qnum   );
+		System.out.println("ndcg@N"+ totalNDCG[2]/(double)qnum   );
+		
+		
 		
 		
 		
@@ -133,7 +142,7 @@ public class ExpertiseExp {
 		
 		Set<String> filter=new HashSet<String>();
 		
-		int iternum=100;
+		int iternum=1;
 		int topNum=30;
 		
 		System.out.println("current topic num:"+topNum);
@@ -143,10 +152,10 @@ public class ExpertiseExp {
 		TEMModel tem=new TEMModel(trainset,testQA,iternum);
 		tem.K=topNum;
 		double t1 = System.currentTimeMillis();
-		runModel(tem,"out/TEM/",filter);
+		//runModel(tem,"out/TEM/",filter);
 		double t2 = System.currentTimeMillis();
 		System.out.println("time="+(t2-t1)  );
-		testNDCG(tem);
+		//testNDCG(tem);
 		
 		resultPath="out/TTEMA/";
 		System.out.println("TTEMA model");
@@ -161,20 +170,20 @@ public class ExpertiseExp {
 		UQAModel uqa = new UQAModel(trainset,testQA,iternum);
 		uqa.K=topNum;
 		t1 = System.currentTimeMillis();
-		runModel(uqa,"out/outUQA/",filter);
+		//runModel(uqa,"out/outUQA/",filter);
 		 t2 = System.currentTimeMillis();
 			System.out.println("time="+(t2-t1)  );
-			testNDCG(uqa);
+			//testNDCG(uqa);
 		
 		resultPath="out/outLDA/";
 		System.out.println("LDA Model");
 		LDA lda= new LDA(trainset,testQA,iternum);
 		lda.K=topNum;
 		t1 = System.currentTimeMillis();
-		runModel(lda,"out/outLDA/",filter);
+		//runModel(lda,"out/outLDA/",filter);
 		 t2 = System.currentTimeMillis();
 			System.out.println("time="+(t2-t1)  );
-			testNDCG(lda);
+			//testNDCG(lda);
 		
 		resultPath= "out/outTTEQAA/";
 		System.out.println("TTEQAA Model");
@@ -191,7 +200,7 @@ public class ExpertiseExp {
 		System.out.println("random Model");
 		RandomAlgo ram = new RandomAlgo(trainset,testQA,iternum);
 		System.out.println("time="+(t2-t1)  );
-		testNDCG(ram);
+		//testNDCG(ram);
 		
 
 		resultPath= "out/outGROST/";
@@ -199,10 +208,10 @@ public class ExpertiseExp {
 		GrosToT tot = new GrosToT(trainset,testQA,iternum);
 		tot.K=topNum;
 		t1 = System.currentTimeMillis();
-		runModel(tot,"out/outGROST/",filter);
+		//runModel(tot,"out/outGROST/",filter);
 		t2 = System.currentTimeMillis();
 		System.out.println("time="+(t2-t1)  );
-		testNDCG(tot);
+		//testNDCG(tot);
 		
 		//System.exit(1);
 		

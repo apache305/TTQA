@@ -123,15 +123,15 @@ public class CommonUtil {
 	    	}
 	    	
 	    	//RE ORDER REC U BY SCORE;
-	    	System.out.println("testsort");
-	    	for(String u:recU){
-	    		System.out.println(u);
-	    	}
+	    //	System.out.println("testsort");
+	    //	for(String u:recU){
+	    		//System.out.println(u);
+	    //	}
 	    	Collections.sort(recU, new myComp(ideaScore));
-	    	System.out.println("testsort");
-	    	for(String u:recU){
-	    		System.out.println(u);
-	    	}
+	    //	System.out.println("testsort");
+	    //	for(String u:recU){
+	    		//System.out.println(u);
+	    //	}
 	    	//compute idcg
 	    	double idcg=0.0f;
 	    	for(int i=0;i<topk;i++){

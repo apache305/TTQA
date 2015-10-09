@@ -42,7 +42,7 @@ public  class LDABasedModel {
 		// TODO Auto-generated method stub
 		
 	}
-	public void NDCG(){
+	public void NDCG(QuestionPost q, double [] totalNDCG){
 		System.out.println("un implement method");
 		
 	}
