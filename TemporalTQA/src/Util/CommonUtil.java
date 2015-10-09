@@ -1,6 +1,8 @@
 package Util;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -71,30 +73,97 @@ public class CommonUtil {
 	    		
 	    }
 	    
-	    public static float computeNDCG(ArrayList<String> recU, ArrayList<String> idealU, int topk){
+	    public static double computeNDCG(ArrayList<String> recU, ArrayList<String> realU, int topk){
 	    	//score for each position is from 10 to 1.
 	    		//assign score
+	    	if (recU.size()==0){
+	    		return 0.0f;
+	    	}
 	    	Map<String,Integer> ideaScore= new HashMap<String,Integer>();
 	    	int score=10;
-	    	for(int i=0;i<idealU.size();i++){
-	    		ideaScore.put(idealU.get(i), score);
+	    	for(int i=0;i<realU.size();i++){
+	    		ideaScore.put(realU.get(i), score);
 	    		if(score>2){
-	    			score/=2;
+	    			score-=2;
 	    		}
 	    		System.out.println("score"+score);
 	    		
 	    	}
 	    	
+	    	double dcg=0.0f;
+	    
 	    	
 	    	
-	    		return 0.0f;
+	    	for(int i=0;i<topk;i++){
+	    		if(i>=recU.size()){
+	    			break;
+	    		}
+	    		int curScore=ideaScore.get(recU.get(i));
+	    		if(i==0){
+	    			dcg+= curScore;
+	    		}else{
+	    			dcg+= (double)curScore / (Math.log(i+1) / Math.log(2)); 
+	    			//System.out.println((Math.log(i) / Math.log(2)));
+	    		}
+	    		//System.out.println(dcg);
+	    		
+	    	}
+	    	
+	    	class myComp implements Comparator<String>{
+	    		private Map<String,Integer> ids;
+	    		public myComp(Map<String,Integer> ids){
+	    			this.ids=ids;
+	    		}
+				@Override
+				public int compare(String o1, String o2) {
+					// TODO Auto-generated method stub
+	    			return -1* this.ids.get(o1).compareTo(this.ids.get(o2));
+				}
+	    		
+	    	}
+	    	
+	    	//RE ORDER REC U BY SCORE;
+	    	System.out.println("testsort");
+	    	for(String u:recU){
+	    		System.out.println(u);
+	    	}
+	    	Collections.sort(recU, new myComp(ideaScore));
+	    	System.out.println("testsort");
+	    	for(String u:recU){
+	    		System.out.println(u);
+	    	}
+	    	//compute idcg
+	    	double idcg=0.0f;
+	    	for(int i=0;i<topk;i++){
+	    		if(i>=recU.size()){
+	    			break;
+	    		}
+	    		int curScore=ideaScore.get(recU.get(i));
+	    		if(i==0){
+	    			idcg+= curScore;
+	    		}else{
+	    			
+	    			idcg+= (double)curScore / (Math.log(i+1) / Math.log(2)); 
+	    			//System.out.println((Math.log(i) / Math.log(2)));
+	    		}
+	    		
+	    	}
+	    	//System.out.println(idcg);
+	    	double ndcg=dcg/idcg;
+	    //	System.out.println(ndcg);
+	    return ndcg;
+	    	
+	    	
+	    	
+	    	
+	    		//return 0.0f;
 	    }
 	    public static void main(String args[]){
 	    		ArrayList<String> recU= new ArrayList<String>();
 	    		ArrayList<String> idealU= new ArrayList<String>();
-	    		recU.add("U5");
-	    		recU.add("U7");
 	    		recU.add("U10");
+	    		recU.add("U7");
+	    		recU.add("U5");
 	    		recU.add("U1");
 	    		idealU.add("U1");
 	    		idealU.add("U5");
@@ -103,7 +172,7 @@ public class CommonUtil {
 	    		idealU.add("U10");
 	    		
 	    		
-	    		computeNDCG(recU,idealU,5);
+	    		System.out.println(computeNDCG(recU,idealU,100000000));
 	    }
 
 
