@@ -119,24 +119,7 @@ public class FileTool {
 		writer.flush();
 		writer.close();
 	}
-	public static void write3DArray(float[][][] theta, String thetaFileName) throws IOException {
-		// TODO Auto-generated method stub
-		BufferedWriter writer = new BufferedWriter(new FileWriter(thetaFileName));
-		writer.append(theta.length+"\n");
-		writer.append(theta[0].length+"\n");
-		writer.append(theta[0][0].length+"\n");
-		
-		for(int i = 0; i < theta.length; i++){
-			for(int j = 0; j < theta[i].length; j++){
-				for(int k = 0; k < theta[i][j].length; k++){
-					writer.append(i + "\t" + j + "\t" + k + "\t" +  theta[i][j][k] + "\n");
-				}
-			}
-			writer.flush();
-		}
-		writer.flush();
-		writer.close();
-	}
+	
 	
 
 	public static void write2DArray(double[][] theta, String savefilename) throws IOException {
@@ -152,19 +135,7 @@ public class FileTool {
 		writer.flush();
 		writer.close();
 	}
-	public static void write2DArray(float[][] theta, String savefilename) throws IOException {
-		// TODO Auto-generated method stub
-		
-		BufferedWriter writer = new BufferedWriter(new FileWriter(savefilename));
-		for(int i = 0; i < theta.length; i++){
-			for(int j = 0; j < theta[i].length; j++){
-				writer.append(theta[i][j] + "\t");
-			}
-			writer.append("\n");
-		}
-		writer.flush();
-		writer.close();
-	}
+
 	public static double[][][] read3DArray(String file){
 		
 		//double [][][] something = new double []
@@ -202,43 +173,7 @@ public class FileTool {
 		return data;
 		
 	}
-public static float[][][] read3DFloatArray(String file){
-		
-		//double [][][] something = new double []
-		ArrayList<String> lines = new ArrayList<String>();
-		ArrayList<String> tokens = new ArrayList<String>();
-		readLines2(file, lines);
-		int lid=0;
-		tokenize(lines.get(lid), tokens);
-		int imax = Integer.parseInt(tokens.get(0));
-		lid+=1;
-		tokens.clear();
-		tokenize(lines.get(lid), tokens);
-		int jmax = Integer.parseInt(tokens.get(0));
-		lid+=1;
-		tokens.clear();
-		tokenize(lines.get(lid), tokens);
-		int kmax = Integer.parseInt(tokens.get(0));
-		lid+=1;
-		
-		float[][][] data = new float[imax][jmax][kmax];
-		
-		
-		
-		for(int i = 0; i < imax; i++) {
-			for(int j=0;j<jmax;j++){
-				for(int k=0;k<kmax;k++){
-					tokens.clear();
-					tokenize(lines.get(lid), tokens);
-					data[i][j][k]= Float.parseFloat(tokens.get(0));
-					lid+=1;
-				}
-			}
-				
-		}
-		return data;
-		
-	}
+
 	public static double[][] read2DArray(String file) {
 		// TODO Auto-generated method stub
 		ArrayList<String> lines = new ArrayList<String>();
@@ -258,25 +193,7 @@ public static float[][][] read3DFloatArray(String file){
 		}
 		return data;
 	}
-	public static float[][] read2DFloatArray(String file) {
-		// TODO Auto-generated method stub
-		ArrayList<String> lines = new ArrayList<String>();
-		ArrayList<String> tokens = new ArrayList<String>();
-		readLines2(file, lines);
 
-		tokenize(lines.get(0), tokens);
-		int d = tokens.size();
-		
-		float[][] data = new float[lines.size()][d];
-		for(int i = 0; i < lines.size(); i++) {
-			tokens.clear();
-			tokenize(lines.get(i), tokens);
-			for(int j = 0; j < d; j++) {
-				data[i][j] = Float.parseFloat(tokens.get(j));
-			}			
-		}
-		return data;
-	}
 	public static void readLines2(String file, ArrayList<String> lines) {
 		BufferedReader reader = null;
 

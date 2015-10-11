@@ -181,7 +181,7 @@ public class ExpertiseExp {
 		
 		int iternum=10;
 		int topNum=30;
-		String savedir="save";
+		String savedir="save";//becareful, this sould be corresponding to the dataset.
 		int read=0;
 		
 		System.out.println("current topic num:"+topNum);
@@ -192,15 +192,15 @@ public class ExpertiseExp {
 		tem.K=topNum;
 		double t1 = System.currentTimeMillis();
 		if(read==0){
-			runModel(tem,"out/TEM/",filter);
-			saveModel(tem,savedir+"saveout/TEM/");
+			//runModel(tem,"out/TEM/",filter);
+			//saveModel(tem,savedir+"saveout/TEM/");
 		}else{
-			readModel(tem,savedir+"saveout/TEM/");
+			//readModel(tem,savedir+"saveout/TEM/");
 		}
 		double t2 = System.currentTimeMillis();
 		System.out.println("time="+(t2-t1)  );
-		testMaxVoteHit(tem);
-		testNDCG(tem);
+		//testMaxVoteHit(tem);
+		//testNDCG(tem);
 		
 		resultPath="out/TTEMA/";
 		System.out.println("TTEMA model");
@@ -236,10 +236,10 @@ public class ExpertiseExp {
 		tteqaa.K=topNum;
 		t1 = System.currentTimeMillis();
 		if(read==0){
-			runModel(tem,"out/TTEA/",filter);
-			saveModel(tem,savedir+"saveout/TTEA/");
+			runModel(tteqaa,"out/TTEA/",filter);
+			saveModel(tteqaa,savedir+"saveout/TTEA/");
 		}else{
-			readModel(tem,savedir+"saveout/TTEA/");
+			readModel(tteqaa,savedir+"saveout/TTEA/");
 		}
 		t2 = System.currentTimeMillis();
 		System.out.println("time="+(t2-t1)  );

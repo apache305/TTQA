@@ -51,10 +51,10 @@ public class TEMModel extends LDABasedModel  {
 
 	// model parameters
 	public double[][] theta;// U*K
-	public float[][][] phi;// K*U*E
-	public float[][] psi;// K*T
-	public float[][][] varphi;// K*E*V
-	public float[][] tau;// E*S
+	public double[][][] phi;// K*U*E
+	public double[][] psi;// K*T
+	public double[][][] varphi;// K*E*V
+	public double[][] tau;// E*S
 	private int Z[][];// U*N topic label for each post
 	private int E[][];// U*N expertise label for each post
 
@@ -117,10 +117,10 @@ public class TEMModel extends LDABasedModel  {
 
 		// model parameters
 		theta = new double[U][K];// U*K
-		phi = new float[K][U][ENum];// K*U*E
-		psi = new float[K][TagNum];// K*T
-		varphi = new float[K][1][V];// K*E*V
-		tau = new float[ENum][S];// E*S
+		phi = new double[K][U][ENum];// K*U*E
+		psi = new double[K][TagNum];// K*T
+		varphi = new double[K][1][V];// K*E*V
+		tau = new double[ENum][S];// E*S
 
 		// temporary count variables while sampling
 		CUK = new int[U][K]; // U*K
@@ -434,9 +434,9 @@ public class TEMModel extends LDABasedModel  {
 		
 		
 		this.theta	=FileTool.read2DArray(outputPath+"thetaUK.txt");
-		this.varphi =FileTool.read3DFloatArray(outputPath+ "thetaKW.txt");
-		this.psi    =FileTool.read2DFloatArray(outputPath+ "thetaKV.txt");
-		this.phi    =FileTool.read3DFloatArray(outputPath+ "thetaKUE.txt");
+		this.varphi =FileTool.read3DArray(outputPath+ "thetaKW.txt");
+		this.psi    =FileTool.read2DArray(outputPath+ "thetaKV.txt");
+		this.phi    =FileTool.read3DArray(outputPath+ "thetaKUE.txt");
 		this.fgmm.p_mu=FileTool.read2DArray( outputPath+"mu.txt");
 		
 
@@ -909,15 +909,15 @@ public class TEMModel extends LDABasedModel  {
 
 		for(int kid=0;kid<this.K;kid++){
 			topicTopWords.add(new ArrayList<String>());
-			ArrayList<Map.Entry<String, Float>> dp= new ArrayList<Map.Entry<String, Float>>();
+			ArrayList<Map.Entry<String, Double>> dp= new ArrayList<Map.Entry<String, Double>>();
 			for(int wid=0;wid<this.V;wid++){
 				String word=this.trainSet.indexToTermMap.get(wid);
 				//AbstractMap.SimpleEntry<String, Integer>("exmpleString", 42);
-				Map.Entry<String, Float> pairs =new  AbstractMap.SimpleEntry<String , Float> (word,this.varphi[kid][0][wid]);
+				Map.Entry<String, Double> pairs =new  AbstractMap.SimpleEntry<String , Double> (word,this.varphi[kid][0][wid]);
 				dp.add(pairs);
 			}
-			Collections.sort(dp, new Comparator<Entry<String,Float>>(){
-				public int compare(Entry<String, Float> arg0,Entry<String, Float> arg1) {
+			Collections.sort(dp, new Comparator<Entry<String,Double>>(){
+				public int compare(Entry<String, Double> arg0,Entry<String, Double> arg1) {
 					// TODO Auto-generated method stub
 					return -1*arg0.getValue().compareTo(arg1.getValue());
 				}
@@ -1132,15 +1132,15 @@ public class TEMModel extends LDABasedModel  {
 		writer = new BufferedWriter(new FileWriter(outputPath+ "thetaKV.sorted.txt"));
 		for(int kid=0;kid<this.K;kid++){
 			writer.write(String.format("Topic%d",kid));
-			ArrayList<Map.Entry<String, Float>> dp= new ArrayList<Map.Entry<String, Float>>();
+			ArrayList<Map.Entry<String, Double>> dp= new ArrayList<Map.Entry<String, Double>>();
 			for(int vid=0;vid<this.TagNum;vid++){
 				String tag=this.trainSet.indexToTagMap.get(vid);
 				//AbstractMap.SimpleEntry<String, Integer>("exmpleString", 42);
-				Map.Entry<String, Float> pairs =new  AbstractMap.SimpleEntry<String , Float> (tag,this.psi[kid][vid]);
+				Map.Entry<String, Double> pairs =new  AbstractMap.SimpleEntry<String , Double> (tag,this.psi[kid][vid]);
 				dp.add(pairs);
 			}
-			Collections.sort(dp, new Comparator<Entry<String,Float>>(){
-				public int compare(Entry<String, Float> arg0,Entry<String, Float> arg1) {
+			Collections.sort(dp, new Comparator<Entry<String,Double>>(){
+				public int compare(Entry<String, Double> arg0,Entry<String, Double> arg1) {
 					// TODO Auto-generated method stub
 					return -1*arg0.getValue().compareTo(arg1.getValue());
 				}
@@ -1170,17 +1170,17 @@ public class TEMModel extends LDABasedModel  {
 		writer = new BufferedWriter(new FileWriter(outputPath+ "thetaKW.sorted.txt"));
 		for(int kid=0;kid<this.K;kid++){
 			writer.write(String.format("Topic%d",kid));
-			ArrayList<Map.Entry<String, Float>> dp= new ArrayList<Map.Entry<String, Float>>();
+			ArrayList<Map.Entry<String, Double>> dp= new ArrayList<Map.Entry<String, Double>>();
 			for(int eid=0;eid<1;eid++){
 				for(int wid=0;wid<this.V;wid++){
 					String word=this.trainSet.indexToTermMap.get(wid);
 					//AbstractMap.SimpleEntry<String, Integer>("exmpleString", 42);
-					Map.Entry<String, Float> pairs =new  AbstractMap.SimpleEntry<String , Float> (word,this.varphi[kid][eid][wid]);
+					Map.Entry<String, Double> pairs =new  AbstractMap.SimpleEntry<String , Double> (word,this.varphi[kid][eid][wid]);
 					dp.add(pairs);
 				}
 			}
-			Collections.sort(dp, new Comparator<Entry<String,Float>>(){
-				public int compare(Entry<String, Float> arg0,Entry<String, Float> arg1) {
+			Collections.sort(dp, new Comparator<Entry<String,Double>>(){
+				public int compare(Entry<String, Double> arg0,Entry<String, Double> arg1) {
 					// TODO Auto-generated method stub
 					return -1*arg0.getValue().compareTo(arg1.getValue());
 				}
