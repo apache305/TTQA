@@ -11,6 +11,80 @@ import java.util.Map.Entry;
 
 public class ExpertiseExp {
 	
+	public static void testTOPVOTE(LDABasedModel xx){
+		int [] msc = new int[4];//5 10 20 30
+		msc[0]=0;
+		msc[1]=0;
+		msc[2]=0;
+		msc[3]=0;
+		double [] precision = new double [4];
+		precision[0]=0.0f;
+		precision[1]=0.0f;
+		precision[2]=0.0f;
+		precision[3]=0.0f;
+		double[] recall = new double [4];
+		recall[0]=0.0f;
+		recall[1]=0.0f;
+		recall[2]=0.0f;
+		recall[3]=0.0f;
+		
+		
+		
+		int qnum=0;
+		//int unum=0;
+		//5102015
+		//System.out.println("test question size")
+		for(Entry<String, QuestionPost> post:xx.testSet.quesitonMap.entrySet()){
+			
+			String qid=post.getKey();
+			QuestionPost q= post.getValue();
+			int numOfAnswer= q.answers.size();
+			/*if (numOfAnswer<=2){
+				continue;
+			}
+			int flag=0;
+			for(AnswerPost ans :q.answers){
+				if (xx.trainSet.useridToIndex.containsKey(ans.user.userId)){
+					flag=1;
+					break;
+				}
+			}
+			if (0==flag){
+				//no train user answer this question.
+				continue;
+			}*/
+			
+			//this.trainSet.useridToIndex.get( p.user.userId); 
+			/*if( !xx.trainSet.useridToIndex.containsKey(q.user.userId)   ){
+				//System.out.println("??");
+				continue;
+			}*/
+
+			
+			qnum+=1;
+			//num+=1;
+			xx.topVoteHit(q,numOfAnswer,precision,recall,msc);
+			//break;
+			//System.out.println(precision[0]+precision[1]+precision[2])	;
+		}
+		System.out.println("test question:"+qnum);
+		
+		System.out.println( "p@10:"+  precision[0]/(double)qnum );
+		System.out.println( "p@20:"+  precision[1]/(double)qnum );
+		System.out.println( "p@30:"+  precision[2]/(double)qnum );
+		System.out.println( "p@50:"+  precision[3]/(double)qnum );
+		System.out.println( "r@10:"+  recall[0]/(double)qnum );
+		System.out.println( "r@20:"+  recall[1]/(double)qnum );
+		System.out.println( "r@30:"+  recall[2]/(double)qnum );
+		System.out.println( "r@50:"+  recall[3]/(double)qnum );
+		System.out.println( "m@10:"+  (double)msc[0]/(double)qnum );
+		System.out.println( "m@20:"+  (double)msc[1]/(double)qnum );
+		System.out.println( "m@30:"+  (double)msc[2]/(double)qnum );
+		System.out.println( "m@50:"+  (double)msc[3]/(double)qnum );
+		
+
+	}
+	
 	public static void testNDCG(LDABasedModel xx){
 			
 		
@@ -179,7 +253,7 @@ public class ExpertiseExp {
 		
 		Set<String> filter=new HashSet<String>();
 		
-		int iternum=10;
+		int iternum=1;
 		int topNum=30;
 		String savedir="save";//becareful, this sould be corresponding to the dataset.
 		int read=0;
@@ -192,7 +266,7 @@ public class ExpertiseExp {
 		tem.K=topNum;
 		double t1 = System.currentTimeMillis();
 		if(read==0){
-			//runModel(tem,"out/TEM/",filter);
+			runModel(tem,"out/TEM/",filter);
 			//saveModel(tem,savedir+"saveout/TEM/");
 		}else{
 			//readModel(tem,savedir+"saveout/TEM/");
@@ -201,6 +275,7 @@ public class ExpertiseExp {
 		System.out.println("time="+(t2-t1)  );
 		//testMaxVoteHit(tem);
 		//testNDCG(tem);
+		testTOPVOTE(tem);
 		
 		resultPath="out/TTEMA/";
 		System.out.println("TTEMA model");
@@ -215,10 +290,11 @@ public class ExpertiseExp {
 		UQAModel uqa = new UQAModel(trainset,testQA,iternum);
 		uqa.K=topNum;
 		t1 = System.currentTimeMillis();
-		//runModel(uqa,"out/outUQA/",filter);
+		runModel(uqa,"out/outUQA/",filter);
 		 t2 = System.currentTimeMillis();
 			System.out.println("time="+(t2-t1)  );
 			//testNDCG(uqa);
+			testTOPVOTE(uqa);
 		
 		resultPath="out/outLDA/";
 		System.out.println("LDA Model");
@@ -230,6 +306,7 @@ public class ExpertiseExp {
 			System.out.println("time="+(t2-t1)  );
 			//testNDCG(lda);
 		
+		
 		resultPath= "out/outTTEQAA/";
 		System.out.println("TTEQAA Model");
 		TTEQAAModel tteqaa = new TTEQAAModel(trainset,testQA,iternum);
@@ -237,20 +314,22 @@ public class ExpertiseExp {
 		t1 = System.currentTimeMillis();
 		if(read==0){
 			runModel(tteqaa,"out/TTEA/",filter);
-			saveModel(tteqaa,savedir+"saveout/TTEA/");
+			//saveModel(tteqaa,savedir+"saveout/TTEA/");
 		}else{
 			readModel(tteqaa,savedir+"saveout/TTEA/");
 		}
 		t2 = System.currentTimeMillis();
 		System.out.println("time="+(t2-t1)  );
 		//tteqaa.oneThingINeedToMakeSure();
-		testNDCG(tteqaa);
-		testMaxVoteHit(tteqaa);
+		testTOPVOTE(tteqaa);
+		//testNDCG(tteqaa);
+		//testMaxVoteHit(tteqaa);
 		
 		resultPath= "out/outRandom/";
 		System.out.println("random Model");
 		RandomAlgo ram = new RandomAlgo(trainset,testQA,iternum);
 		System.out.println("time="+(t2-t1)  );
+		testTOPVOTE(ram);
 		//testNDCG(ram);
 		
 
@@ -259,11 +338,11 @@ public class ExpertiseExp {
 		GrosToT tot = new GrosToT(trainset,testQA,iternum);
 		tot.K=topNum;
 		t1 = System.currentTimeMillis();
-		//runModel(tot,"out/outGROST/",filter);
+		runModel(tot,"out/outGROST/",filter);
 		t2 = System.currentTimeMillis();
 		System.out.println("time="+(t2-t1)  );
 		//testNDCG(tot);
-		
+		testTOPVOTE(tot);
 		//System.exit(1);
 		
 

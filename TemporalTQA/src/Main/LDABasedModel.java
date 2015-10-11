@@ -60,5 +60,8 @@ public  class LDABasedModel {
 		System.out.println("un implement method");
 		
 	}
+	public void topVoteHit(QuestionPost q,int numOfAnswer, double[] precision, double[] recall, int [] msc){
+		System.out.println("un implement method");
+	}
 	
 }

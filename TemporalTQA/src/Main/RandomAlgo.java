@@ -69,6 +69,62 @@ public void recommendUserForQuestion(QuestionPost q,int numOfAnswer, double[] pr
 		recall[3] +=  ( (double) CommonUtil.computePrecision(randomRec, ansUids, 30) / (double)numOfAnswer   );
 		
 	}
+public void topVoteHit(QuestionPost q,int numOfAnswer, double[] precision, double[] recall, int [] msc){
+	
+	Set<String> randomUids= this.trainSet.useridToIndex.keySet();
+	ArrayList<String> randomList=new ArrayList<String>();
+	for(String ruid : randomUids){
+		randomList.add(ruid);
+	}
+	ArrayList<String> topUsers=new ArrayList<String>();
+	
+	Collections.shuffle(randomList);
+	for(int i=0;i<randomList.size();i++){
+		topUsers.add(randomList.get(i));
+	}
+		
+		//sort real user score by votes.
+		ArrayList<Map.Entry<String,Integer>> realU= new ArrayList<Map.Entry<String,Integer>>();
+
+		for(AnswerPost a: q.answers){
+			Map.Entry<String, Integer> pairs =new  AbstractMap.SimpleEntry<String , Integer> (a.user.userId,a.score);
+			realU.add(pairs);
+		}
+		
+		Collections.sort(realU, new Comparator<Map.Entry<String, Integer>>(){
+			public int compare(Map.Entry<String, Integer> arg0,Map.Entry<String, Integer> arg1){
+				return -1*arg0.getValue().compareTo(arg1.getValue());
+			}
+			
+		});
+		
+		//get top half as set
+		Set<String> topHalf= new HashSet<String>();
+		int halfNum=q.answers.size()/2;
+		if(halfNum==0){
+			//only one answer.
+			System.out.println("this should not happen.");
+		}
+		for(int i=0;i<halfNum;i++){
+			topHalf.add(realU.get(i).getKey())	;
+		}
+		
+		msc[0]+=CommonUtil.computeMSC(topUsers, topHalf, 10);
+		msc[1]+=CommonUtil.computeMSC(topUsers, topHalf, 20);
+		msc[2]+=CommonUtil.computeMSC(topUsers, topHalf, 30);
+		msc[3]+=CommonUtil.computeMSC(topUsers, topHalf, 50);
+		
+		precision[0] +=  ( (double) CommonUtil.computePrecision(topUsers, topHalf, 10) / 10.0f   );
+		precision[1] +=  ( (double) CommonUtil.computePrecision(topUsers, topHalf, 20) / 20.0f   );
+		precision[2] +=  ( (double) CommonUtil.computePrecision(topUsers, topHalf, 30) / 30.0f   );
+		precision[3] +=  ( (double) CommonUtil.computePrecision(topUsers, topHalf, 50) / 50.0f   );
+		recall[0] +=  ( (double) CommonUtil.computePrecision(topUsers, topHalf, 10) / (double)numOfAnswer   );
+		recall[1] +=  ( (double) CommonUtil.computePrecision(topUsers, topHalf, 20) /(double)numOfAnswer   );
+		recall[2] +=  ( (double) CommonUtil.computePrecision(topUsers, topHalf, 30) / (double)numOfAnswer   );
+		recall[3] +=  ( (double) CommonUtil.computePrecision(topUsers, topHalf, 50) / (double)numOfAnswer   );
+		
+		
+	}
 	
 	
 	
