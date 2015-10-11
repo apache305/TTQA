@@ -15,6 +15,7 @@ import java.util.Random;
 import java.util.Set;
 
 import Util.CommonUtil;
+import Util.FileTool;
 
 public class UQAModel extends LDABasedModel{
 	
@@ -276,6 +277,24 @@ public class UQAModel extends LDABasedModel{
 
 		
 		return newSampledTopic;
+	}
+	
+	
+	public void saveModel(String outputPath) throws IOException{
+		
+		FileTool.write2DArray(this.thetaUK	,outputPath+"thetaUK.txt");
+		FileTool.write2DArray(this.thetaKW	,outputPath+ "thetaKW.txt");
+		FileTool.write2DArray(this.thetaKC	,outputPath+ "thetaKC.txt");
+
+		
+	}
+	
+	public void readModel(String outputPath)throws IOException{
+		
+		this.thetaUK	=FileTool.read2DArray(outputPath+"thetaUK.txt");
+		this.thetaKW=FileTool.read2DArray(outputPath+ "thetaKW.txt");
+		this.thetaKC=FileTool.read2DArray(outputPath+ "thetaKC.txt");
+
 	}
 	
 	public void estimateProb(){

@@ -68,6 +68,41 @@ public class ExpertiseExp {
 		
 
 	}
+	public static void saveModel(LDABasedModel xx,String outputPathDir){
+		//xx.initModel();
+		try {
+			File f = new File(outputPathDir);
+			if(!f.exists()){
+				new File(outputPathDir).mkdirs();
+			}{
+				//FileUtils.cleanDirectory(outputPathDir);
+			}
+			xx.saveModel(outputPathDir);
+
+			//xx.outputResult(outputPathDir );
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public static void readModel(LDABasedModel xx,String outputPathDir){
+		xx.initModel();
+		try {
+			File f = new File(outputPathDir);
+			if(!f.exists()){
+				new File(outputPathDir).mkdirs();
+			}{
+				//FileUtils.cleanDirectory(outputPathDir);
+			}
+			xx.readModel(outputPathDir);
+
+			//xx.outputResult(outputPathDir );
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	
 	public static void runModel(LDABasedModel xx, String outputPathDir,Set<String> filter){
@@ -144,8 +179,10 @@ public class ExpertiseExp {
 		
 		Set<String> filter=new HashSet<String>();
 		
-		int iternum=1;
+		int iternum=10;
 		int topNum=30;
+		String savedir="save";
+		int read=0;
 		
 		System.out.println("current topic num:"+topNum);
 		
@@ -154,9 +191,15 @@ public class ExpertiseExp {
 		TEMModel tem=new TEMModel(trainset,testQA,iternum);
 		tem.K=topNum;
 		double t1 = System.currentTimeMillis();
-		runModel(tem,"out/TEM/",filter);
+		if(read==0){
+			runModel(tem,"out/TEM/",filter);
+			saveModel(tem,savedir+"saveout/TEM/");
+		}else{
+			readModel(tem,savedir+"saveout/TEM/");
+		}
 		double t2 = System.currentTimeMillis();
 		System.out.println("time="+(t2-t1)  );
+		testMaxVoteHit(tem);
 		testNDCG(tem);
 		
 		resultPath="out/TTEMA/";
@@ -192,10 +235,16 @@ public class ExpertiseExp {
 		TTEQAAModel tteqaa = new TTEQAAModel(trainset,testQA,iternum);
 		tteqaa.K=topNum;
 		t1 = System.currentTimeMillis();
-		runModel(tteqaa,"out/outTTEQAA/",filter);
+		if(read==0){
+			runModel(tem,"out/TTEA/",filter);
+			saveModel(tem,savedir+"saveout/TTEA/");
+		}else{
+			readModel(tem,savedir+"saveout/TTEA/");
+		}
 		t2 = System.currentTimeMillis();
 		System.out.println("time="+(t2-t1)  );
 		//tteqaa.oneThingINeedToMakeSure();
+		testNDCG(tteqaa);
 		testMaxVoteHit(tteqaa);
 		
 		resultPath= "out/outRandom/";

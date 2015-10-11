@@ -15,6 +15,7 @@ import java.util.Random;
 import java.util.Set;
 
 import Util.CommonUtil;
+import Util.FileTool;
 
 public class TTEQAAModel extends LDABasedModel{
 	
@@ -422,6 +423,31 @@ public class TTEQAAModel extends LDABasedModel{
 		this.sumkeu[newSampledTopic][expLevel]++;
 		
 		return newSampledTopic;
+	}
+	
+	public void saveModel(String outputPath) throws IOException{
+		
+		FileTool.write2DArray(this.thetaUK	,outputPath+"thetaUK.txt");
+		FileTool.write2DArray(this.thetaKU	,outputPath+ "thetaKU.txt");
+		FileTool.write2DArray(this.thetaKW	,outputPath+ "thetaKW.txt");
+		FileTool.write2DArray(this.thetaKV	,outputPath+ "thetaKV.txt");
+		FileTool.write3DArray(this.thetaUKE	,outputPath+ "thetaUKE.txt");
+
+		
+	}
+	
+	public void readModel(String outputPath)throws IOException{
+		
+		
+		
+		
+		this.thetaUK	=FileTool.read2DArray(outputPath+"thetaUK.txt");
+		this.thetaKU=FileTool.read2DArray(outputPath+ "thetaKU.txt");
+		this.thetaKW=FileTool.read2DArray(outputPath+ "thetaKW.txt");
+		this.thetaKV=FileTool.read2DArray(outputPath+ "thetaKV.txt");
+		this.thetaUKE=FileTool.read3DArray(outputPath+ "thetaUKE.txt");
+		
+
 	}
 	
 	public void estimateProb(){
@@ -1159,9 +1185,6 @@ public void recommendUserForQuestion(QuestionPost q,int numOfAnswer, double[] pr
 	}
 	
 	
-	public void saveModel(String outputPath) throws IOException{
-		
-	}
 	
 	
 	public void computeTimeLikelihood(){

@@ -15,6 +15,7 @@ import java.util.Map.Entry;
 import java.util.Random;
 
 import Util.CommonUtil;
+import Util.FileTool;
 
 public class GrosToT extends LDABasedModel{
 	
@@ -341,6 +342,31 @@ public class GrosToT extends LDABasedModel{
 		
 		return newSampledTopic;
 	}
+	
+	
+	public void saveModel(String outputPath) throws IOException{
+		
+		FileTool.write2DArray(this.thetaUG	,outputPath+"thetaUG.txt");
+		FileTool.write2DArray(this.thetaGK	,outputPath+ "thetaGK.txt");
+		FileTool.write2DArray(this.thetaKV	,outputPath+ "thetaKV.txt");
+		FileTool.write3DArray(this.thetaKGT	,outputPath+ "thetaKGT.txt");
+
+		
+	}
+	
+	public void readModel(String outputPath)throws IOException{
+		
+		
+		
+		
+		this.thetaUG	=FileTool.read2DArray(outputPath+"thetaUG.txt");
+		this.thetaGK=FileTool.read2DArray(outputPath+ "thetaGK.txt");
+		this.thetaKV=FileTool.read2DArray(outputPath+ "thetaKV.txt");
+		this.thetaKGT=FileTool.read3DArray(outputPath+ "thetaKGT.txt");
+		
+
+	}
+	
 	
 	
 	public void estimateProb(){

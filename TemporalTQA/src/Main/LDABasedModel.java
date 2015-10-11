@@ -21,6 +21,14 @@ public  class LDABasedModel {
 	public void trainModel(){
 		
 	}
+	public void saveModel(String outputPath) throws IOException{
+		System.out.println("un implement method");
+		
+	}
+	public void readModel(String outputPath) throws IOException{
+		System.out.println("un implement method");
+		
+	}
 	public void estimateProb(){
 		
 	}

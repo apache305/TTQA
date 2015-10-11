@@ -16,6 +16,7 @@ import java.util.Map.Entry;
 
 import Util.ComUtil;
 import Util.CommonUtil;
+import Util.FileTool;
 import Util.ModelComFunc;
 
 
@@ -411,6 +412,38 @@ public class TEMModel extends LDABasedModel  {
 			CKTsum[newTopic]++; // K
 		}
 	}
+	
+	
+	
+	
+	public void saveModel(String outputPath) throws IOException{
+		
+		FileTool.write2DArray(this.theta	,outputPath+"thetaUK.txt");
+		//FileTool.write2DArray(this.thetaKU	,outputPath+ "thetaKU.txt");
+		FileTool.write3DArray(this.varphi	,outputPath+ "thetaKW.txt");
+		FileTool.write2DArray(this.psi	,outputPath+ "thetaKV.txt");
+		FileTool.write3DArray(this.phi	,outputPath+ "thetaKUE.txt");
+		FileTool.write2DArray(this.fgmm.p_mu, outputPath+"mu.txt");
+
+		
+	}
+	
+	public void readModel(String outputPath)throws IOException{
+		
+		
+		
+		
+		this.theta	=FileTool.read2DArray(outputPath+"thetaUK.txt");
+		this.varphi =FileTool.read3DFloatArray(outputPath+ "thetaKW.txt");
+		this.psi    =FileTool.read2DFloatArray(outputPath+ "thetaKV.txt");
+		this.phi    =FileTool.read3DFloatArray(outputPath+ "thetaKUE.txt");
+		this.fgmm.p_mu=FileTool.read2DArray( outputPath+"mu.txt");
+		
+
+	}
+	
+	
+	
 
 	public void estimateProb() {
 		for (int u = 0; u < U; u++) {
@@ -475,7 +508,7 @@ public class TEMModel extends LDABasedModel  {
 			double []klevel= new double[this.K];
 			for(int k=0;k<this.K;k++){
 				for(int el=0;el<this.ENum;el++){
-					klevel[k]=this.phi[k][uindex][el] * fgmm.p_mu[el][k] ;
+					klevel[k]=this.phi[k][uindex][el] * fgmm.p_mu[el][0] ;
 					//    1 0.1   10 0.9       u,j  5.3
 				}
 			}//
@@ -489,7 +522,7 @@ public class TEMModel extends LDABasedModel  {
 
 			}
 			
-			double uscore= (1-jsdis)*actscore*expscore;
+			double uscore= (1-jsdis)*expscore;
 			//System.out.println(actscore);
 			
 			Map.Entry<String, Double> pairs =new  AbstractMap.SimpleEntry<String , Double> (u.userId,uscore);
