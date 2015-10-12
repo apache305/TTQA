@@ -1418,6 +1418,7 @@ public void recommendUserForQuestion(QuestionPost q,int numOfAnswer, double[] pr
 				expscore += (thetaQK[j]* klevel[j]	 );
 
 			}
+			System.out.println("exp"+expscore);
 			
 			double uscore= (1-jsdis)*actscore*expscore;
 			//System.out.println(actscore);
@@ -1575,15 +1576,15 @@ for(User u:this.trainSet.users){
 		//realUVotes.put(a.user.userId, a.score);
 	}
 	
-	for(int i=0;i<30;i++){
+	for(int i=0;i<100;i++){
 		String recUid= userScore.get(i).getKey();
 		if(maxuids.contains(recUid)){
-			mvh[i]+=1;
+			mvh[i/10]+=1;
 			return ;
 		}
 	}
-	mvh[0]+=1;//miss
-	return ;
+	
+	return;
 	
 
 
@@ -1627,7 +1628,7 @@ public void NDCG(QuestionPost q, double [] totalNDCG){
 
 		}
 		
-		double uscore= (1-jsdis)*actscore*expscore;
+		double uscore= (1-jsdis)*expscore;
 		//System.out.println(actscore);
 		
 		Map.Entry<String, Double> pairs =new  AbstractMap.SimpleEntry<String , Double> (u.userId,uscore);
@@ -1684,8 +1685,8 @@ public void NDCG(QuestionPost q, double [] totalNDCG){
 	}
 	
 	totalNDCG[0]+=CommonUtil.computeNDCG(recUser, relUser,realUVotes, 1);
-	totalNDCG[1]+=CommonUtil.computeNDCG(recUser, relUser,realUVotes, 5);
-	totalNDCG[2]+=CommonUtil.computeNDCG(recUser, relUser,realUVotes, relUser.size());
+	totalNDCG[1]+=CommonUtil.computeNDCG(recUser, relUser,realUVotes, 2);
+	totalNDCG[2]+=CommonUtil.computeNDCG(recUser, relUser,realUVotes, 3);
 	//System.out.println("totalNDCG[0]"+totalNDCG[0]);
 	//System.out.println("totalNDCG[0]"+totalNDCG[1]);
 	//System.out.println("totalNDCG[0]"+totalNDCG[2]);

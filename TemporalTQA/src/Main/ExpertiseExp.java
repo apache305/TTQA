@@ -11,6 +11,8 @@ import java.util.Map.Entry;
 
 public class ExpertiseExp {
 	
+	
+	
 	public static void testTOPVOTE(LDABasedModel xx){
 		int [] msc = new int[4];//5 10 20 30
 		msc[0]=0;
@@ -107,8 +109,8 @@ public class ExpertiseExp {
 		}
 		System.out.println("test question:"+qnum);
 		System.out.println("ndcg@1"+ totalNDCG[0]/(double)qnum   );
-		System.out.println("ndcg@5"+ totalNDCG[1]/(double)qnum   );
-		System.out.println("ndcg@N"+ totalNDCG[2]/(double)qnum   );
+		System.out.println("ndcg@2"+ totalNDCG[1]/(double)qnum   );
+		System.out.println("ndcg@3"+ totalNDCG[2]/(double)qnum   );
 			
 	}
 
@@ -116,7 +118,7 @@ public class ExpertiseExp {
 		
 		
 		int qnum=0;
-		int [] maxVoteHit= new int [30];
+		int [] maxVoteHit= new int [12];
 
 		for(Entry<String, QuestionPost> post:xx.testSet.quesitonMap.entrySet()){
 			
@@ -129,7 +131,7 @@ public class ExpertiseExp {
 
 		}
 		System.out.println("test question:"+qnum);
-		for(int i=0;i<30;i++){
+		for(int i=0;i<12;i++){
 			System.out.print( maxVoteHit[i]/(double)qnum +","   );
 		}
 		System.out.println("\n");
@@ -253,12 +255,13 @@ public class ExpertiseExp {
 		
 		Set<String> filter=new HashSet<String>();
 		
-		int iternum=1;
+		int iternum=50;
 		int topNum=30;
 		String savedir="save";//becareful, this sould be corresponding to the dataset.
 		int read=0;
 		
 		System.out.println("current topic num:"+topNum);
+		System.out.println("current it num:"+iternum);
 		
 		resultPath="out/TEM/";
 		System.out.println("TEM model");
@@ -266,16 +269,16 @@ public class ExpertiseExp {
 		tem.K=topNum;
 		double t1 = System.currentTimeMillis();
 		if(read==0){
-			runModel(tem,"out/TEM/",filter);
+			 runModel(tem,"out/TEM/",filter);
 			//saveModel(tem,savedir+"saveout/TEM/");
 		}else{
 			//readModel(tem,savedir+"saveout/TEM/");
 		}
 		double t2 = System.currentTimeMillis();
 		System.out.println("time="+(t2-t1)  );
-		//testMaxVoteHit(tem);
+		testMaxVoteHit(tem);
 		//testNDCG(tem);
-		testTOPVOTE(tem);
+		//testTOPVOTE(tem);
 		
 		resultPath="out/TTEMA/";
 		System.out.println("TTEMA model");
@@ -290,11 +293,12 @@ public class ExpertiseExp {
 		UQAModel uqa = new UQAModel(trainset,testQA,iternum);
 		uqa.K=topNum;
 		t1 = System.currentTimeMillis();
-		runModel(uqa,"out/outUQA/",filter);
+		//runModel(uqa,"out/outUQA/",filter);
 		 t2 = System.currentTimeMillis();
 			System.out.println("time="+(t2-t1)  );
 			//testNDCG(uqa);
-			testTOPVOTE(uqa);
+			//testTOPVOTE(uqa);
+			//testMaxVoteHit(uqa);
 		
 		resultPath="out/outLDA/";
 		System.out.println("LDA Model");
@@ -321,15 +325,15 @@ public class ExpertiseExp {
 		t2 = System.currentTimeMillis();
 		System.out.println("time="+(t2-t1)  );
 		//tteqaa.oneThingINeedToMakeSure();
-		testTOPVOTE(tteqaa);
+		//testTOPVOTE(tteqaa);
 		//testNDCG(tteqaa);
-		//testMaxVoteHit(tteqaa);
+		testMaxVoteHit(tteqaa);
 		
 		resultPath= "out/outRandom/";
 		System.out.println("random Model");
 		RandomAlgo ram = new RandomAlgo(trainset,testQA,iternum);
 		System.out.println("time="+(t2-t1)  );
-		testTOPVOTE(ram);
+		//testTOPVOTE(ram);
 		//testNDCG(ram);
 		
 
@@ -338,11 +342,11 @@ public class ExpertiseExp {
 		GrosToT tot = new GrosToT(trainset,testQA,iternum);
 		tot.K=topNum;
 		t1 = System.currentTimeMillis();
-		runModel(tot,"out/outGROST/",filter);
+		//runModel(tot,"out/outGROST/",filter);
 		t2 = System.currentTimeMillis();
 		System.out.println("time="+(t2-t1)  );
 		//testNDCG(tot);
-		testTOPVOTE(tot);
+		//testTOPVOTE(tot);
 		//System.exit(1);
 		
 

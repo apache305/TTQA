@@ -400,6 +400,86 @@ public class UQAModel extends LDABasedModel{
 		
 		
 	}
+
+	public void maxVoteHit(QuestionPost q, int [] mvh){
+		
+		double [] thetaQK= this.computeQuestionTopicDistribution(q);
+
+		//score = (1-js) * expert(u,q) * act (u,q)
+
+		ArrayList<Map.Entry<String, Double>> userScore= new ArrayList<Map.Entry<String, Double>>();
+		for(User u:this.trainSet.users){
+			int uindex=this.trainSet.useridToIndex.get(u.userId);
+			double [] thetacUK=this.thetaUK[uindex];
+
+
+			double jsdis= CommonUtil.jensenShannonDivergence(thetacUK, thetaQK);
+
+			
+
+			double uscore= (1-jsdis);
+			//System.out.println(actscore);
+			
+			Map.Entry<String, Double> pairs =new  AbstractMap.SimpleEntry<String , Double> (u.userId,uscore);
+			userScore.add(pairs);
+			//System.out.println("jsdis:"+jsdis);
+			
+			//U,1, 1     2      3 
+			//     0.1   0.5    0.4
+			//U,1, 1     2      3
+			//     0.5  0.1    0.1
+			
+			//
+			}
+			//sort it.
+			
+			Collections.sort(userScore, new Comparator<Entry<String,Double>>(){
+				public int compare(Entry<String, Double> arg0,Entry<String, Double> arg1) {
+					// TODO Auto-generated method stub
+					return -1*arg0.getValue().compareTo(arg1.getValue());
+				}
+			});
+			
+			//find the hight votes user id
+			int maxvote=0;
+			//String maxvoteid=null;
+			Set<String> maxuids=new HashSet<String>();
+			//Set<String> ansUids = new HashSet<String>();
+			//ArrayList<Map.Entry<String,Integer>> realU= new ArrayList<Map.Entry<String,Integer>>();
+			//Map<String,Integer> realUVotes= new HashMap<String,Integer>();
+			for(AnswerPost a: q.answers){
+				//ansUids.add(a.user.userId);
+				if (a.score> maxvote){
+					maxvote=a.score;
+					maxuids.clear();
+					maxuids.add(a.user.userId);
+				}else if(a.score==maxvote){
+					maxuids.add(a.user.userId);//if score equal
+				}
+				
+				//Map.Entry<String, Integer> pairs =new  AbstractMap.SimpleEntry<String , Integer> (a.user.userId,a.score);
+				//realU.add(pairs);
+				//realUVotes.put(a.user.userId, a.score);
+			}
+			
+			for(int i=0;i<50;i++){
+				String recUid= userScore.get(i).getKey();
+				if(maxuids.contains(recUid)){
+					mvh[i]+=1;
+					return ;
+				}
+			}
+			//mvh[11]+=1;//miss
+			return ;
+			
+
+
+			
+		}
+	
+	
+	
+	
 public void topVoteHit(QuestionPost q,int numOfAnswer, double[] precision, double[] recall, int [] msc){
 		
 		double [] thetaQK= this.computeQuestionTopicDistribution(q);
@@ -814,6 +894,97 @@ public void topVoteHit(QuestionPost q,int numOfAnswer, double[] precision, doubl
 		
 		
 		
+	}
+	
+	
+	public void NDCG(QuestionPost q, double [] totalNDCG){
+		
+		
+		double [] thetaQK= this.computeQuestionTopicDistribution(q);
+		
+		//score = (1-js) * expert(u,q) * act (u,q)
+		
+		ArrayList<Map.Entry<String, Double>> userScore= new ArrayList<Map.Entry<String, Double>>();
+		for(User u:this.trainSet.users){
+			int uindex=this.trainSet.useridToIndex.get(u.userId);
+			double [] thetacUK=this.thetaUK[uindex];
+
+
+			double jsdis= CommonUtil.jensenShannonDivergence(thetacUK, thetaQK);
+
+			
+
+			
+			double uscore= (1-jsdis);
+			//System.out.println(actscore);
+			
+			Map.Entry<String, Double> pairs =new  AbstractMap.SimpleEntry<String , Double> (u.userId,uscore);
+			userScore.add(pairs);
+			//System.out.println("jsdis:"+jsdis);
+			
+			//U,1, 1     2      3 
+			//     0.1   0.5    0.4
+			//U,1, 1     2      3
+			//     0.5  0.1    0.1
+			
+			//
+		}
+		//sort it.
+
+		Collections.sort(userScore, new Comparator<Entry<String,Double>>(){
+			public int compare(Entry<String, Double> arg0,Entry<String, Double> arg1) {
+				// TODO Auto-generated method stub
+				return -1*arg0.getValue().compareTo(arg1.getValue());
+			}
+		});
+		
+		//check p@5 p@10 p@15 //
+		Set<String> ansUids = new HashSet<String>();
+		ArrayList<Map.Entry<String,Integer>> realU= new ArrayList<Map.Entry<String,Integer>>();
+		Map<String,Integer> realUVotes= new HashMap<String,Integer>();
+		for(AnswerPost a: q.answers){
+			ansUids.add(a.user.userId);
+			Map.Entry<String, Integer> pairs =new  AbstractMap.SimpleEntry<String , Integer> (a.user.userId,a.score);
+			realU.add(pairs);
+			realUVotes.put(a.user.userId, a.score);
+		}
+		
+		Collections.sort(realU, new Comparator<Map.Entry<String, Integer>>(){
+			public int compare(Map.Entry<String, Integer> arg0,Map.Entry<String, Integer> arg1){
+				return -1*arg0.getValue().compareTo(arg1.getValue());
+			}
+			
+		});
+		
+
+		//recuser list.
+		ArrayList<String> recUser = new ArrayList<String >();
+		for(int i=0;i<userScore.size();i++){
+			String userScoreUID= userScore.get(i).getKey();
+			if (ansUids.contains(userScoreUID)){
+				recUser.add(userScoreUID);
+			}
+		}
+		//ground truth rank list.
+		ArrayList<String> relUser= new ArrayList<String>();
+		for(int i=0;i<realU.size();i++){
+			relUser.add( realU.get(i).getKey());
+		}
+		
+		totalNDCG[0]+=CommonUtil.computeNDCG(recUser, relUser,realUVotes, 1);
+		totalNDCG[1]+=CommonUtil.computeNDCG(recUser, relUser,realUVotes, 2);
+		totalNDCG[2]+=CommonUtil.computeNDCG(recUser, relUser,realUVotes, 3);
+		//System.out.println("totalNDCG[0]"+totalNDCG[0]);
+		//System.out.println("totalNDCG[0]"+totalNDCG[1]);
+		//System.out.println("totalNDCG[0]"+totalNDCG[2]);
+		
+		
+		
+		//then we have two sorted list.
+		//recUser and idealU.
+		
+			
+			
 	}
 	
 	public void outputResult(String outputPath) throws IOException{

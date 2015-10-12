@@ -482,6 +482,7 @@ public class TEMModel extends LDABasedModel  {
 		// }
 		// }
 	}
+
 	
 public void topVoteHit(QuestionPost q,int numOfAnswer, double[] precision, double[] recall, int [] msc){
 		
@@ -519,6 +520,7 @@ public void topVoteHit(QuestionPost q,int numOfAnswer, double[] precision, doubl
 			
 			double uscore= (1-jsdis)*expscore;
 			//System.out.println(actscore);
+			System.out.println("exp"+expscore);
 			
 			Map.Entry<String, Double> pairs =new  AbstractMap.SimpleEntry<String , Double> (u.userId,uscore);
 			userScore.add(pairs);
@@ -631,6 +633,7 @@ public void topVoteHit(QuestionPost q,int numOfAnswer, double[] precision, doubl
 			
 			double uscore= (1-jsdis)*expscore;
 			//System.out.println(actscore);
+			//first sort by uscore, then by expscore.
 			
 			Map.Entry<String, Double> pairs =new  AbstractMap.SimpleEntry<String , Double> (u.userId,uscore);
 			userScore.add(pairs);
@@ -674,14 +677,14 @@ public void topVoteHit(QuestionPost q,int numOfAnswer, double[] precision, doubl
 				//realUVotes.put(a.user.userId, a.score);
 			}
 			
-			for(int i=0;i<30;i++){
+			for(int i=0;i<100;i++){
 				String recUid= userScore.get(i).getKey();
 				if(maxuids.contains(recUid)){
-					mvh[i]+=1;
+					mvh[i/10]+=1;
 					return ;
 				}
 			}
-			mvh[0]+=1;//miss
+			//mvh[11]+=1;//miss
 			return ;
 			
 
@@ -783,8 +786,8 @@ public void topVoteHit(QuestionPost q,int numOfAnswer, double[] precision, doubl
 			}
 			
 			totalNDCG[0]+=CommonUtil.computeNDCG(recUser, relUser,realUVotes, 1);
-			totalNDCG[1]+=CommonUtil.computeNDCG(recUser, relUser,realUVotes, 5);
-			totalNDCG[2]+=CommonUtil.computeNDCG(recUser, relUser,realUVotes, relUser.size());
+			totalNDCG[1]+=CommonUtil.computeNDCG(recUser, relUser,realUVotes, 2);
+			totalNDCG[2]+=CommonUtil.computeNDCG(recUser, relUser,realUVotes, 3);
 			//System.out.println("totalNDCG[0]"+totalNDCG[0]);
 			//System.out.println("totalNDCG[0]"+totalNDCG[1]);
 			//System.out.println("totalNDCG[0]"+totalNDCG[2]);
