@@ -1590,6 +1590,158 @@ for(User u:this.trainSet.users){
 
 	
 }
+
+
+
+public void maxVoteHitSortByExp(QuestionPost q, int [] mvh){
+	
+double [] thetaQK= this.computeQuestionTopicDistribution(q);
+
+//score = (1-js) * expert(u,q) * act (u,q)
+
+ArrayList<Map.Entry<String, Double>> userScore= new ArrayList<Map.Entry<String, Double>>();
+for(User u:this.trainSet.users){
+	int uindex=this.trainSet.useridToIndex.get(u.userId);
+	double [] thetacUK=this.thetaUK[uindex];
+
+
+	double jsdis= CommonUtil.jensenShannonDivergence(thetacUK, thetaQK);
+	double actscore=0.0f;
+	for(int j=0;j<this.K;j++){
+		actscore=actscore+(thetaQK[j]* this.thetaKU[j][uindex]);
+	}
+	
+	
+	
+	double uscore= (1-jsdis)*actscore;//*expscore;
+	//System.out.println(actscore);
+	
+	Map.Entry<String, Double> pairs =new  AbstractMap.SimpleEntry<String , Double> (u.userId,uscore);
+	userScore.add(pairs);
+	//System.out.println("jsdis:"+jsdis);
+	
+	//U,1, 1     2      3 
+	//     0.1   0.5    0.4
+	//U,1, 1     2      3
+	//     0.5  0.1    0.1
+	
+	//
+	}
+	//sort it.
+	
+	Collections.sort(userScore, new Comparator<Entry<String,Double>>(){
+		public int compare(Entry<String, Double> arg0,Entry<String, Double> arg1) {
+			// TODO Auto-generated method stub
+			return -1*arg0.getValue().compareTo(arg1.getValue());
+		}
+	});
+	
+	
+	
+	
+	
+	
+	// second step, ranking them by expertise.
+	ArrayList<String> firstStepTopUsers= new ArrayList<String>();
+	for(int i=0;i<100;i++){
+		firstStepTopUsers.add(userScore.get(i).getKey());
+	}
+	//now we have 100 top active users. re-rank them.
+	
+	//ArrayList<Double> topUsersExpScores= new ArrayList<Double>();
+	//only for sort.
+	//
+	ArrayList<Map.Entry<String, Double>> topUsersExpScores =
+			new ArrayList<Map.Entry<String,Double>> ();
+	
+	
+	for(String topuid : firstStepTopUsers){
+		//compute exp
+		int uindex=this.trainSet.useridToIndex.get(topuid);
+		double [] thetacUK=this.thetaUK[uindex];
+
+		//avg level for user.
+			double []klevel= new double[this.K];
+			for(int j=0;j<this.K;j++){
+				for(int el=0;el<this.E;el++){
+					klevel[j]=this.thetaUKE[uindex][j][el] * el;
+					//    1 0.1   10 0.9       u,j  5.3
+				}
+			}//
+			//[3,5,1,......9]
+			
+			
+			
+			double expscore=0.0f;
+			for(int j=0;j<this.K;j++){
+				expscore += (thetaQK[j]* klevel[j]	 );
+
+			}
+			
+			Map.Entry<String, Double> pairs =new  AbstractMap.SimpleEntry<String , Double> (topuid,expscore);
+			topUsersExpScores.add(pairs);
+			
+			//topUsersExpScores
+			//coresExpScores.add(expscore);
+
+		}
+	Collections.sort(topUsersExpScores, new Comparator<Entry<String,Double>>(){
+		public int compare(Entry<String, Double> arg0,Entry<String, Double> arg1) {
+			// TODO Auto-generated method stub
+			return -1*arg0.getValue().compareTo(arg1.getValue());
+		}
+	});
+	
+	
+	
+	// now we have a reranked user list.
+	
+
+	
+	//find the hight votes user id
+	int maxvote=0;
+	//String maxvoteid=null;
+	Set<String> maxuids=new HashSet<String>();
+	//Set<String> ansUids = new HashSet<String>();
+	//ArrayList<Map.Entry<String,Integer>> realU= new ArrayList<Map.Entry<String,Integer>>();
+	//Map<String,Integer> realUVotes= new HashMap<String,Integer>();
+	for(AnswerPost a: q.answers){
+		//ansUids.add(a.user.userId);
+		if (a.score> maxvote){
+			maxvote=a.score;
+			maxuids.clear();
+			maxuids.add(a.user.userId);
+		}else if(a.score==maxvote){
+			maxuids.add(a.user.userId);//if score equal
+		}
+		
+		//Map.Entry<String, Integer> pairs =new  AbstractMap.SimpleEntry<String , Integer> (a.user.userId,a.score);
+		//realU.add(pairs);
+		//realUVotes.put(a.user.userId, a.score);
+	}
+	
+	for(int i=0;i<100;i++){
+		String recUid= userScore.get(i).getKey();
+		if(maxuids.contains(recUid)){
+			mvh[i/10]+=1;
+			return ;
+		}
+	}
+	
+	return;
+	
+
+
+	
+}
+
+
+
+
+
+
+
+
 public void NDCG(QuestionPost q, double [] totalNDCG){
 		
 		
