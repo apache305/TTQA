@@ -462,10 +462,10 @@ public class UQAModel extends LDABasedModel{
 				//realUVotes.put(a.user.userId, a.score);
 			}
 			
-			for(int i=0;i<50;i++){
+			for(int i=0;i<100;i++){
 				String recUid= userScore.get(i).getKey();
 				if(maxuids.contains(recUid)){
-					mvh[i]+=1;
+					mvh[i/10]+=1;
 					return ;
 				}
 			}

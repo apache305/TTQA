@@ -1494,7 +1494,7 @@ public void recommendUserForQuestion(QuestionPost q,int numOfAnswer, double[] pr
 		}
 
 	
-public void maxVoteHit(QuestionPost q, int [] mvh){
+public void maxVoteHitNotByExp(QuestionPost q, int [] mvh){
 	
 double [] thetaQK= this.computeQuestionTopicDistribution(q);
 
@@ -1593,7 +1593,7 @@ for(User u:this.trainSet.users){
 
 
 
-public void maxVoteHitSortByExp(QuestionPost q, int [] mvh){
+public void maxVoteHit(QuestionPost q, int [] mvh){
 	
 double [] thetaQK= this.computeQuestionTopicDistribution(q);
 
@@ -1721,7 +1721,7 @@ for(User u:this.trainSet.users){
 	}
 	
 	for(int i=0;i<100;i++){
-		String recUid= userScore.get(i).getKey();
+		String recUid= topUsersExpScores.get(i).getKey();
 		if(maxuids.contains(recUid)){
 			mvh[i/10]+=1;
 			return ;
