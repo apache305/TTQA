@@ -3,15 +3,15 @@ package Main;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.Set;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
-public class QuestionRouting {
+public class TimeIllustration {
 	
+
 	
-	
-	
-	public static void testQR(LDABasedModel xx){
+	public static void testQR(LDABasedModel xx, DataWoker testQAset){
 		int [] msc = new int[4];//5 10 20 30
 		msc[0]=0;
 		msc[1]=0;
@@ -34,33 +34,15 @@ public class QuestionRouting {
 		//int unum=0;
 		//5102015
 		//System.out.println("test question size")
-		for(Entry<String, QuestionPost> post:xx.testSet.quesitonMap.entrySet()){
+		for(Entry<String, QuestionPost> post:testQAset.quesitonMap.entrySet()){
 			
 			String qid=post.getKey();
 			QuestionPost q= post.getValue();
+			//number of answer.
+			//if(!xx.trainSet.useridToIndex.containsKey(q.user.userId)){
+				//continue;
+			//}
 			int numOfAnswer= q.answers.size();
-			/*if (numOfAnswer<=2){
-				continue;
-			}
-			int flag=0;
-			for(AnswerPost ans :q.answers){
-				if (xx.trainSet.useridToIndex.containsKey(ans.user.userId)){
-					flag=1;
-					break;
-				}
-			}
-			if (0==flag){
-				//no train user answer this question.
-				continue;
-			}*/
-			
-			//this.trainSet.useridToIndex.get( p.user.userId); 
-			/*if( !xx.trainSet.useridToIndex.containsKey(q.user.userId)   ){
-				//System.out.println("??");
-				continue;
-			}*/
-
-			
 			qnum+=1;
 			//num+=1;
 			xx.recommendUserForQuestion(q,numOfAnswer,precision,recall,msc);
@@ -109,7 +91,8 @@ public class QuestionRouting {
 		
 		
 		//xx.computePer(filter);
-
+		//xx.computeCoherence(xx.trainSet);
+		//xx.computeCoherence(xx.testSet);
 		
 		
 	}
@@ -124,38 +107,38 @@ public class QuestionRouting {
 		
 		String trainFile = args[0];
 		String resultPath= args[1];*/
-		//int  batchTopicNum = Integer.parseInt(args[0]);//  30;
+		int  batchTopicNum = 30;//Integer.parseInt(args[0]);
 
 		String resultPath=null;
 		//String curWorkingDir=System.getProperty("user.dir");
 		//System.out.println(curWorkingDir+trainFile);
 
 		//only for debug
-
-		//String trainsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/QRtrain2m1.train.txt";
-		//String testQAsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/plex2m1.80.5.test.txt";
-		String trainsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/qa3m3.train.50.txt";
-		//String trainsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/qa123m456.train.50.txt";
-		String testQAsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/qa3m3.qr.a2.txt";
-		//String testQAsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/qa123m456.qr.a2.txt";
 		
-		trainsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/qa789m3.train.80.txt";
-		testQAsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/qa789m3.qr.a2.80.txt";
-		System.out.println("dataset:"+trainsource);
-		System.out.println("dataset:"+testQAsource);
+		//String trainsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/alla100.2.train.txt";
+		//String testsource ="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/alla100.2.test.txt";
+		String trainsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/qa2011fullyear.train.100.txt";
+		//String testsource ="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/plex2m.test.80.txt";
 		DataWoker trainset= new DataWoker(trainsource);
-		//DataWoker testset=new DataWoker();
-		DataWoker testQA=new DataWoker(testQAsource);
+		DataWoker testset=new DataWoker();
 		trainset.ProcessOriData();
-		testQA.ProcessQuestions();
+		testset.ProcessOriData();
 		trainset.printStat();
-		testQA.printStat();
-		
-		
-
+		testset.printStat();
 		
 		//System.exit(1);
-		System.out.println("this is question routing runing");
+		
+		//trainset.computeCoOccur();
+		//testset.computeCoOccur();
+		
+		/*for(int i=0;i<trainset.useridToIndex.size();i++){
+			System.out.println( trainset.users.get(i).allPosts.size() )	;
+		}
+		System.exit(1);*/
+
+		
+		
+		
 		
 		//System.out.println(users.tagCountMap.keySet().size());
 		//System.out.println(users.tagCountMap.size());
@@ -167,87 +150,84 @@ public class QuestionRouting {
 		
 		int iternum=100;
 		int topNum=30;
+		double t1;
+		double t2;
 		
 		System.out.println("current topic num:"+topNum);
-		System.out.println("current iteration num:"+iternum);
 		
-		resultPath="out/TEM/";
+		/*resultPath="out/TEM/";
 		System.out.println("TEM model");
-		TEMModel tem=new TEMModel(trainset,testQA,iternum);
+		TEMModel tem=new TEMModel(trainset,testset,iternum);
 		tem.K=topNum;
 		double t1 = System.currentTimeMillis();
-		runModel(tem,"out/TEM/",filter);
+		//runModel(tem,"out/TEM/",filter);
 		double t2 = System.currentTimeMillis();
 		System.out.println("time="+(t2-t1)  );
-		testQR(tem);
-		
+		//testQR(tem, testQA);
 		resultPath="out/TTEMA/";
 		System.out.println("TTEMA model");
-		TTEMA ttema=new TTEMA(trainset,testQA,iternum);
+		TTEMA ttema=new TTEMA(trainset,testset,iternum);
 		ttema.K=topNum;
-		runModel(ttema,"out/TTEMA/",filter);
-		testQR(ttema);
+		//runModel(ttema,"out/TTEMA/",filter);
+		//testQR(ttema);
 		
 		
 		resultPath= "out/outUQA/";
 		System.out.println("UQA Model");
-		UQAModel uqa = new UQAModel(trainset,testQA,iternum);
+		UQAModel uqa = new UQAModel(trainset,testset,iternum);
 		uqa.K=topNum;
 		t1 = System.currentTimeMillis();
-		runModel(uqa,"out/outUQA/",filter);
+		//runModel(uqa,"out/outUQA/",filter);
 		 t2 = System.currentTimeMillis();
 			System.out.println("time="+(t2-t1)  );
-		testQR(uqa);
+		//testQR(uqa);
 		
 		resultPath="out/outLDA/";
 		System.out.println("LDA Model");
-		LDA lda= new LDA(trainset,testQA,iternum);
+		LDA lda= new LDA(trainset,testset,iternum);
 		lda.K=topNum;
 		t1 = System.currentTimeMillis();
 		//runModel(lda,"out/outLDA/",filter);
 		 t2 = System.currentTimeMillis();
 			System.out.println("time="+(t2-t1)  );
-		//testQR(lda);
+		//testQR(lda);*/
 		
 		resultPath= "out/outTTEQAA/";
 		System.out.println("TTEQAA Model");
-		TTEQAAModel tteqaa = new TTEQAAModel(trainset,testQA,iternum);
+		TTEQAAModel tteqaa = new TTEQAAModel(trainset,testset,iternum);
 		tteqaa.K=topNum;
 		t1 = System.currentTimeMillis();
 		runModel(tteqaa,"out/outTTEQAA/",filter);
 		t2 = System.currentTimeMillis();
 		System.out.println("time="+(t2-t1)  );
 		//tteqaa.oneThingINeedToMakeSure();
-		testQR(tteqaa);
+		//testQR(tteqaa, testQA);
 		
-		
-		resultPath= "out/outTTEAACT/";
-		System.out.println("TTEAACT Model");
-		TTEAACT tteaact = new TTEAACT(trainset,testQA,iternum);
-		tteaact.K=topNum;
-		t1 = System.currentTimeMillis();
-		runModel(tteaact,"out/outTTEAACT/",filter);
-		t2 = System.currentTimeMillis();
+		/*resultPath= "out/outRandom/";
+		System.out.println("TTEQAA Model");
+		RandomAlgo ram = new RandomAlgo(trainset,testset,iternum);
 		System.out.println("time="+(t2-t1)  );
 		//tteqaa.oneThingINeedToMakeSure();
-		testQR(tteaact);
-		
-		resultPath= "out/outRandom/";
-		System.out.println("random Model");
-		RandomAlgo ram = new RandomAlgo(trainset,testQA,iternum);
-		System.out.println("time="+(t2-t1)  );
-		//testQR(ram);
+		//testQR(ram, testQA);
 		
 
 		resultPath= "out/outGROST/";
 		System.out.println("Grostt Model");
-		GrosToT tot = new GrosToT(trainset,testQA,iternum);
+		GrosToT tot = new GrosToT(trainset,testset,iternum);
 		tot.K=topNum;
 		t1 = System.currentTimeMillis();
 		runModel(tot,"out/outGROST/",filter);
 		t2 = System.currentTimeMillis();
 		System.out.println("time="+(t2-t1)  );
-		testQR(tot);
+		//testQR(tot);
+		System.exit(1);
+		System.out.println("tem,tot,lda,uqa,tteqa"+topNum);
+		tem.computePer(filter);
+		tot.computePer(filter);
+		lda.computePer(filter);
+		uqa.computePer(filter);
+		tteqaa.computePer(filter);
+		System.exit(1);*/
 		
 		//System.exit(1);
 		

@@ -2,7 +2,13 @@ package Main;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
@@ -10,6 +16,57 @@ import java.util.Map.Entry;
 	
 
 public class ExpertiseExp {
+	
+	
+	
+	public static void testHitAndRank(LDABasedModel xx){
+		
+		int qnum=0;
+		double [] totalNDCG= new double [3];
+		totalNDCG[0]=0.0f;//ndcg@1
+		totalNDCG[1]=0.0f;//ndcg@5
+		totalNDCG[2]=0.0f;//ndcg
+		//int unum=0;
+		//5102015
+		//System.out.println("test question size")
+		for(Entry<String, QuestionPost> post:xx.testSet.quesitonMap.entrySet()){
+			
+			String qid=post.getKey();
+			QuestionPost q= post.getValue();
+			int numOfAnswer= q.answers.size();
+			Set<String> ansUids = new HashSet<String>();
+			ArrayList<Map.Entry<String,Integer>> realU= new ArrayList<Map.Entry<String,Integer>>();
+			Map<String,Integer> realUVotes= new HashMap<String,Integer>();
+			for(AnswerPost a: q.answers){
+				if(xx.trainSet.useridToIndex.containsKey(a.user.userId) ){
+					ansUids.add(a.user.userId);
+					Map.Entry<String, Integer> pairs =new  AbstractMap.SimpleEntry<String , Integer> (a.user.userId,a.score);
+					realU.add(pairs);
+					realUVotes.put(a.user.userId, a.score);
+				}
+			}
+			//System.out.println(ansUids.size());
+			Collections.sort(realU, new Comparator<Map.Entry<String, Integer>>(){
+				public int compare(Map.Entry<String, Integer> arg0,Map.Entry<String, Integer> arg1){
+					return -1*arg0.getValue().compareTo(arg1.getValue());
+				}
+				
+			});
+			if(ansUids.size()>1){
+			
+				xx.HitAndRank(q, ansUids, realU, realUVotes,totalNDCG    );
+				qnum+=1;
+			}
+			
+			
+			
+		}
+		System.out.println("test question:"+qnum);
+		System.out.println("ndcg@1"+ totalNDCG[0]/(double)qnum   );
+		System.out.println("ndcg@2"+ totalNDCG[1]/(double)qnum   );
+		System.out.println("ndcg@3"+ totalNDCG[2]/(double)qnum   );
+		
+	}
 	
 	
 	
@@ -266,6 +323,7 @@ public class ExpertiseExp {
 		resultPath="out/TEM/";
 		System.out.println("TEM model");
 		TEMModel tem=new TEMModel(trainset,testQA,iternum);
+		//testHitAndRank(tem);
 		tem.K=topNum;
 		double t1 = System.currentTimeMillis();
 		if(read==0){
@@ -279,7 +337,7 @@ public class ExpertiseExp {
 		testMaxVoteHit(tem);
 		//testNDCG(tem);
 		//testTOPVOTE(tem);
-		
+		//testHitAndRank(tem);
 		resultPath="out/TTEMA/";
 		System.out.println("TTEMA model");
 		TTEMA ttema=new TTEMA(trainset,testQA,iternum);
@@ -293,12 +351,13 @@ public class ExpertiseExp {
 		UQAModel uqa = new UQAModel(trainset,testQA,iternum);
 		uqa.K=topNum;
 		t1 = System.currentTimeMillis();
-		//runModel(uqa,"out/outUQA/",filter);
+		runModel(uqa,"out/outUQA/",filter);
 		 t2 = System.currentTimeMillis();
 			System.out.println("time="+(t2-t1)  );
 			//testNDCG(uqa);
+			//testHitAndRank(uqa);
 			//testTOPVOTE(uqa);
-			//testMaxVoteHit(uqa);
+			testMaxVoteHit(uqa);
 		
 		resultPath="out/outLDA/";
 		System.out.println("LDA Model");
@@ -328,6 +387,7 @@ public class ExpertiseExp {
 		//testTOPVOTE(tteqaa);
 		//testNDCG(tteqaa);
 		testMaxVoteHit(tteqaa);
+		//testHitAndRank(tteqaa);
 		
 		resultPath= "out/outRandom/";
 		System.out.println("random Model");
@@ -335,6 +395,7 @@ public class ExpertiseExp {
 		System.out.println("time="+(t2-t1)  );
 		//testTOPVOTE(ram);
 		//testNDCG(ram);
+		testMaxVoteHit(ram);
 		
 
 		resultPath= "out/outGROST/";
@@ -342,11 +403,12 @@ public class ExpertiseExp {
 		GrosToT tot = new GrosToT(trainset,testQA,iternum);
 		tot.K=topNum;
 		t1 = System.currentTimeMillis();
-		//runModel(tot,"out/outGROST/",filter);
+		runModel(tot,"out/outGROST/",filter);
 		t2 = System.currentTimeMillis();
 		System.out.println("time="+(t2-t1)  );
 		//testNDCG(tot);
 		//testTOPVOTE(tot);
+		testMaxVoteHit(tot);
 		//System.exit(1);
 		
 

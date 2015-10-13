@@ -17,7 +17,7 @@ import java.util.Set;
 import Util.CommonUtil;
 import Util.FileTool;
 
-public class TTEQAAModel extends LDABasedModel{
+public class TTEAACT extends LDABasedModel{
 	
 	float a1;//alpha
 	float a2;//alpha
@@ -95,7 +95,7 @@ public class TTEQAAModel extends LDABasedModel{
 	
 	
 	
-	public TTEQAAModel(DataWoker trainUsers, DataWoker testUsers,int iternum){
+	public TTEAACT(DataWoker trainUsers, DataWoker testUsers,int iternum){
 		super.trainSet=trainUsers;
 		super.testSet=testUsers;
 		this.setDefaultParameteres();
@@ -871,7 +871,7 @@ public void recommendUserForQuestion(QuestionPost q,int numOfAnswer, double[] pr
 				actscore=actscore+(thetaQK[j]* this.thetaKU[j][uindex]);
 			}
 			
-			double uscore= (1-jsdis);//*actscore;
+			double uscore= (1-jsdis)*actscore;
 			//System.out.println(actscore);
 			
 			Map.Entry<String, Double> pairs =new  AbstractMap.SimpleEntry<String , Double> (u.userId,uscore);

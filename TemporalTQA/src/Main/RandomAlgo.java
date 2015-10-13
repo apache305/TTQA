@@ -69,6 +69,60 @@ public void recommendUserForQuestion(QuestionPost q,int numOfAnswer, double[] pr
 		recall[3] +=  ( (double) CommonUtil.computePrecision(randomRec, ansUids, 30) / (double)numOfAnswer   );
 		
 	}
+
+public void maxVoteHit(QuestionPost q, int [] mvh){
+	
+	
+
+		
+	
+		
+		//find the hight votes user id
+		int maxvote=0;
+		//String maxvoteid=null;
+		Set<String> maxuids=new HashSet<String>();
+		//Set<String> ansUids = new HashSet<String>();
+		//ArrayList<Map.Entry<String,Integer>> realU= new ArrayList<Map.Entry<String,Integer>>();
+		//Map<String,Integer> realUVotes= new HashMap<String,Integer>();
+		for(AnswerPost a: q.answers){
+			//ansUids.add(a.user.userId);
+			if (a.score> maxvote){
+				maxvote=a.score;
+				maxuids.clear();
+				maxuids.add(a.user.userId);
+			}else if(a.score==maxvote){
+				maxuids.add(a.user.userId);//if score equal
+			}
+			
+			//Map.Entry<String, Integer> pairs =new  AbstractMap.SimpleEntry<String , Integer> (a.user.userId,a.score);
+			//realU.add(pairs);
+			//realUVotes.put(a.user.userId, a.score);
+		}
+		Set<String> randomUids= this.trainSet.useridToIndex.keySet();
+		ArrayList<String> randomList=new ArrayList<String>();
+		for(String ruid : randomUids){
+			randomList.add(ruid);
+		}
+
+		for(int i=0;i<100;i++){
+			String recUid= randomList.get(i);
+			if(maxuids.contains(recUid)){
+				mvh[i/10]+=1;
+				return ;
+			}
+		}
+		//mvh[11]+=1;//miss
+		return ;
+		
+
+
+		
+	}
+
+
+
+
+
 public void topVoteHit(QuestionPost q,int numOfAnswer, double[] precision, double[] recall, int [] msc){
 	
 	Set<String> randomUids= this.trainSet.useridToIndex.keySet();

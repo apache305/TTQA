@@ -562,6 +562,98 @@ public class GrosToT extends LDABasedModel{
 		System.out.println(final_perplex);
 	}
 	
+	
+public void maxVoteHit(QuestionPost q, int [] mvh){
+		
+		double [] thetaQK= this.computeQuestionTopicDistribution(q);
+
+		//score = (1-js) * expert(u,q) * act (u,q)
+
+		ArrayList<Map.Entry<String, Double>> userScore= new ArrayList<Map.Entry<String, Double>>();
+		for(User u:this.trainSet.users){
+			int uindex=this.trainSet.useridToIndex.get(u.userId);
+			double [] thetacUK= new double [this.K];
+			
+			double sum=0.0f;
+			for(int i=0;i<this.K;i++){
+				for(int j=0;j<this.G;j++){
+					thetacUK[i] +=   this.thetaUG[uindex][j]* this.thetaGK[j][i];
+				}
+				sum+=thetacUK[i];
+				
+			}
+			
+			//normal
+			for (int i=0;i<this.K;i++){
+				thetacUK[i]=thetacUK[i]/sum;
+			}
+
+
+			double jsdis= CommonUtil.jensenShannonDivergence(thetacUK, thetaQK);
+
+			
+
+			double uscore= (1-jsdis);
+			//System.out.println(actscore);
+			
+			Map.Entry<String, Double> pairs =new  AbstractMap.SimpleEntry<String , Double> (u.userId,uscore);
+			userScore.add(pairs);
+			//System.out.println("jsdis:"+jsdis);
+			
+			//U,1, 1     2      3 
+			//     0.1   0.5    0.4
+			//U,1, 1     2      3
+			//     0.5  0.1    0.1
+			
+			//
+			}
+			//sort it.
+			
+			Collections.sort(userScore, new Comparator<Entry<String,Double>>(){
+				public int compare(Entry<String, Double> arg0,Entry<String, Double> arg1) {
+					// TODO Auto-generated method stub
+					return -1*arg0.getValue().compareTo(arg1.getValue());
+				}
+			});
+			
+			//find the hight votes user id
+			int maxvote=0;
+			//String maxvoteid=null;
+			Set<String> maxuids=new HashSet<String>();
+			//Set<String> ansUids = new HashSet<String>();
+			//ArrayList<Map.Entry<String,Integer>> realU= new ArrayList<Map.Entry<String,Integer>>();
+			//Map<String,Integer> realUVotes= new HashMap<String,Integer>();
+			for(AnswerPost a: q.answers){
+				//ansUids.add(a.user.userId);
+				if (a.score> maxvote){
+					maxvote=a.score;
+					maxuids.clear();
+					maxuids.add(a.user.userId);
+				}else if(a.score==maxvote){
+					maxuids.add(a.user.userId);//if score equal
+				}
+				
+				//Map.Entry<String, Integer> pairs =new  AbstractMap.SimpleEntry<String , Integer> (a.user.userId,a.score);
+				//realU.add(pairs);
+				//realUVotes.put(a.user.userId, a.score);
+			}
+			
+			for(int i=0;i<100;i++){
+				String recUid= userScore.get(i).getKey();
+				if(maxuids.contains(recUid)){
+					mvh[i/10]+=1;
+					return ;
+				}
+			}
+			//mvh[11]+=1;//miss
+			return ;
+			
+
+
+			
+		}
+	
+	
 public void topVoteHit(QuestionPost q,int numOfAnswer, double[] precision, double[] recall, int [] msc){
 		
 		double [] thetaQK= this.computeQuestionTopicDistribution(q);

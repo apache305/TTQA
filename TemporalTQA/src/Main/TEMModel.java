@@ -732,7 +732,7 @@ for(User u:this.trainSet.users){
 
 
 	
-	public void maxVoteHitNotSortByExp(QuestionPost q, int [] mvh){
+	public void maxVoteHit1Step(QuestionPost q, int [] mvh){
 		
 		double [] thetaQK= this.computeQuestionTopicDistribution(q);
 
@@ -830,6 +830,104 @@ for(User u:this.trainSet.users){
 
 			
 		}
+	
+	
+
+public void HitAndRank(QuestionPost q, Set<String> ansUids, ArrayList<Map.Entry<String,Integer>> sortedVotes, Map<String,Integer> votesMap, double [] totalNDCG){
+		
+		
+	double [] thetaQK= this.computeQuestionTopicDistribution(q);
+	
+	//score = (1-js) * expert(u,q) * act (u,q)
+	
+	ArrayList<Map.Entry<String, Double>> userScore= new ArrayList<Map.Entry<String, Double>>();
+	for(String uid: ansUids){
+		int uindex=this.trainSet.useridToIndex.get(uid);
+		double [] thetacUK=this.theta[uindex];
+
+
+		double jsdis= CommonUtil.jensenShannonDivergence(thetacUK, thetaQK);
+
+		
+		//avg level for user.
+		double []klevel= new double[this.K];
+		for(int k=0;k<this.K;k++){
+			for(int el=0;el<this.ENum;el++){
+				klevel[k]=this.phi[k][uindex][el] * fgmm.p_mu[el][0] ;
+				//    1 0.1   10 0.9       u,j  5.3
+			}
+		}//
+		//[3,5,1,......9]
+		
+		
+		
+		double expscore=0.0f;
+		for(int j=0;j<this.K;j++){
+			expscore += (thetaQK[j]* klevel[j]	 );
+
+		}
+		
+		double uscore= (1-jsdis)*expscore;
+		//System.out.println(actscore);
+		
+		Map.Entry<String, Double> pairs =new  AbstractMap.SimpleEntry<String , Double> (uid,uscore);
+		userScore.add(pairs);
+		//System.out.println("jsdis:"+jsdis);
+		
+		//U,1, 1     2      3 
+		//     0.1   0.5    0.4
+		//U,1, 1     2      3
+		//     0.5  0.1    0.1
+		
+		//
+	}
+	//sort it.
+
+	Collections.sort(userScore, new Comparator<Entry<String,Double>>(){
+		public int compare(Entry<String, Double> arg0,Entry<String, Double> arg1) {
+			// TODO Auto-generated method stub
+			return -1*arg0.getValue().compareTo(arg1.getValue());
+		}
+	});
+	
+	
+
+
+	//recuser list.
+	ArrayList<String> recUser = new ArrayList<String >();
+	for(int i=0;i<userScore.size();i++){
+		String userScoreUID= userScore.get(i).getKey();
+		//if (ansUids.contains(userScoreUID)){
+			recUser.add(userScoreUID);
+		//}
+	}
+	//ground truth rank list.
+	ArrayList<String> relUser= new ArrayList<String>();
+	for(int i=0;i<sortedVotes.size();i++){
+		relUser.add( sortedVotes.get(i).getKey());
+	}
+	//System.out.println(CommonUtil.computeNDCG(recUser, relUser,votesMap, 1));
+	//System.out.println(CommonUtil.computeNDCG(recUser, relUser,votesMap, 2));
+	//System.out.println(CommonUtil.computeNDCG(recUser, relUser,votesMap, 3));
+	
+	
+	totalNDCG[0]+=CommonUtil.computeNDCG(recUser, relUser,votesMap, 1);
+	totalNDCG[1]+=CommonUtil.computeNDCG(recUser, relUser,votesMap, 2);
+	totalNDCG[2]+=CommonUtil.computeNDCG(recUser, relUser,votesMap, 3);
+	//System.out.println("totalNDCG[0]"+totalNDCG[0]);
+	//System.out.println("totalNDCG[0]"+totalNDCG[1]);
+	//System.out.println("totalNDCG[0]"+totalNDCG[2]);
+	
+	
+	
+	//then we have two sorted list.
+	//recUser and idealU.
+	
+		
+		
+}
+	
+	
 		public void NDCG(QuestionPost q, double [] totalNDCG){
 				
 				
