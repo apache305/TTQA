@@ -139,8 +139,11 @@ public class QuestionRouting {
 		String testQAsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/qa3m3.qr.a2.txt";
 		//String testQAsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/qa123m456.qr.a2.txt";
 		
-		trainsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/qa789m3.train.80.txt";
-		testQAsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/qa789m3.qr.a2.80.txt";
+		//trainsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/qa789m3.train.80.txt";
+		//testQAsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/qa789m3.qr.a2.80.txt";
+		
+		trainsource=args[0];
+		testQAsource=args[1];
 		System.out.println("dataset:"+trainsource);
 		System.out.println("dataset:"+testQAsource);
 		DataWoker trainset= new DataWoker(trainsource);
@@ -236,7 +239,7 @@ public class QuestionRouting {
 		System.out.println("random Model");
 		RandomAlgo ram = new RandomAlgo(trainset,testQA,iternum);
 		System.out.println("time="+(t2-t1)  );
-		//testQR(ram);
+		testQR(ram);
 		
 
 		resultPath= "out/outGROST/";

@@ -1364,6 +1364,21 @@ public void recommendUserForQuestion(QuestionPost q,int numOfAnswer, double[] pr
 		}
 		writer.close();
 		
+		writer = new BufferedWriter(new FileWriter(outputPath+ "thetaKTU.txt"));
+		for(int kid=0;kid<this.K;kid++){
+			writer.write(String.format("Topic%d,",kid));
+			for(int tid=0;tid<this.T;tid++){
+				String timeLabel = this.trainSet.indexToTimeMap.get(tid);
+				writer.write(String.format("TimeID%s,",timeLabel));
+				for(int uid=0;uid<this.U;uid++){
+					writer.write(this.thetaUKT[uid][kid][tid]+",");
+				}
+				writer.write("\n");
+			}
+		}
+
+		writer.close();
+		
 		//thetaUKE
 		writer = new BufferedWriter(new FileWriter(outputPath+ "UserthetaKE.txt"));
 		for(int uid=0;uid<this.U;uid++){

@@ -33,7 +33,12 @@ public class DataWoker {
 	public ArrayList<String> indexToTagMap;
 	public Map<String, Integer> tagCountMap;  //all tag count
 	
-	public int timeLevel=7;//"Month";
+	public int startLevel=0;//hour=11
+	//public int timeLevel=13;
+	//this.startLevel, this.timeLevel)
+	//public int timeLevel=7;//"Month";
+	public int timeLevel=10;//day;
+	//public int timeLevel=11-13 
 	
 	public Map<String, Integer> timeToIndexMap;
 	public ArrayList<String> indexToTimeMap;
@@ -220,7 +225,7 @@ public class DataWoker {
 
 			
 			q.user=u;
-			String month=date.substring(0, this.timeLevel);
+			String month=date.substring(this.startLevel, this.timeLevel);
 			
 			if(!this.timeToIndexMap.containsKey(month)){
 				this.timeToIndexMap.put(month,this.indexToTimeMap.size());
@@ -307,7 +312,7 @@ public class DataWoker {
 			User u = this.users.get(this.useridToIndex.get(auid)  );
 
 			a.user=u;
-			String month=date.substring(0, this.timeLevel);
+			String month=date.substring(this.startLevel, this.timeLevel);
 			
 			
 			
@@ -415,7 +420,7 @@ public class DataWoker {
 		
 		
 
-		String month=date.substring(0, this.timeLevel);
+		String month=date.substring(this.startLevel, this.timeLevel);
 		
 		if(!this.timeToIndexMap.containsKey(month)){
 			this.timeToIndexMap.put(month,this.indexToTimeMap.size());

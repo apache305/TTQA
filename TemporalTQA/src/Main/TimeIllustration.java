@@ -119,12 +119,16 @@ public class TimeIllustration {
 		//String testsource ="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/alla100.2.test.txt";
 		String trainsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/qa2011fullyear.train.100.txt";
 		//String testsource ="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/plex2m.test.80.txt";
+		
+		//String trainsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/qa789fortime.train.10.txt";
+		//String trainsource="/Users/zmeng/GoogleDriver/2015/full_data/temp_dir/qa7fortime.train.10.txt";
 		DataWoker trainset= new DataWoker(trainsource);
 		DataWoker testset=new DataWoker();
 		trainset.ProcessOriData();
-		testset.ProcessOriData();
+		//testset.ProcessOriData();
+		//trainset.indexToTimeMap.add("25");
 		trainset.printStat();
-		testset.printStat();
+		// testset.printStat();
 		
 		//System.exit(1);
 		
@@ -148,8 +152,8 @@ public class TimeIllustration {
 		
 		Set<String> filter=new HashSet<String>();
 		
-		int iternum=100;
-		int topNum=30;
+		int iternum=50;
+		int topNum=100;
 		double t1;
 		double t2;
 		
